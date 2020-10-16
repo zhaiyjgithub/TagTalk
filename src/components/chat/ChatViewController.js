@@ -7,9 +7,13 @@ import {
 	Text,
 	RefreshControl,
 } from 'react-native';
-
+import ChatItem from './view/ChatItem';
 
 export default class ChatViewController extends Component {
+	static defaultProps = {
+		uid: 0
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -50,9 +54,7 @@ export default class ChatViewController extends Component {
 
 	renderItem(item) {
 		return (
-			<View style={{flex: 1, height: 80}}>
-				<Text>{item}</Text>
-			</View>
+			<ChatItem />
 		)
 	}
 
