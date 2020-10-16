@@ -7,9 +7,13 @@ import {
 	Text,
 	RefreshControl,
 } from 'react-native';
-
+import ChatItem from './view/ChatItem';
 
 export default class ChatViewController extends Component {
+	static defaultProps = {
+		uid: 0
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -18,17 +22,10 @@ export default class ChatViewController extends Component {
 		}
 
 		this.onEndReachedCalledDuringMomentum = false
-		this.number = 5
+		this.number = 0
 	}
 
 	componentDidMount() {
-		// setTimeout(() => {
-		// 	this.setState({isRefreshing: true})
-		// 	setTimeout(() => {
-		// 		this.setState({isRefreshing: false})
-		// 	}, 2000)
-		// }, 5000)
-
 		this.refresh()
 	}
 
@@ -57,21 +54,20 @@ export default class ChatViewController extends Component {
 
 	renderItem(item) {
 		return (
-			<View style={{flex: 1, height: 80}}>
-				<Text>{item}</Text>
-			</View>
+			<ChatItem />
 		)
 	}
 
 	render(){
-		const {dataSource, isRefreshing} = this.state
+		const {dataSource} = this.state
+
 		return (
 			<View style={{flex: 1}}>
 				<FlatList
-					style={{flex: 1, minHeight: 812}}
 					ref={(o) => {
 						this._flatList = o
 					}}
+					style={{flex: 1}}
 					data={dataSource}
 					renderItem={({item}) => this.renderItem(item)}
 					keyExtractor={(item, index) => {
@@ -86,19 +82,6 @@ export default class ChatViewController extends Component {
 						}
 					}}
 					onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-					refreshControl={
-						<RefreshControl
-							refreshing={isRefreshing}
-							enabled = {true}
-							onRefresh={() => {
-								if (!this.onEndReachedCalledDuringMomentum) {
-									this.refresh()
-									this.onEndReachedCalledDuringMomentum = true;
-								}
-							}
-							}
-						/>
-					}
 				/>
 			</View>
 		)

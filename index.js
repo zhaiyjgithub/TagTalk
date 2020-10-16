@@ -3,22 +3,45 @@
  */
 
 import {Navigation} from 'react-native-navigation';
-// import {AppRegistry} from 'react-native';
-import App from './App';
 import ChatViewController from './src/components/chat/ChatViewController';
-// import {name as appName} from './app.json';
-//
-// AppRegistry.registerComponent(appName, () => App);
+import MessageViewController from './src/components/chat/MessageViewController';
+import {Colors} from './src/utils/styles';
 
-Navigation.registerComponent('com.myApp.WelcomeScreen', () => ChatViewController);
+Navigation.registerComponent('MessageViewController', () => MessageViewController);
+Navigation.registerComponent('ChatViewController', () => ChatViewController);
 Navigation.events().registerAppLaunchedListener(() => {
+  Navigation.setDefaultOptions({
+    topBar: {
+      drawBehind: false,
+      leftButtonColor: Colors.black,
+      rightButtonColor: Colors.black,
+      title: {
+        color: Colors.black,
+        fontSize: 24,
+        fontFamily: 'Helvetica'
+      },
+      backButton: {
+        color: Colors.black,
+        showTitle: false
+      }
+    },
+  });
+
+  MessageViewController.options = {
+    topBar: {
+      title: {
+        text: 'Chats'
+      }
+    },
+  }
+
   Navigation.setRoot({
     root: {
       stack: {
         children: [
           {
             component: {
-              name: 'com.myApp.WelcomeScreen',
+              name: 'MessageViewController',
             },
           },
         ],
