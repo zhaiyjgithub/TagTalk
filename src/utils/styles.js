@@ -4,7 +4,9 @@ const Colors = {
 	blue: '#2A87FF',
 	gray: '#7B87A5',
 	lightBlue: '#DCE7FF',
-	green: '#1BC12E'
+	green: '#1BC12E',
+	white: '#FFFFFF',
+	lineColor: "#EFEFF4",
 }
 
 const FontFamily = {

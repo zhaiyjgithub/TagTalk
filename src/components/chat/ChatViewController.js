@@ -6,8 +6,17 @@ import {
 	View,
 	Text,
 	RefreshControl,
+	TouchableOpacity,
+	TextInput,
+	Image,
+	Animated,
+	Keyboard
 } from 'react-native';
 import ChatItem from './view/ChatItem';
+import {Colors} from '../../utils/styles';
+import {PLATFORM} from '../../utils/Enums';
+
+const AnimatedListView = new Animated.createAnimatedComponent(FlatList)
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -23,10 +32,17 @@ export default class ChatViewController extends Component {
 
 		this.onEndReachedCalledDuringMomentum = false
 		this.number = 0
+		this.inputViewMarginBottom = new Animated.Value(0)
 	}
 
 	componentDidMount() {
+		this.addKeyboardListener()
 		this.refresh()
+	}
+
+	componentWillUnmount(): void {
+		this.keyboardWillShowSub && this.keyboardWillShowSub.remove()
+		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
 	}
 
 	refreshToLoadMore() {
@@ -48,8 +64,61 @@ export default class ChatViewController extends Component {
 		this.setState({isRefreshing: true})
 
 		setTimeout(() => {
-			this.setState({isRefreshing:false, dataSource: dataSource.concat(source.reverse())})
+			this.setState({isRefreshing: false, dataSource: dataSource.concat(source.reverse())})
 		}, 2000)
+	}
+
+	addKeyboardListener() {
+		if (PLATFORM.isIOS) {
+			this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
+			this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
+		}else {
+			this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow.bind(this));
+			this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide.bind(this));
+		}
+	}
+
+	keyboardWillShow(event) {
+		this.keyboardDuration = event.duration
+		if (PLATFORM.isIOS) {
+			let safeAreaViewHeight = PLATFORM.isX ? 34 : 0
+			Animated.timing(this.inputViewMarginBottom,{duration:this.keyboardDuration,toValue:event.endCoordinates.height - safeAreaViewHeight, useNativeDriver: false}).start()
+		}else {
+			Animated.timing(this.inputViewMarginBottom,{duration:this.keyboardDuration,toValue:event.endCoordinates.height, useNativeDriver: false}).start()
+		}
+	}
+
+	keyboardWillHide(event) {
+		if (PLATFORM.isIOS) {
+			Animated.timing(this.inputViewMarginBottom,{duration: this.keyboardDuration,toValue:0, useNativeDriver: false}).start()
+		}else {
+			Animated.timing(this.inputViewMarginBottom,{duration: this.keyboardDuration,toValue: 0, useNativeDriver: false}).start()
+		}
+	}
+
+	renderInputBar() {
+		return(
+			<Animated.View style={{width: '100%', height: 60, flexDirection: 'row',
+				alignItems: 'center', justifyContent: 'space-between',
+				marginBottom: this.inputViewMarginBottom
+			}}>
+				<TouchableOpacity style={{width: 30, height: 30,marginHorizontal: 10,}} >
+					<Image source={require('../../source/image/chat/voice.png')}/>
+				</TouchableOpacity>
+
+				<TextInput style={{flex: 1, backgroundColor: '#ECF2FB', height: 36,
+					borderRadius: 4, fontSize: 16, paddingHorizontal: 4
+				}}/>
+
+				<TouchableOpacity style={{width: 30, height: 30, marginHorizontal: 10,}} >
+					<Image source={require('../../source/image/chat/add.png')}/>
+				</TouchableOpacity>
+
+				<View style={{width: '100%', height: 1, backgroundColor: Colors.lineColor,
+					position: 'absolute', left: 0, top: 0,
+				}}/>
+			</Animated.View>
+		)
 	}
 
 	renderItem(item) {
@@ -58,32 +127,36 @@ export default class ChatViewController extends Component {
 		)
 	}
 
-	render(){
+	render() {
 		const {dataSource} = this.state
 
 		return (
-			<View style={{flex: 1}}>
-				<FlatList
-					ref={(o) => {
-						this._flatList = o
-					}}
-					style={{flex: 1}}
-					data={dataSource}
-					renderItem={({item}) => this.renderItem(item)}
-					keyExtractor={(item, index) => {
-						return 'key' + item.key + index
-					}}
-					inverted={true}
-					onEndReachedThreshold={0.5}
-					onEndReached = {() => {
-						if (!this.onEndReachedCalledDuringMomentum) {
-							this.refreshToLoadMore()
-							this.onEndReachedCalledDuringMomentum = true;
-						}
-					}}
-					onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-				/>
-			</View>
+				<SafeAreaView style={{flex: 1}}>
+					<FlatList
+						ref={(o) => {
+							this._flatList = o
+						}}
+						style={{flex: 1}}
+						data={dataSource}
+						renderItem={({item}) => this.renderItem(item)}
+						keyExtractor={(item, index) => {
+							return 'key' + item.key + index
+						}}
+						inverted={true}
+						onEndReachedThreshold={0.5}
+						onEndReached={() => {
+							if (!this.onEndReachedCalledDuringMomentum) {
+								this.refreshToLoadMore()
+								this.onEndReachedCalledDuringMomentum = true;
+							}
+						}}
+						onMomentumScrollBegin={() => {
+							this.onEndReachedCalledDuringMomentum = false;
+						}}
+					/>
+
+					{this.renderInputBar()}
+				</SafeAreaView>
 		)
 	}
 }

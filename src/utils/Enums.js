@@ -1,8 +1,9 @@
-import {Platform} from 'react-native'
+import {Platform, Dimensions} from 'react-native'
 
 const PLATFORM = {
 	isIOS: (Platform.OS === 'ios'),
-	isAndroid: (Platform.OS === 'android')
+	isAndroid: (Platform.OS === 'android'),
+	isX: Platform.OS === "ios" && !Platform.isPad && (Dimensions.get("window").height > 800 || Dimensions.get("window").width > 800)
 }
 
 const EventName = {

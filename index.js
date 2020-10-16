@@ -9,6 +9,7 @@ import {Colors} from './src/utils/styles';
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
 Navigation.registerComponent('ChatViewController', () => ChatViewController);
+
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setDefaultOptions({
     topBar: {
