@@ -16,8 +16,6 @@ import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
 import {PLATFORM} from '../../utils/Enums';
 
-const AnimatedListView = new Animated.createAnimatedComponent(FlatList)
-
 export default class ChatViewController extends Component {
 	static defaultProps = {
 		uid: 0
@@ -27,17 +25,19 @@ export default class ChatViewController extends Component {
 		super(props)
 		this.state = {
 			dataSource: [],
-			isRefreshing: false
+			isRefreshing: false,
+			typingMessage: ''
 		}
 
 		this.onEndReachedCalledDuringMomentum = false
 		this.number = 0
 		this.inputViewMarginBottom = new Animated.Value(0)
+		this.textMessage = ''
 	}
 
 	componentDidMount() {
 		this.addKeyboardListener()
-		this.refresh()
+		// this.refresh()
 	}
 
 	componentWillUnmount(): void {
@@ -97,17 +97,43 @@ export default class ChatViewController extends Component {
 	}
 
 	renderInputBar() {
+		const {typingMessage} = this.state
 		return(
-			<Animated.View style={{width: '100%', height: 60, flexDirection: 'row',
+			<Animated.View  style={{width: '100%', height: 60, flexDirection: 'row',
 				alignItems: 'center', justifyContent: 'space-between',
-				marginBottom: this.inputViewMarginBottom
+				marginBottom: this.inputViewMarginBottom,
 			}}>
 				<TouchableOpacity style={{width: 30, height: 30,marginHorizontal: 10,}} >
 					<Image source={require('../../source/image/chat/voice.png')}/>
 				</TouchableOpacity>
 
-				<TextInput style={{flex: 1, backgroundColor: '#ECF2FB', height: 36,
-					borderRadius: 4, fontSize: 16, paddingHorizontal: 4
+				<TextInput
+					ref ={(o) => {
+						this._textInput = o
+					}}
+					value = {typingMessage}
+					onKeyPress={(e) => {
+						let key = e.nativeEvent.key
+						if (key === 'Enter') {
+							if (!this.textMessage.length) {
+								return
+							}
+
+							this.setState({typingMessage: ''}, () => {
+								this.appendNewMessage(this.textMessage)
+								this.textMessage = ''
+							})
+						}else {
+							this.textMessage = this.textMessage + key
+							this.setState({typingMessage: this.textMessage})
+						}
+					}}
+					multiline={true}
+					underlineColorAndroid={'transparent'}
+					returnKeyType={'send'}
+					placeholder={'Type a message...'}
+					style={{flex: 1, backgroundColor: '#efeff4', height: 36,
+					borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
 				}}/>
 
 				<TouchableOpacity style={{width: 30, height: 30, marginHorizontal: 10,}} >
@@ -121,6 +147,22 @@ export default class ChatViewController extends Component {
 		)
 	}
 
+	insert(arr, index, ...newItems){
+		return [
+			// part of the array before the specified index
+			...arr.slice(0, index),
+			// inserted items
+			...newItems,
+			// part of the array after the specified index
+			...arr.slice(index)
+		]
+	}
+
+	appendNewMessage(message) {
+		const {dataSource} = this.state
+		this.setState({dataSource: this.insert(dataSource, 0, [message])})
+	}
+
 	renderItem(item) {
 		return (
 			<ChatItem />
@@ -131,7 +173,7 @@ export default class ChatViewController extends Component {
 		const {dataSource} = this.state
 
 		return (
-				<SafeAreaView style={{flex: 1}}>
+				<SafeAreaView style={{flex: 1,}}>
 					<FlatList
 						ref={(o) => {
 							this._flatList = o
@@ -146,7 +188,7 @@ export default class ChatViewController extends Component {
 						onEndReachedThreshold={0.5}
 						onEndReached={() => {
 							if (!this.onEndReachedCalledDuringMomentum) {
-								this.refreshToLoadMore()
+								// this.refreshToLoadMore()
 								this.onEndReachedCalledDuringMomentum = true;
 							}
 						}}

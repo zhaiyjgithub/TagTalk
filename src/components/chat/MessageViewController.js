@@ -112,7 +112,7 @@ export default class MessageViewController extends Component{
 					}}
 					ListHeaderComponent={() => {
 						return(
-							<View style={{height: 20}}/>
+							<View style={{height: 20, }}/>
 						)
 					}}
 				/>
