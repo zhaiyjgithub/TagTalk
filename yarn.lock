@@ -5592,6 +5592,16 @@ react-lifecycles-compat@2.0.0:
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-lifecycles-compat/-/react-lifecycles-compat-2.0.0.tgz#71d9c4cde47114c4102454f76da055c2bc48c948"
   integrity sha512-txfpPCQYiazVdcbMRhatqWKcAxJweUu2wDXvts5/7Wyp6+Y9cHojqXHsLPEckzutfHlxZhG8Oiundbmp8Fd6eQ==
 
+react-native-fast-image@^8.3.2:
+  version "8.3.2"
+  resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-native-fast-image/-/react-native-fast-image-8.3.2.tgz#e9db271b70b9634b7be054760914d80954f9898c"
+  integrity sha512-AJ0b4BEswRwa0bh4SibYUtXszEiaO88Lf4CZ1ib+t5ZfkAgsMk9Liv3L0LYnDblMJmSeGTr1+2ViIM8F2vamjg==
+
+react-native-image-crop-picker@^0.35.1:
+  version "0.35.1"
+  resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-native-image-crop-picker/-/react-native-image-crop-picker-0.35.1.tgz#590b6ed7af7b63a505132c73819c9166347bf1e3"
+  integrity sha512-5HY2NnkmgL/Nw1IpU9CkTWj4qgFYPF8KxDaHoaufEWNjvOCRGziMoui55cO7k4KdwsIKmb1UbDzkCYemJqcyow==
+
 react-native-navigation@^7.1.0:
   version "7.1.0"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-native-navigation/-/react-native-navigation-7.1.0.tgz#05dbfc6b31dd6a8aa626a74b2f51e1cc031b230d"

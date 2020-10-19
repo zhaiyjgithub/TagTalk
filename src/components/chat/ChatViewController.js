@@ -16,6 +16,7 @@ import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
 import {MessageType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -221,8 +222,10 @@ export default class ChatViewController extends Component {
 
 		return arr.map((item, key) => {
 			return (
-				<View style={{alignItems: 'center', marginTop: 10}}>
-					<TouchableOpacity key={key} style={{width: size, height: size, backgroundColor: Colors.lineGray, borderRadius: 8,
+				<View key={key} style={{alignItems: 'center', marginTop: 10}}>
+					<TouchableOpacity onPress={() => {
+						this.openMedia(item.type)
+					}} style={{width: size, height: size, backgroundColor: Colors.lineGray, borderRadius: 8,
 						alignItems: 'center', justifyContent: 'center'
 					}}>
 						<Image style={{alignSelf: 'center'}} source={item.source}/>
@@ -233,13 +236,77 @@ export default class ChatViewController extends Component {
 		})
 	}
 
+	openMedia(type) {
+		switch (type) {
+			case MediaButtonType.photo:
+				this.openPhotoLibrary()
+				break
+			case MediaButtonType.camera:
+				this.openPhotoLibrary()
+				break
+			default: ;
+		}
+	}
+
+	openPhotoLibrary() {
+		ImagePicker.openPicker({
+			multiple: true
+		}).then(images => {
+			console.log(images);
+
+			if (images && images.length) {
+				images.map((item) => {
+					this.appendNewImageMessage(MessageType.Image, item.path)
+				})
+			}
+		});
+	}
+
+	openCamera() {
+		ImagePicker.openCamera({
+			width: 300,
+			height: 400,
+			cropping: true,
+		}).then(image => {
+			console.log(image);
+		});
+	}
+
+	appendNewImageMessage(type, url) {
+		let message = new Message()
+		message.type = type
+		message.user = this.getUser()
+		message.imageURL = url
+		message.createdAt = this.getDateTimeISO()
+		message.updatedAt = message.createdAt
+
+		this.appendNewMessage(message)
+	}
+
 	renderItem(message) {
 		return (
 			<ChatItem
 				message = {message}
 				isPeer = {message.user.id !== this.getUser().id}
+				previewImageAction={(url) => {
+					this.previewImage(url)
+				}}
 			/>
 		)
+	}
+
+	previewImage(url) {
+		ImagePicker.openCropper({
+			path: url,
+			width: 300,
+			height: 400,
+			cropperChooseText: '',
+			hideBottomControls: true
+		}).then(image => {
+			//
+		}).catch(() => {
+
+		})
 	}
 
 	render() {

@@ -37,6 +37,20 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSCameraUsageDescription</key>
+  <string>TagTalk wants to use your camera to take a picture.</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>TagTalk wants to access your photo library to upload a picture.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>TagTalk wants to use your microphone during the audio chat</string>
+  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  <string>TagTalk wants to use your location to calculate the distance between your firends and you</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>TagTalk wants to use your location calculate the distance between your firends and you</string>
+  <key>NSLocationUsageDescription</key>
+  <string>TagTalk wants to use your location  calculate the distance between your firends and you</string>
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>TagTalk wants to use your location  calculate the distance between your firends and you</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>
