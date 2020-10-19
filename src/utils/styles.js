@@ -7,6 +7,7 @@ const Colors = {
 	green: '#1BC12E',
 	white: '#FFFFFF',
 	lineColor: "#EFEFF4",
+	lineGray: "#EFEFF4",
 }
 
 const FontFamily = {

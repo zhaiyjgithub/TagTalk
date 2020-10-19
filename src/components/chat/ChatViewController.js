@@ -27,7 +27,8 @@ export default class ChatViewController extends Component {
 		this.state = {
 			dataSource: [],
 			isRefreshing: false,
-			textMessage: ''
+			textMessage: '',
+			isShowMediaPanel: false
 		}
 
 		this.onEndReachedCalledDuringMomentum = false
@@ -103,23 +104,32 @@ export default class ChatViewController extends Component {
 	}
 
 	renderInputBar() {
-		const {textMessage} = this.state
+		const {textMessage, isShowMediaPanel} = this.state
 		return(
 			<Animated.View  style={{width: '100%', height: 60, flexDirection: 'row',
 				alignItems: 'center', justifyContent: 'space-between',
 				marginBottom: this.inputViewMarginBottom,
 			}}>
-				<TouchableOpacity style={{width: 30, height: 30,marginHorizontal: 10,}} >
+				<TouchableOpacity onPress={() => {
+					Keyboard.dismiss()
+					this.setState({isShowMediaPanel: !isShowMediaPanel})
+				}} style={{width: 30, height: 30,marginHorizontal: 10,}} >
 					<Image source={require('../../source/image/chat/add.png')}/>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={{width: 30, height: 30, marginRight: 10,}} >
+				<TouchableOpacity onPress={() => {
+					Keyboard.dismiss()
+					this.setState({isShowMediaPanel: false})
+				}} style={{width: 30, height: 30, marginRight: 10,}} >
 					<Image source={require('../../source/image/chat/voice.png')}/>
 				</TouchableOpacity>
 
 				<TextInput
 					onChangeText={(text) => {
 						this.setState({textMessage: text})
+					}}
+					onFocus={() => {
+						this.setState({isShowMediaPanel: false})
 					}}
 					value={textMessage}
 					multiline={true}
@@ -180,6 +190,49 @@ export default class ChatViewController extends Component {
 		})
 	}
 
+	renderMediaPanel() {
+		const {isShowMediaPanel} = this.state
+		if (!isShowMediaPanel) {
+			return
+		}
+
+		return(
+			<View style={{width: '100%', height: 120, backgroundColor: Colors.white}}>
+				<View style={{width: '100%', alignItems: 'center', justifyContent: 'space-around', flexDirection: 'row'}}>{this.renderMediaItem()}</View>
+
+				<View style={{width: '100%', height: 1, backgroundColor: Colors.lineColor,
+					position: 'absolute', left: 0, top: 0,
+				}}/>
+			</View>
+		)
+	}
+
+	renderMediaItem() {
+		let arr = [
+			{source: require('../../source/image/chat/image.png'),
+			type: MediaButtonType.photo, title: 'Photo',},
+			{source: require('../../source/image/chat/camera.png'),
+				type: MediaButtonType.camera, title: 'Camera',},
+			{source: require('../../source/image/chat/location.png'),
+				type: MediaButtonType.location, title: 'Location',},
+		]
+
+		let size = 55
+
+		return arr.map((item, key) => {
+			return (
+				<View style={{alignItems: 'center', marginTop: 10}}>
+					<TouchableOpacity key={key} style={{width: size, height: size, backgroundColor: Colors.lineGray, borderRadius: 8,
+						alignItems: 'center', justifyContent: 'center'
+					}}>
+						<Image style={{alignSelf: 'center'}} source={item.source}/>
+					</TouchableOpacity>
+					<Text style={{fontSize: 14, color: Colors.black, marginTop: 8,}}>{item.title}</Text>
+				</View>
+			)
+		})
+	}
+
 	renderItem(message) {
 		return (
 			<ChatItem
@@ -218,7 +271,15 @@ export default class ChatViewController extends Component {
 					/>
 
 					{this.renderInputBar()}
+					{this.renderMediaPanel()}
 				</SafeAreaView>
 		)
 	}
+}
+
+const MediaButtonType = {
+	photo: 0,
+	camera: 1,
+	location: 2,
+
 }
