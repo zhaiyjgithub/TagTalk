@@ -14,7 +14,8 @@ import {
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
-import {PLATFORM} from '../../utils/Enums';
+import {MessageType, PLATFORM} from '../../utils/Enums';
+import {Message} from './model/Message'
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -26,13 +27,12 @@ export default class ChatViewController extends Component {
 		this.state = {
 			dataSource: [],
 			isRefreshing: false,
-			typingMessage: ''
+			textMessage: ''
 		}
 
 		this.onEndReachedCalledDuringMomentum = false
 		this.number = 0
 		this.inputViewMarginBottom = new Animated.Value(0)
-		this.textMessage = ''
 	}
 
 	componentDidMount() {
@@ -43,6 +43,12 @@ export default class ChatViewController extends Component {
 	componentWillUnmount(): void {
 		this.keyboardWillShowSub && this.keyboardWillShowSub.remove()
 		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
+	}
+
+	getUser() {
+		return {
+			id: 1,
+		}
 	}
 
 	refreshToLoadMore() {
@@ -97,37 +103,25 @@ export default class ChatViewController extends Component {
 	}
 
 	renderInputBar() {
-		const {typingMessage} = this.state
+		const {textMessage} = this.state
 		return(
 			<Animated.View  style={{width: '100%', height: 60, flexDirection: 'row',
 				alignItems: 'center', justifyContent: 'space-between',
 				marginBottom: this.inputViewMarginBottom,
 			}}>
 				<TouchableOpacity style={{width: 30, height: 30,marginHorizontal: 10,}} >
+					<Image source={require('../../source/image/chat/add.png')}/>
+				</TouchableOpacity>
+
+				<TouchableOpacity style={{width: 30, height: 30, marginRight: 10,}} >
 					<Image source={require('../../source/image/chat/voice.png')}/>
 				</TouchableOpacity>
 
 				<TextInput
-					ref ={(o) => {
-						this._textInput = o
+					onChangeText={(text) => {
+						this.setState({textMessage: text})
 					}}
-					value = {typingMessage}
-					onKeyPress={(e) => {
-						let key = e.nativeEvent.key
-						if (key === 'Enter') {
-							if (!this.textMessage.length) {
-								return
-							}
-
-							this.setState({typingMessage: ''}, () => {
-								this.appendNewMessage(this.textMessage)
-								this.textMessage = ''
-							})
-						}else {
-							this.textMessage = this.textMessage + key
-							this.setState({typingMessage: this.textMessage})
-						}
-					}}
+					value={textMessage}
 					multiline={true}
 					underlineColorAndroid={'transparent'}
 					returnKeyType={'send'}
@@ -136,8 +130,14 @@ export default class ChatViewController extends Component {
 					borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
 				}}/>
 
-				<TouchableOpacity style={{width: 30, height: 30, marginHorizontal: 10,}} >
-					<Image source={require('../../source/image/chat/add.png')}/>
+				<TouchableOpacity onPress={() => {
+					if (!(textMessage + '').length ) {
+						return
+					}
+
+					this.appendNewTextMessage(textMessage)
+				}} style={{width: 30, height: 30, marginHorizontal: 10,}} >
+					<Image style={{alignItems: 'center'}} source={require('../../source/image/chat/send.png')}/>
 				</TouchableOpacity>
 
 				<View style={{width: '100%', height: 1, backgroundColor: Colors.lineColor,
@@ -158,14 +158,34 @@ export default class ChatViewController extends Component {
 		]
 	}
 
-	appendNewMessage(message) {
-		const {dataSource} = this.state
-		this.setState({dataSource: this.insert(dataSource, 0, [message])})
+	getDateTimeISO() {
+		return (new Date()).toISOString()
 	}
 
-	renderItem(item) {
+	appendNewTextMessage(text) {
+		let message = new Message()
+		message.type = MessageType.Text
+		message.user = this.getUser()
+		message.text = text
+		message.createdAt = this.getDateTimeISO()
+		message.updatedAt = message.createdAt
+
+		this.appendNewMessage(message)
+	}
+
+	appendNewMessage(message) {
+		const {dataSource, textMessage} = this.state
+		this.setState({dataSource: this.insert(dataSource, 0, message),
+			textMessage: ''
+		})
+	}
+
+	renderItem(message) {
 		return (
-			<ChatItem />
+			<ChatItem
+				message = {message}
+				isPeer = {message.user.id !== this.getUser().id}
+			/>
 		)
 	}
 

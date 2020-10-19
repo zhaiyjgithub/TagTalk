@@ -15,7 +15,17 @@ const EventName = {
 	}
 }
 
+const MessageType = {
+	Text: 0,
+	Image: 1,
+	Audio: 2,
+	Video: 3,
+	WebView: 4,
+	MapView: 5,
+}
+
 export {
 	PLATFORM,
-	EventName
+	EventName,
+	MessageType
 }

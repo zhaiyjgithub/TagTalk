@@ -14,11 +14,17 @@ export default class ChatItem extends Component{
 	constructor(props){
 		super(props)
 		this.state = {
+			isPeer: props.isPeer,
+			message: props.message
 		}
 	}
 
+	componentWillReceiveProps(nextProps: Readonly<P>, nextContext: any): void {
+		this.setState({message: nextProps.message, isPeer: nextProps.isPeer})
+	}
+
 	shouldComponentUpdate(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean {
-		return false
+		return this.state.message.text !== nextProps.message.text
 	}
 
 	renderUserIcon(isPeer) {
@@ -31,6 +37,7 @@ export default class ChatItem extends Component{
 	}
 
 	renderTextMessage(isPeer) {
+		const {message} = this.state
 		return (
 			<View style={[{flex: 1, maxWidth: '65%',
 				backgroundColor: isPeer ? Colors.lightBlue : Colors.blue,
@@ -41,14 +48,14 @@ export default class ChatItem extends Component{
 					fontSize: 16,
 					color: isPeer ? Colors.black : Colors.white,
 					fontFamily: FontFamily.helvetica
-				}}>{'Trademarks and brands are the property of their respective owners.'}</Text>
+				}}>{message.text}</Text>
 			</View>
 
 		)
 	}
 
 	render() {
-		let isPeer = true
+		const {isPeer} = this.state
 		return(
 			<View style={isPeer ? styles.peerContainer : styles.myContainer}>
 				<Fragment>
