@@ -17,6 +17,7 @@ import {Colors} from '../../utils/styles';
 import {MessageType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
+import {Navigation} from 'react-native-navigation';
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -214,6 +215,8 @@ export default class ChatViewController extends Component {
 			type: MediaButtonType.photo, title: 'Photo',},
 			{source: require('../../source/image/chat/camera.png'),
 				type: MediaButtonType.camera, title: 'Camera',},
+			{source: require('../../source/image/chat/record.png'),
+				type: MediaButtonType.recordVideo, title: 'Record',},
 			{source: require('../../source/image/chat/location.png'),
 				type: MediaButtonType.location, title: 'Location',},
 		]
@@ -242,7 +245,10 @@ export default class ChatViewController extends Component {
 				this.openPhotoLibrary()
 				break
 			case MediaButtonType.camera:
-				this.openPhotoLibrary()
+				this.openCamera()
+				break
+			case MediaButtonType.recordVideo:
+				this.pushToRecordVideo()
 				break
 			default: ;
 		}
@@ -269,6 +275,10 @@ export default class ChatViewController extends Component {
 			cropping: true,
 		}).then(image => {
 			console.log(image);
+
+			if (image) {
+				this.appendNewImageMessage(MessageType.Image, image.path)
+			}
 		});
 	}
 
@@ -281,6 +291,24 @@ export default class ChatViewController extends Component {
 		message.updatedAt = message.createdAt
 
 		this.appendNewMessage(message)
+	}
+
+	pushToRecordVideo() {
+		Navigation.push(this.props.componentId, {
+			component: {
+				name: 'RecordVideoViewController',
+				passProps: {
+
+				},
+				options: {
+					topBar: {
+						title: {
+							text: 'Record Video'
+						}
+					},
+				}
+			}
+		});
 	}
 
 	renderItem(message) {
@@ -347,6 +375,6 @@ export default class ChatViewController extends Component {
 const MediaButtonType = {
 	photo: 0,
 	camera: 1,
-	location: 2,
-
+	recordVideo: 2,
+	location: 3,
 }
