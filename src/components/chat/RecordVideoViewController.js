@@ -18,6 +18,7 @@ import {Colors} from '../../utils/styles';
 import {Surface, Shape, Path,Group} from '@react-native-community/art';
 import Wedge from './view/Wedge';
 import {ScreenDimensions} from '../../utils/Dimemsions';
+import {PLATFORM} from '../../utils/Enums';
 
 const MaxDurationSecond = 15
 const DurationSecondStep = 10
@@ -62,6 +63,9 @@ export default class takeVideoViewController extends Component{
                     const data = await promise;
                     this.isRecording = false
                     console.log('takeVideo', data);
+                    if (PLATFORM.isIOS) {
+                        //convert .mov to .mp4
+                    }
                 }else {
                     this.isRecording = false
                 }
@@ -132,6 +136,12 @@ export default class takeVideoViewController extends Component{
 
     updateRecordProgress(progress) {
         this.setState({progress: progress})
+    }
+
+    renderVideoPreview() {
+        //
+        // react-native-mov-to-mp4 格式转换
+        //uri: "file:///var/mobile/Containers/Data/Application/A4C27150-1CDC-4310-9209-A780CFB553E6/Library/Caches/Camera/1D4BAD6E-01AF-46F9-B906-92E5A0D8F171.mov"
     }
 
     render() {
