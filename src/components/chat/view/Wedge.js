@@ -142,7 +142,7 @@ export default class Wedge extends Component<void, any, any> {
 		const or = Math.max(innerRadius, outerRadius);
 
 		let path;
-		if (endAngle >= startAngle + 360) {
+		if (endAngle > startAngle + 360) {
 			path = this._createCirclePath(originX, originY, or, ir);
 		} else {
 			path = this._createArcPath(originX, originY, startAngle, endAngle, or, ir);
