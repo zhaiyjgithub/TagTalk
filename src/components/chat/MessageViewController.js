@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {
 	SafeAreaView,
 	StyleSheet,
@@ -8,11 +8,14 @@ import {
 	RefreshControl,
 	TouchableOpacity,
 	Image,
-	DeviceEventEmitter
+	DeviceEventEmitter,
+	TextInput
 } from 'react-native';
 import {EventName} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import {Colors} from '../../utils/styles';
+import StoryHeader from './view/StoryHeader';
+import MessageDialogItem from './view/MessageDialogItem';
 
 export default class MessageViewController extends Component{
 	constructor(props) {
@@ -82,21 +85,27 @@ export default class MessageViewController extends Component{
 
 	renderItem() {
 		return(
-			<TouchableOpacity onPress={() => {
-				this.pushToChatRoom()
-			}} style={{marginHorizontal: 20, paddingBottom: 20}}>
-				<View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-					<Image style={{width: 66, height: 66, borderRadius: 33, overflow: 'hidden'}} source={require('../../source/image/test/Group7.png')}/>
+			<MessageDialogItem />
+		)
+	}
 
-					<View style={{justifyContent: 'center', marginLeft: 13, flex: 1}}>
-						<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',}}>
-							<Text numberOfLines={1} style={{fontFamily: 'Helvetica', fontSize: 17, color: Colors.black}}>{'Jimmy'}</Text>
-							<Text numberOfLines={1} style={{fontFamily: 'Helvetica', fontSize: 12, color: Colors.gray}}>{'04:00 pm'}</Text>
-						</View>
-						<Text numberOfLines={1} style={{fontFamily: 'Helvetica', fontSize: 14, color: Colors.gray, marginTop: 8}}>{'Sounds cool'}</Text>
-					</View>
-				</View>
-			</TouchableOpacity>
+	renderSearchBar() {
+		return (
+			<View style={{flex: 1, height: 40, marginTop: 30,
+				flexDirection: 'row', alignItems: 'center', marginHorizontal: 20,
+				backgroundColor: Colors.searchBar, borderRadius: 20,
+			}}>
+				<Image source={require('../../source/image/chat/search.png')} style={{width: 18, height: 18, marginLeft: 16, marginRight: 5 }}/>
+				<TextInput
+					placeholder={'Search'}
+					placeholderColor={Colors.placeholder}
+					style={{
+					flex: 1,
+					paddingVertical: 0, paddingHorizontal: 5,
+					fontSize: 15, color: Colors.black,
+					marginRight: 10, height: 40
+				}}/>
+			</View>
 		)
 	}
 
@@ -112,7 +121,13 @@ export default class MessageViewController extends Component{
 					}}
 					ListHeaderComponent={() => {
 						return(
-							<View style={{height: 20, }}/>
+							<Fragment>
+								{this.renderSearchBar()}
+								<StoryHeader
+									dataSource={[1, 2, 3, 1, 2, 3]}
+								/>
+							</Fragment>
+
 						)
 					}}
 				/>

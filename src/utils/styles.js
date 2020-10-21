@@ -8,6 +8,8 @@ const Colors = {
 	white: '#FFFFFF',
 	lineColor: "#EFEFF4",
 	lineGray: "#EFEFF4",
+	searchBar: '#E9F0FB',
+	placeholder: '#818BBF'
 }
 
 const FontFamily = {
