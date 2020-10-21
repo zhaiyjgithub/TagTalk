@@ -41,7 +41,7 @@ export default class ChatItem extends Component{
 
 	renderTextMessage(isPeer, message) {
 		return (
-			<View style={[{flex: 1, maxWidth: '65%',
+			<View style={[{maxWidth: '65%',
 				backgroundColor: isPeer ? Colors.lightBlue : Colors.blue,
 				minHeight: 40,
 				paddingVertical: 8, paddingHorizontal: 15

@@ -136,7 +136,6 @@ export default class ChatViewController extends Component {
 					value={textMessage}
 					multiline={true}
 					underlineColorAndroid={'transparent'}
-					returnKeyType={'send'}
 					placeholder={'Type a message...'}
 					style={{flex: 1, backgroundColor: '#efeff4', height: 36,
 					borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
