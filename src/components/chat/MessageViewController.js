@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import {EventName} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
-import {Colors} from '../../utils/styles';
+import {Colors, FontFamily} from '../../utils/styles';
 import StoryHeader from './view/StoryHeader';
 import MessageDialogItem from './view/MessageDialogItem';
+import ContactItem from '../contacts/view/contactItem';
 
 export default class MessageViewController extends Component{
 	constructor(props) {
@@ -91,7 +92,7 @@ export default class MessageViewController extends Component{
 
 	renderSearchBar() {
 		return (
-			<View style={{flex: 1, height: 40, marginTop: 30,
+			<View style={{flex: 1, height: 40, marginTop: 20,
 				flexDirection: 'row', alignItems: 'center', marginHorizontal: 20,
 				backgroundColor: Colors.searchBar, borderRadius: 20,
 			}}>
@@ -103,7 +104,7 @@ export default class MessageViewController extends Component{
 					flex: 1,
 					paddingVertical: 0, paddingHorizontal: 5,
 					fontSize: 15, color: Colors.black,
-					marginRight: 10, height: 40
+					marginRight: 10, height: 40, fontFamily: FontFamily.helvetica
 				}}/>
 			</View>
 		)

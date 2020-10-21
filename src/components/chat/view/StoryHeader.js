@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Image
 } from 'react-native';
-import {Colors} from '../../../utils/styles';
+import {Colors, FontFamily} from '../../../utils/styles';
 
 export default class StoryHeader extends Component{
     static defaultProps = {
@@ -25,7 +25,7 @@ export default class StoryHeader extends Component{
                             <Image source={require('../../../source/image/test/Group7.png')} style={{width: 66, height: 66}}/>
                             <View style={{position: 'absolute', right: 2, bottom: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.green}}/>
                         </TouchableOpacity>
-                        <Text numberOfline={1} style={{width: 70, marginTop: 4,
+                        <Text numberOfLines={1} style={{width: 70, marginTop: 4,
                             fontSize: 14, color: Colors.black, textAlign: 'center'
                         }}>{'Annie'}</Text>
                     </View>
@@ -42,8 +42,8 @@ export default class StoryHeader extends Component{
                         <TouchableOpacity >
                             <Image source={require('../../../source/image/chat/addNewStory.png')} style={{width: 66, height: 66}}/>
                         </TouchableOpacity>
-                        <Text numberOfline={1} style={{width: 70, marginTop: 4,
-                            fontSize: 14, color: Colors.black, textAlign: 'center'
+                        <Text numberOfLines={1} style={{width: 70, marginTop: 4,
+                            fontSize: 14, color: Colors.black, textAlign: 'center',fontFamily: FontFamily.helvetica
                         }}>{'Your Story'}</Text>
                     </View>
 
