@@ -76,7 +76,7 @@ export default class ContactsViewController extends Component{
 
     render() {
         return(
-            <View style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1}}>
                 <FlatList
                     style={{flex: 1}}
                     data={[1, 2, 3]}
@@ -90,7 +90,7 @@ export default class ContactsViewController extends Component{
                         )
                     }}
                 />
-            </View>
+            </SafeAreaView>
         )
     }
 }
