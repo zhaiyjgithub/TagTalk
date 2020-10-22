@@ -5546,7 +5546,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@15.x.x, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.x.x, prop-types@^15.5.6, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -5623,6 +5623,11 @@ react-native-image-crop-picker@^0.35.1:
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-native-image-crop-picker/-/react-native-image-crop-picker-0.35.1.tgz#590b6ed7af7b63a505132c73819c9166347bf1e3"
   integrity sha512-5HY2NnkmgL/Nw1IpU9CkTWj4qgFYPF8KxDaHoaufEWNjvOCRGziMoui55cO7k4KdwsIKmb1UbDzkCYemJqcyow==
 
+react-native-mov-to-mp4@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.npm.taobao.org/react-native-mov-to-mp4/download/react-native-mov-to-mp4-0.2.2.tgz#d59f91aec180f80f48f54eb36c6ddd03ad5f5655"
+  integrity sha1-1Z+RrsGA+A9I9U6zbG3dA61fVlU=
+
 react-native-navigation@^7.1.0:
   version "7.1.0"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/react-native-navigation/-/react-native-navigation-7.1.0.tgz#05dbfc6b31dd6a8aa626a74b2f51e1cc031b230d"
@@ -5633,6 +5638,30 @@ react-native-navigation@^7.1.0:
     prop-types "15.x.x"
     react-lifecycles-compat "2.0.0"
     tslib "1.9.3"
+
+react-native-slider@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.npm.taobao.org/react-native-slider/download/react-native-slider-0.11.0.tgz#b68a0bc43c8422b24cd57947cc5ac2bcdb58fadc"
+  integrity sha1-tooLxDyEIrJM1XlHzFrCvNtY+tw=
+  dependencies:
+    prop-types "^15.5.6"
+
+react-native-vector-icons@^6.6.0:
+  version "6.7.0"
+  resolved "https://registry.npm.taobao.org/react-native-vector-icons/download/react-native-vector-icons-6.7.0.tgz#8871ba52ef8e98878ba7a932847f96b6dfc1c137"
+  integrity sha1-iHG6Uu+OmIeLp6kyhH+Wtt/BwTc=
+  dependencies:
+    lodash "^4.17.15"
+    prop-types "^15.7.2"
+    yargs "^15.0.2"
+
+react-native-vlc-media-player@^1.0.28:
+  version "1.0.28"
+  resolved "https://registry.npm.taobao.org/react-native-vlc-media-player/download/react-native-vlc-media-player-1.0.28.tgz#117d8032ad337f7b2fc6bea0d925864d5f9685cc"
+  integrity sha1-EX2AMq0zf3svxr6g2SWGTV+Whcw=
+  dependencies:
+    react-native-slider "^0.11.0"
+    react-native-vector-icons "^6.6.0"
 
 react-native@0.63.3:
   version "0.63.3"
@@ -7128,7 +7157,7 @@ yargs@^14.2.0:
     y18n "^4.0.0"
     yargs-parser "^15.0.1"
 
-yargs@^15.1.0, yargs@^15.4.1:
+yargs@^15.0.2, yargs@^15.1.0, yargs@^15.4.1:
   version "15.4.1"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/yargs/-/yargs-15.4.1.tgz#0d87a16de01aee9d8bec2bfbf74f67851730f4f8"
   integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
