@@ -1,21 +1,27 @@
-import React, {Component, Fragment} from 'react';
-import {
-    SafeAreaView,
-    StyleSheet,
-    FlatList,
-    View,
-    Text,
-    RefreshControl,
-    TouchableOpacity,
-    Image,
-    DeviceEventEmitter,
-    TextInput
-} from 'react-native';
+import React from 'react';
+import {View} from 'react-native';
 
-export default class UniversalViewController extends Component{
+class UniversalViewController extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    componentWillMount() {
+    }
+
+    componentDidMount() {
+    }
+
+    componentDidUpdate() {
+    }
+
+    componentWillUnmount() {
+    }
+
     render() {
-        return(
-            <SafeAreaView style={{flex: 1}}/>
-        )
+        return (<View style={{}}> </View>);
     }
 }
+
+export default UniversalViewController;
