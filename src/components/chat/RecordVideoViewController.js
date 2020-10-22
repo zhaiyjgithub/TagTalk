@@ -21,6 +21,8 @@ import {ScreenDimensions} from '../../utils/Dimemsions';
 import {PLATFORM} from '../../utils/Enums';
 import MovToMp4 from 'react-native-mov-to-mp4';
 import Video from 'react-native-video';
+import {Navigation} from 'react-native-navigation';
+import Slider from '@react-native-community/slider';
 
 const MaxDurationSecond = 15
 const DurationSecondStep = 10
@@ -30,25 +32,25 @@ export default class takeVideoViewController extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            progress: 0,
             filePath: '',
-            isPreview: true
+            isPreview: true,
+            progressText: 0
         }
 
         this.isRecording = false
+        this.progress = 0
     }
 
     componentDidMount() {
         setInterval(() => {
-            const {progress} = this.state
 
             if (this.isRecording) {
-                if (progress > (MaxDurationSecond * DurationSecondStep - 1)) {
+                if (this.progress > (MaxDurationSecond * DurationSecondStep - 1)) {
                     this.stopRecord().then().catch()
                     return
                 }
 
-                this.updateRecordProgress(progress + 1)
+                this.updateRecordProgress(this.progress + 1)
             }
         }, 100)
     }
@@ -105,7 +107,7 @@ export default class takeVideoViewController extends Component{
         const lineSize = 8
         const originX = (containerSize - outerRadius*2)/2.0 + outerRadius
         const originY = (containerSize - outerRadius*2)/2.0
-        const {progress} = this.state
+        const progress = this.progress
         let endAngle = progress*step
 
         return(
@@ -114,14 +116,13 @@ export default class takeVideoViewController extends Component{
                 height: containerSize,
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: 20
             }}>
                 <TouchableWithoutFeedback onPress={() => {
                     console.log('onPress')
                     this.updateRecordProgress(0)
                 }} onLongPress={() => {
                     console.log('on long press')
-                    this.setState({progress: 0})
+                    this.progress = 0
                     this.takeVideo().then().catch()
                 }} onPressIn={() => {
                     console.log('on press in ')
@@ -151,10 +152,11 @@ export default class takeVideoViewController extends Component{
     }
 
     updateRecordProgress(progress) {
-        this.setState({progress: progress})
+        this.progress = progress
+        this.setState({progressText: progress})
     }
 
-    renderVideoPreview() {
+    renderVideo() {
         let filePath = 'file:///var/mobile/Containers/Data/Application/629FA5CB-9199-4D27-9BC3-39115B9B2A1E/Documents/1603355844637.mp4'
         // const {filePath} = this.state
         // console.log('play uri: ' + filePath )
@@ -173,7 +175,38 @@ export default class takeVideoViewController extends Component{
                    }}
                    style={{flex: 1}} />
         )
+    }
 
+    renderVideoPreview() {
+        return(
+            <View style={{flex: 1, backgroundColor: '#000000'}}>
+                {this.renderVideo()}
+                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',
+                    justifyContent: 'space-between', paddingHorizontal: 20,
+                    marginBottom: 20,
+                }}>
+                    {this.renderPopButton()}
+                    {this.renderSlider()}
+                    <View />
+                </View>
+            </View>
+        )
+    }
+
+    renderSlider() {
+        return(
+            <Slider
+                style={{flex: 1, height: 40, marginLeft: 20, marginRight: 20, backgroundColor: Colors.blue,
+                }}
+                onValueChange={() => {
+                    
+                }}
+                minimumValue={0}
+                maximumValue={1}
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="#000000"
+            />
+        )
     }
 
     renderCamera() {
@@ -196,8 +229,27 @@ export default class takeVideoViewController extends Component{
                     buttonNegative: 'Cancel',
                 }}
             >
-                {this.renderTakeButton()}
+                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',
+                    justifyContent: 'space-between', paddingHorizontal: 20,
+                    marginBottom: 20,
+                }}>
+                    {this.renderPopButton()}
+                    {this.renderTakeButton()}
+                    <View />
+                </View>
             </RNCamera>
+        )
+    }
+
+    renderPopButton() {
+        return(
+            <TouchableOpacity onPress={() => {
+                Navigation.pop(this.props.componentId)
+            }} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center',
+                backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 22,
+            }}>
+                <Image style={{tintColor: Colors.white, width: 23, height: 13}} source={require('../../source/image/chat/down.png')} />
+            </TouchableOpacity>
         )
     }
 
@@ -219,8 +271,6 @@ export default class takeVideoViewController extends Component{
             <View style={{backgroundColor: '#000000', flex: 1}}>
                 <SafeAreaView style={{flex: 1}}>
                     {isPreview ? this.renderVideoPreview() : this.renderCamera()}
-
-                    {this.renderSeekButton()}
                 </SafeAreaView>
             </View>
         )

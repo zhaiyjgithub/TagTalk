@@ -18,6 +18,7 @@ import {MessageType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
+import {BaseNavigatorOptions} from '../../utils/Navigator';
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -43,7 +44,7 @@ export default class ChatViewController extends Component {
 		// this.refresh()
 	}
 
-	componentWillUnmount(): void {
+	componentWillUnmount() {
 		this.keyboardWillShowSub && this.keyboardWillShowSub.remove()
 		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
 	}
@@ -301,10 +302,12 @@ export default class ChatViewController extends Component {
 				},
 				options: {
 					topBar: {
-						title: {
-							text: 'Record Video'
-						}
+						visible: false,
 					},
+					bottomTabs: {
+						visible: false,
+						drawBehind: false,
+					}
 				}
 			}
 		});

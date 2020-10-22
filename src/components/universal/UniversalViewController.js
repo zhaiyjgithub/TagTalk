@@ -7,20 +7,11 @@ class UniversalViewController extends React.Component {
         this.state = {};
     }
 
-    componentWillMount() {
-    }
-
     componentDidMount() {
     }
 
-    componentDidUpdate() {
-    }
-
-    componentWillUnmount() {
-    }
-
     render() {
-        return (<View style={{}}> </View>);
+        return (<View />)
     }
 }
 

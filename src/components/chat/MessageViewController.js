@@ -17,6 +17,7 @@ import {Colors, FontFamily} from '../../utils/styles';
 import StoryHeader from './view/StoryHeader';
 import MessageDialogItem from './view/MessageDialogItem';
 import ContactItem from '../contacts/view/contactItem';
+import {BaseNavigatorOptions} from '../../utils/Navigator';
 
 export default class MessageViewController extends Component{
 	constructor(props) {
@@ -72,14 +73,7 @@ export default class MessageViewController extends Component{
 				passProps: {
 					uid: 98
 				},
-				options: {
-					topBar: {
-						title: {
-							text: 'Jimmy'
-						}
-					},
-				}
-
+				options: BaseNavigatorOptions('Chat')
 			}
 		});
 	}
