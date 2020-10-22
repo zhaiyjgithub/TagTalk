@@ -86,7 +86,11 @@ export default class MessageViewController extends Component{
 
 	renderItem() {
 		return(
-			<MessageDialogItem />
+			<MessageDialogItem
+				didSelectedItem={() =>{
+					this.pushToChatRoom()
+				}}
+			/>
 		)
 	}
 

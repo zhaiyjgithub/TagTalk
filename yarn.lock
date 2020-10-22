@@ -1167,6 +1167,11 @@
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
 
+"@react-native-community/toolbar-android@^0.1.0-rc.2":
+  version "0.1.0-rc.2"
+  resolved "https://registry.npm.taobao.org/@react-native-community/toolbar-android/download/@react-native-community/toolbar-android-0.1.0-rc.2.tgz#86cae655836afacc52d4063062cc59837d1a8640"
+  integrity sha1-hsrmVYNq+sxS1AYwYsxZg30ahkA=
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"
@@ -2419,6 +2424,11 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
+
+eme-encryption-scheme-polyfill@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npm.taobao.org/eme-encryption-scheme-polyfill/download/eme-encryption-scheme-polyfill-2.0.1.tgz#b080b01bffd74c75c9cf8044c1cabedf3b83954f"
+  integrity sha1-sICwG//XTHXJz4BEwcq+3zuDlU8=
 
 emittery@^0.7.1:
   version "0.7.1"
@@ -4325,6 +4335,11 @@ jsprim@^1.2.2:
     array-includes "^3.1.1"
     object.assign "^4.1.1"
 
+keymirror@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npm.taobao.org/keymirror/download/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
+  integrity sha1-kYiJ6hP40KQufFVyUO7nE63JXDU=
+
 kind-of@^1.1.0:
   version "1.1.0"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/kind-of/-/kind-of-1.1.0.tgz#140a3d2d41a36d2efcfa9377b62c24f8495a5c44"
@@ -5546,7 +5561,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@15.x.x, prop-types@^15.5.6, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.x.x, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -5639,29 +5654,14 @@ react-native-navigation@^7.1.0:
     react-lifecycles-compat "2.0.0"
     tslib "1.9.3"
 
-react-native-slider@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.npm.taobao.org/react-native-slider/download/react-native-slider-0.11.0.tgz#b68a0bc43c8422b24cd57947cc5ac2bcdb58fadc"
-  integrity sha1-tooLxDyEIrJM1XlHzFrCvNtY+tw=
+react-native-video@^5.1.0-alpha8:
+  version "5.1.0-alpha8"
+  resolved "https://registry.npm.taobao.org/react-native-video/download/react-native-video-5.1.0-alpha8.tgz#f0cb4cb2d74154b7916e68bef0f9b9cdcfe5f568"
+  integrity sha1-8MtMstdBVLeRbmi+8Pm5zc/l9Wg=
   dependencies:
-    prop-types "^15.5.6"
-
-react-native-vector-icons@^6.6.0:
-  version "6.7.0"
-  resolved "https://registry.npm.taobao.org/react-native-vector-icons/download/react-native-vector-icons-6.7.0.tgz#8871ba52ef8e98878ba7a932847f96b6dfc1c137"
-  integrity sha1-iHG6Uu+OmIeLp6kyhH+Wtt/BwTc=
-  dependencies:
-    lodash "^4.17.15"
+    keymirror "^0.1.1"
     prop-types "^15.7.2"
-    yargs "^15.0.2"
-
-react-native-vlc-media-player@^1.0.28:
-  version "1.0.28"
-  resolved "https://registry.npm.taobao.org/react-native-vlc-media-player/download/react-native-vlc-media-player-1.0.28.tgz#117d8032ad337f7b2fc6bea0d925864d5f9685cc"
-  integrity sha1-EX2AMq0zf3svxr6g2SWGTV+Whcw=
-  dependencies:
-    react-native-slider "^0.11.0"
-    react-native-vector-icons "^6.6.0"
+    shaka-player "^2.5.9"
 
 react-native@0.63.3:
   version "0.63.3"
@@ -6120,6 +6120,13 @@ setprototypeof@1.1.1:
   version "1.1.1"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
+
+shaka-player@^2.5.9:
+  version "2.5.17"
+  resolved "https://registry.npm.taobao.org/shaka-player/download/shaka-player-2.5.17.tgz#824740a0db06fd433397389650ec94ce3b57a26d"
+  integrity sha1-gkdAoNsG/UMzlziWUOyUzjtXom0=
+  dependencies:
+    eme-encryption-scheme-polyfill "^2.0.1"
 
 shebang-command@^1.2.0:
   version "1.2.0"
@@ -7157,7 +7164,7 @@ yargs@^14.2.0:
     y18n "^4.0.0"
     yargs-parser "^15.0.1"
 
-yargs@^15.0.2, yargs@^15.1.0, yargs@^15.4.1:
+yargs@^15.1.0, yargs@^15.4.1:
   version "15.4.1"
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/yargs/-/yargs-15.4.1.tgz#0d87a16de01aee9d8bec2bfbf74f67851730f4f8"
   integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
