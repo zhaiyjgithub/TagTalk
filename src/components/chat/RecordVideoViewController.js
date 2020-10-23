@@ -17,12 +17,10 @@ import { RNCamera } from 'react-native-camera';
 import {Colors} from '../../utils/styles';
 import {Surface, Shape, Path,Group} from '@react-native-community/art';
 import Wedge from './view/Wedge';
-import {ScreenDimensions} from '../../utils/Dimemsions';
 import {PLATFORM} from '../../utils/Enums';
 import MovToMp4 from 'react-native-mov-to-mp4';
 import Video from 'react-native-video';
 import {Navigation} from 'react-native-navigation';
-import Slider from '@react-native-community/slider';
 
 const MaxDurationSecond = 15
 const DurationSecondStep = 10
@@ -33,8 +31,9 @@ export default class takeVideoViewController extends Component{
         super(props);
         this.state = {
             filePath: '',
-            isPreview: true,
-            progressText: 0
+            isPreview: false,
+            progressText: 0,
+            isPlaying: true
         }
 
         this.isRecording = false
@@ -72,7 +71,7 @@ export default class takeVideoViewController extends Component{
                     console.log('takeVideo', data);
                     let uri = data.uri
                     if (PLATFORM.isIOS) {
-                        const filename = Date.now().toString();
+                        const filename = ('mini_video_' +  Date.now().toString())
                         MovToMp4.convertMovToMp4(uri, filename)
                         .then((path) => {
                             //here you can upload the video...
@@ -157,8 +156,8 @@ export default class takeVideoViewController extends Component{
     }
 
     renderVideo() {
-        let filePath = 'file:///var/mobile/Containers/Data/Application/629FA5CB-9199-4D27-9BC3-39115B9B2A1E/Documents/1603355844637.mp4'
-        // const {filePath} = this.state
+        // let filePath = 'file:///var/mobile/Containers/Data/Application/629FA5CB-9199-4D27-9BC3-39115B9B2A1E/Documents/1603355844637.mp4'
+        const {filePath, isPlaying} = this.state
         // console.log('play uri: ' + filePath )
         return (
             <Video source={{uri: filePath}}
@@ -167,13 +166,21 @@ export default class takeVideoViewController extends Component{
                    }}
                    resizeMode={'cover'}
                    repeat={false}
+                   paused={!isPlaying}
                    onBuffer={() => {
 
                    }}
+                   onLoad={() => {
+                       this.setState({isPlaying: true})
+                   }}
+                   onEnd={() => {
+                       this.setState({isPlaying: false})
+                   }}
                    onError={(error) => {
                        console.log(error)
+                       this.setState({isPlaying: false})
                    }}
-                   style={{flex: 1}} />
+                   style={{flex: 1,}} />
         )
     }
 
@@ -181,31 +188,50 @@ export default class takeVideoViewController extends Component{
         return(
             <View style={{flex: 1, backgroundColor: '#000000'}}>
                 {this.renderVideo()}
-                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',
-                    justifyContent: 'space-between', paddingHorizontal: 20,
-                    marginBottom: 20,
+                <View style={{position: 'absolute', right: 0, left: 0, bottom: 0,
+                    paddingBottom: 15
                 }}>
-                    {this.renderPopButton()}
-                    {this.renderSlider()}
-                    <View />
+                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center',
+                        justifyContent: 'space-between', paddingHorizontal: 20,
+                        marginTop: 20
+                    }}>
+                        {this.renderCancelVideoButton()}
+                        <TouchableOpacity style={{width: 50, height: 50,
+                            justifyContent: 'center', alignItems: 'center',
+                            backgroundColor: 'rgba(0,0,0, 0.35)', borderRadius: 25,
+                        }}>
+                            <Image  source={require('../../source/image/chat/play.png')} style={{
+                                tintColor: Colors.white, width: 30, height: 30,
+                            }}/>
+                        </TouchableOpacity>
+                        {this.renderDoneButton()}
+                    </View>
                 </View>
             </View>
         )
     }
 
-    renderSlider() {
+    renderCancelVideoButton() {
         return(
-            <Slider
-                style={{flex: 1, height: 40, marginLeft: 20, marginRight: 20, backgroundColor: Colors.blue,
-                }}
-                onValueChange={() => {
-                    
-                }}
-                minimumValue={0}
-                maximumValue={1}
-                minimumTrackTintColor="#FFFFFF"
-                maximumTrackTintColor="#000000"
-            />
+            <TouchableOpacity onPress={() => {
+                Navigation.pop(this.props.componentId)
+            }} style={{width: 40, height: 40, justifyContent: 'center', alignItems: 'center',
+                backgroundColor: 'rgba(0,0,0, 0.35)', borderRadius: 20,
+            }}>
+                <Image style={{tintColor: Colors.white,}} source={require('../../source/image/chat/close_circle.png')} />
+            </TouchableOpacity>
+        )
+    }
+
+    renderDoneButton() {
+        return(
+            <TouchableOpacity onPress={() => {
+                this.popToLastPage()
+            }} style={{width: 40, height: 30, backgroundColor: Colors.green, justifyContent: 'center',
+                alignItems: 'center', borderRadius: 2,
+            }}>
+                <Image style={{tintColor:  Colors.white}} source={require('../../source/image/chat/done.png')}/>
+            </TouchableOpacity>
         )
     }
 
@@ -244,25 +270,25 @@ export default class takeVideoViewController extends Component{
     renderPopButton() {
         return(
             <TouchableOpacity onPress={() => {
-                Navigation.pop(this.props.componentId)
-            }} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center',
-                backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 22,
+                this.popToLastPage()
+            }} style={{width: 40, height: 40, justifyContent: 'center', alignItems: 'center',
+                backgroundColor: 'rgba(0,0,0, 0.35)', borderRadius: 20,
             }}>
-                <Image style={{tintColor: Colors.white, width: 23, height: 13}} source={require('../../source/image/chat/down.png')} />
+                <Image style={{tintColor: Colors.white,}} source={require('../../source/image/chat/down_circle.png')} />
             </TouchableOpacity>
         )
     }
 
-    renderSeekButton() {
-        return(
-            <TouchableOpacity onPress={() => {
-                this.player && this.player.seek(3)
-            }} style={{width: 50, height: 50, backgroundColor: Colors.green,
-                position: 'absolute'
-            }}>
+    popToLastPage() {
+        if (PLATFORM.isIOS) {
+            Navigation.dismissModal(this.props.componentId)
+        }else {
+            Navigation.pop(this.props.componentId)
+        }
+    }
 
-            </TouchableOpacity>
-        )
+    deleteFile() {
+
     }
 
     render() {

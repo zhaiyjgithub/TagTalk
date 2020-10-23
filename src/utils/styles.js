@@ -10,7 +10,8 @@ const Colors = {
 	lineColor: "#EFEFF4",
 	lineGray: "#EFEFF4",
 	searchBar: '#E9F0FB',
-	placeholder: '#818BBF'
+	placeholder: '#818BBF',
+	systemGray: '#D9D9D9'
 }
 
 const FontFamily = {

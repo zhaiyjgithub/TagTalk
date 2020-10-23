@@ -1167,10 +1167,10 @@
   resolved "http://192.168.136.193:8981/repository/npmSvenProxy/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
 
-"@react-native-community/toolbar-android@^0.1.0-rc.2":
-  version "0.1.0-rc.2"
-  resolved "https://registry.npm.taobao.org/@react-native-community/toolbar-android/download/@react-native-community/toolbar-android-0.1.0-rc.2.tgz#86cae655836afacc52d4063062cc59837d1a8640"
-  integrity sha1-hsrmVYNq+sxS1AYwYsxZg30ahkA=
+"@react-native-community/slider@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.npm.taobao.org/@react-native-community/slider/download/@react-native-community/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
+  integrity sha1-gwFn/XV7pwrGOHR7oxabLbrmAzA=
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"

@@ -294,13 +294,14 @@ export default class ChatViewController extends Component {
 	}
 
 	pushToRecordVideo() {
-		Navigation.push(this.props.componentId, {
+		let layout = {
 			component: {
 				name: 'RecordVideoViewController',
 				passProps: {
 
 				},
 				options: {
+					modalPresentationStyle: 'fullScreen',
 					topBar: {
 						visible: false,
 					},
@@ -310,7 +311,14 @@ export default class ChatViewController extends Component {
 					}
 				}
 			}
-		});
+		}
+
+		if (PLATFORM.isIOS) {
+			Navigation.showModal(layout)
+		}else {
+			Navigation.push(this.props.componentId, layout);
+		}
+
 	}
 
 	renderItem(message) {
