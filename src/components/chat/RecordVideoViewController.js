@@ -21,6 +21,7 @@ import {PLATFORM} from '../../utils/Enums';
 import MovToMp4 from 'react-native-mov-to-mp4';
 import Video from 'react-native-video';
 import {Navigation} from 'react-native-navigation';
+import RNFS from 'react-native-fs'
 
 const MaxDurationSecond = 15
 const DurationSecondStep = 10
@@ -214,7 +215,9 @@ export default class takeVideoViewController extends Component{
     renderCancelVideoButton() {
         return(
             <TouchableOpacity onPress={() => {
-                Navigation.pop(this.props.componentId)
+                const {filePath} = this.state
+               this.deleteFile(filePath)
+                this.setState({isPreview: false})
             }} style={{width: 40, height: 40, justifyContent: 'center', alignItems: 'center',
                 backgroundColor: 'rgba(0,0,0, 0.35)', borderRadius: 20,
             }}>
@@ -287,8 +290,15 @@ export default class takeVideoViewController extends Component{
         }
     }
 
-    deleteFile() {
-
+    deleteFile(path) {
+        RNFS.unlink(path)
+        .then(() => {
+            console.log('FILE DELETED');
+        })
+        // `unlink` will throw an error, if the item to unlink does not exist
+        .catch((err) => {
+            console.log(err.message);
+        });
     }
 
     render() {
