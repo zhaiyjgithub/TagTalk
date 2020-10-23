@@ -294,30 +294,44 @@ export default class ChatViewController extends Component {
 	}
 
 	pushToRecordVideo() {
-		let layout = {
-			component: {
-				name: 'RecordVideoViewController',
-				passProps: {
+		// let layout = {
+		// 	component: {
+		// 		name: 'RecordVideoViewController',
+		// 		passProps: {
+		//
+		// 		},
+		// 		options: {
+		// 			modalPresentationStyle: 'fullScreen',
+		// 			topBar: {
+		// 				visible: false,
+		// 			},
+		// 			bottomTabs: {
+		// 				visible: false,
+		// 				drawBehind: false,
+		// 			}
+		// 		}
+		// 	}
+		// }
+		//
+		// if (PLATFORM.isIOS) {
+		// 	Navigation.showModal(layout)
+		// }else {
+		// 	Navigation.push(this.props.componentId, layout);
+		// }
 
-				},
+		Navigation.showOverlay({
+			component: {
+				name: 'VideoPreview',
 				options: {
-					modalPresentationStyle: 'fullScreen',
-					topBar: {
-						visible: false,
+					layout: {
+						componentBackgroundColor: 'transparent',
 					},
-					bottomTabs: {
-						visible: false,
-						drawBehind: false,
+					overlay: {
+						interceptTouchOutside: true
 					}
 				}
 			}
-		}
-
-		if (PLATFORM.isIOS) {
-			Navigation.showModal(layout)
-		}else {
-			Navigation.push(this.props.componentId, layout);
-		}
+		});
 
 	}
 

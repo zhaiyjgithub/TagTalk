@@ -11,6 +11,7 @@ import ContactsViewController from './src/components/contacts/ContactsViewContro
 import ProfileViewController from './src/components/profile/ProfileViewController';
 import MatchViewController from './src/components/match/MatchViewController';
 import UniversalViewController from './src/components/universal/UniversalViewController';
+import VideoPreview from './src/components/chat/VideoPreview';
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
 Navigation.registerComponent('ChatViewController', () => ChatViewController);
@@ -19,6 +20,8 @@ Navigation.registerComponent('ContactsViewController', () => ContactsViewControl
 Navigation.registerComponent('ProfileViewController', () => ProfileViewController);
 Navigation.registerComponent('MatchViewController', () => MatchViewController);
 Navigation.registerComponent('UniversalViewController', () => UniversalViewController);
+Navigation.registerComponent('VideoPreview', () => VideoPreview);
+//
 
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setDefaultOptions({
