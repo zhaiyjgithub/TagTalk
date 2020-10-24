@@ -18,6 +18,7 @@ import StoryHeader from './view/StoryHeader';
 import MessageDialogItem from './view/MessageDialogItem';
 import ContactItem from '../contacts/view/contactItem';
 import {BaseNavigatorOptions} from '../../utils/Navigator';
+import RNFS from "react-native-fs"
 
 export default class MessageViewController extends Component{
 	constructor(props) {
@@ -33,8 +34,76 @@ export default class MessageViewController extends Component{
 		this.initWebsocket()
 	}
 
+	createFile() {
+		let path = RNFS.DocumentDirectoryPath + '/test1.txt';
+// write the file
+		RNFS.writeFile(path, 'Lorem ipsum dolor sit amet', 'utf8')
+			.then((success) => {
+				console.log('FILE WRITTEN!');
+			})
+			.catch((err) => {
+				console.log(err.message);
+			});
+	}
+
+	uploadFiles() {
+		let uploadUrl = 'http://localhost:8090/upload';  // For testing purposes, go to http://requestb.in/ and create your own link
+// create an array of objects of the files you want to upload
+		let files = [
+			{
+				name: 'test1',
+				filename: 'test2.txt',
+				filepath: RNFS.DocumentDirectoryPath + '/test2.txt',
+				filetype: 'text/plain'
+			},
+			{
+				name: 'test',
+				filename: 'test.txt',
+				filepath: RNFS.DocumentDirectoryPath + '/test.txt',
+				filetype: 'text/plain'
+			},
+		];
+
+		let uploadBegin = (response) => {
+			let jobId = response.jobId;
+			console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+		};
+
+		let uploadProgress = (response) => {
+			let percentage = Math.floor((response.totalBytesSent/response.totalBytesExpectedToSend) * 100);
+			console.log('UPLOAD IS ' + percentage + '% DONE!');
+		};
+
+// upload files
+		RNFS.uploadFiles({
+			toUrl: uploadUrl,
+			files: files,
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+			},
+			fields: {
+				'hello': 'world',
+			},
+			begin: uploadBegin,
+			progress: uploadProgress
+		}).promise.then((response) => {
+			if (response.statusCode === 200) {
+				console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
+			} else {
+				console.log('SERVER ERROR');
+			}
+		})
+			.catch((err) => {
+				if(err.description === "cancelled") {
+					// cancelled by user
+				}
+				console.log(err);
+			});
+	}
+
 	initWebsocket() {
-		let ws = new WebSocket("ws://localhost:8088/ws?uid=3378")
+		let ws = new WebSocket("ws://localhost:8090/ws?uid=3378")
 		this.ws = ws
 
 		ws.onopen = () => {
@@ -67,15 +136,16 @@ export default class MessageViewController extends Component{
 	}
 
 	pushToChatRoom() {
-		Navigation.push(this.props.componentId, {
-			component: {
-				name: 'ChatViewController',
-				passProps: {
-					uid: 98
-				},
-				options: BaseNavigatorOptions('Chat')
-			}
-		});
+		this.uploadFiles()
+		// Navigation.push(this.props.componentId, {
+		// 	component: {
+		// 		name: 'ChatViewController',
+		// 		passProps: {
+		// 			uid: 98
+		// 		},
+		// 		options: BaseNavigatorOptions('Chat')
+		// 	}
+		// });
 	}
 
 	renderItem() {
@@ -97,7 +167,6 @@ export default class MessageViewController extends Component{
 				<Image source={require('../../source/image/chat/search.png')} style={{width: 18, height: 18, marginLeft: 16, marginRight: 5 }}/>
 				<TextInput
 					placeholder={'Search'}
-					placeholderColor={Colors.placeholder}
 					style={{
 					flex: 1,
 					paddingVertical: 0, paddingHorizontal: 5,
