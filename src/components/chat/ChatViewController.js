@@ -43,18 +43,11 @@ export default class ChatViewController extends Component {
 		this.inputViewMarginBottom = new Animated.Value(0)
 
 		this.recorder = null;
-
-		this.tempName = 'test123.mp4'
-		this.fileName = 'file://' + RNFS.DocumentDirectoryPath+ '/'  + this.tempName
-
 	}
 
 	componentDidMount() {
 		this.addKeyboardListener()
 		// this.refresh()
-
-		this.reloadPlayer();
-		this.reloadRecorder();
 	}
 
 	componentWillUnmount() {
@@ -143,95 +136,61 @@ export default class ChatViewController extends Component {
 		)
 	}
 
+	getFileName () {
+		return (new Date()).getTime() + '-' + 'voice.mp4'
+	}
+
 	updatePlayerState() {
 
 	}
 
 	playerPlay() {
-		// let fileName = 'file://' + RNFS.DocumentDirectoryPath+ '/'  + this.fileName
-		this.player = new Player(this.fileName)
-		this.player.play((error) => {
+		if (!this.filePath || !this.filePath.length) {
+			console.log('audio file path error')
+			return
+		}
+
+		this.playerInit(this.filePath)
+		this.player && this.player.play((error) => {
 			console.log('error : ' + JSON.stringify(error))
 		})
 	}
 
 	playerPause() {
-		this.player.playPause((err, paused) => {
+		this.player && this.player.playPause((err, paused) => {
 			if (err) {
 				this.setState({
 					error: err.message
 				});
 			}
-			this.updatePlayerState();
 		});
 	}
 
 	playerStop() {
 		this.player.stop(() => {
-			this.updatePlayerState();
+			//
 		});
 	}
 
-	playerSeek(percentage) {
-		if (!this.player) {
-			return;
-		}
-
-		this.lastSeek = Date.now();
-
-		let position = percentage * this.player.duration;
-
-		this.player.seek(position, () => {
-			this.updatePlayerState();
-		});
-	}
-
-	reloadPlayer() {
+	playerInit(filePath) {
 		if (this.player) {
 			this.player.destroy();
 		}
 
-		// let fileName = 'file://' + RNFS.DocumentDirectoryPath + '/' + this.fileName
-
-		console.log("reload file  name:" + this.fileName)
-		this.player = new Player(this.fileName, {
-			autoDestroy: false
-		}).prepare((err) => {
-			if (err) {
-				console.log('error at _reloadPlayer():');
-				console.log(err);
-			} else {
-				this.player.looping = this.state.loopButtonStatus;
-			}
-
-			this.updatePlayerState();
-		});
-
-		this.updatePlayerState();
-
-		this.player.on('ended', () => {
-			console.log("play end")
-			this.updatePlayerState();
-		});
-		this.player.on('pause', () => {
-			console.log('play pause')
-			this.updatePlayerState();
-		});
+		this.player = new Player(filePath)
 	}
 
-	reloadRecorder() {
+	recorderInit(fileName) {
 		if (this.recorder) {
 			this.recorder.destroy();
 		}
 
-		this.recorder = new Recorder(this.tempName, {
+		this.recorder = new Recorder(fileName, {
 			bitrate: 256000,
 			channels: 2,
 			sampleRate: 44100,
 			quality: 'max'
 		});
-
-		this.updatePlayerState();
 	}
 
 	toggleRecord() {
@@ -254,6 +213,9 @@ export default class ChatViewController extends Component {
 				return;
 			}
 
+			let fileName = this.getFileName()
+			this.filePath = 'file://' + RNFS.DocumentDirectoryPath+ '/'  + fileName
+			this.recorderInit(fileName)
 			this.recorder.toggleRecord((err, stopped) => {
 				console.log("toggleRecord response: " + err + stopped)
 				if (err) {
@@ -262,18 +224,15 @@ export default class ChatViewController extends Component {
 					});
 				}
 				if (stopped) {
-
-					this.reloadPlayer();
-					this.reloadRecorder();
+					//
 				}
 
-				this.updatePlayerState();
 			});
 		});
 	}
 
 	recorderStop() {
-		this.recorder.stop((error) => {
+		this.recorder && this.recorder.stop((error) => {
 			console.log("stop record error:" + error)
 		})
 	}
