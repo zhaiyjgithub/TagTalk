@@ -24,7 +24,7 @@ export default class MessageViewController extends Component{
 	constructor(props) {
 		super(props)
 		this.state = {
-			msg: ''
+			msg: '',
 		}
 
 		this.ws = {}
@@ -32,6 +32,13 @@ export default class MessageViewController extends Component{
 
 	componentDidMount() {
 		this.initWebsocket()
+
+		RNFS.readDir(RNFS.DocumentDirectoryPath)
+		.then((result) => {
+			console.log(result)
+		}).catch(() => {
+
+		})
 	}
 
 	createFile() {
@@ -136,16 +143,15 @@ export default class MessageViewController extends Component{
 	}
 
 	pushToChatRoom() {
-		this.uploadFiles()
-		// Navigation.push(this.props.componentId, {
-		// 	component: {
-		// 		name: 'ChatViewController',
-		// 		passProps: {
-		// 			uid: 98
-		// 		},
-		// 		options: BaseNavigatorOptions('Chat')
-		// 	}
-		// });
+		Navigation.push(this.props.componentId, {
+			component: {
+				name: 'ChatViewController',
+				passProps: {
+					uid: 98
+				},
+				options: BaseNavigatorOptions('Chat')
+			}
+		});
 	}
 
 	renderItem() {

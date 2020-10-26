@@ -10,7 +10,8 @@ import {
 	TextInput,
 	Image,
 	Animated,
-	Keyboard
+	Keyboard,
+	TouchableWithoutFeedback,
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
@@ -19,6 +20,8 @@ import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import {BaseNavigatorOptions} from '../../utils/Navigator';
+import { Player, Recorder, MediaStates } from '@react-native-community/audio-toolkit';
+import RNFS from 'react-native-fs'
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
@@ -31,17 +34,27 @@ export default class ChatViewController extends Component {
 			dataSource: [],
 			isRefreshing: false,
 			textMessage: '',
-			isShowMediaPanel: false
+			isShowMediaPanel: false,
+			isVoicing: false
 		}
 
 		this.onEndReachedCalledDuringMomentum = false
 		this.number = 0
 		this.inputViewMarginBottom = new Animated.Value(0)
+
+		this.recorder = null;
+
+		this.tempName = 'test123.mp4'
+		this.fileName = 'file://' + RNFS.DocumentDirectoryPath+ '/'  + this.tempName
+
 	}
 
 	componentDidMount() {
 		this.addKeyboardListener()
 		// this.refresh()
+
+		this.reloadPlayer();
+		this.reloadRecorder();
 	}
 
 	componentWillUnmount() {
@@ -106,8 +119,219 @@ export default class ChatViewController extends Component {
 		}
 	}
 
+	renderVoiceButton() {
+		return (
+			<View activeOpacity={0.6} style={{flex: 1, backgroundColor: '#efeff4', height: 36,
+				borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
+				justifyContent: 'center', alignItems: 'center'
+			}}>
+				<TouchableWithoutFeedback onPress={() => {
+					console.log('onPress')
+				}} onLongPress={() => {
+					console.log('on long press')
+					this.toggleRecord()
+				}} onPressIn={() => {
+					console.log('on press in ')
+				}} onPressOut={() => {
+					this.recorderStop()
+					console.log('on press out')
+				}}>
+					<Text style={{fontSize: 16, color: Colors.black, fontWeight: 'bold'}}>{'Press and speak'}</Text>
+				</TouchableWithoutFeedback>
+			</View>
+
+		)
+	}
+
+	updatePlayerState() {
+
+	}
+
+	playerPlay() {
+		// let fileName = 'file://' + RNFS.DocumentDirectoryPath+ '/'  + this.fileName
+		this.player = new Player(this.fileName)
+		this.player.play((error) => {
+			console.log('error : ' + JSON.stringify(error))
+		})
+	}
+
+	playerPause() {
+		this.player.playPause((err, paused) => {
+			if (err) {
+				this.setState({
+					error: err.message
+				});
+			}
+			this.updatePlayerState();
+		});
+	}
+
+	playerStop() {
+		this.player.stop(() => {
+			this.updatePlayerState();
+		});
+	}
+
+	playerSeek(percentage) {
+		if (!this.player) {
+			return;
+		}
+
+		this.lastSeek = Date.now();
+
+		let position = percentage * this.player.duration;
+
+		this.player.seek(position, () => {
+			this.updatePlayerState();
+		});
+	}
+
+	reloadPlayer() {
+		if (this.player) {
+			this.player.destroy();
+		}
+
+		// let fileName = 'file://' + RNFS.DocumentDirectoryPath + '/' + this.fileName
+
+		console.log("reload file  name:" + this.fileName)
+		this.player = new Player(this.fileName, {
+			autoDestroy: false
+		}).prepare((err) => {
+			if (err) {
+				console.log('error at _reloadPlayer():');
+				console.log(err);
+			} else {
+				this.player.looping = this.state.loopButtonStatus;
+			}
+
+			this.updatePlayerState();
+		});
+
+		this.updatePlayerState();
+
+		this.player.on('ended', () => {
+			console.log("play end")
+			this.updatePlayerState();
+		});
+		this.player.on('pause', () => {
+			console.log('play pause')
+			this.updatePlayerState();
+		});
+	}
+
+	reloadRecorder() {
+		if (this.recorder) {
+			this.recorder.destroy();
+		}
+
+		this.recorder = new Recorder(this.tempName, {
+			bitrate: 256000,
+			channels: 2,
+			sampleRate: 44100,
+			quality: 'max'
+		});
+
+		this.updatePlayerState();
+	}
+
+	toggleRecord() {
+		if (this.player) {
+			this.player.destroy();
+		}
+
+		let recordAudioRequest;
+		if (PLATFORM.isAndroid) {
+			recordAudioRequest = this.requestRecordAudioPermission();
+		} else {
+			recordAudioRequest = new Promise(function (resolve, reject) { resolve(true); });
+		}
+
+		recordAudioRequest.then((hasPermission) => {
+			if (!hasPermission) {
+				this.setState({
+					error: 'Record Audio Permission was denied'
+				});
+				return;
+			}
+
+			this.recorder.toggleRecord((err, stopped) => {
+				console.log("toggleRecord response: " + err + stopped)
+				if (err) {
+					this.setState({
+						error: err.message
+					});
+				}
+				if (stopped) {
+
+					this.reloadPlayer();
+					this.reloadRecorder();
+				}
+
+				this.updatePlayerState();
+			});
+		});
+	}
+
+	recorderStop() {
+		this.recorder.stop((error) => {
+			console.log("stop record error:" + error)
+		})
+	}
+
+	async requestRecordAudioPermission() {
+		try {
+			const granted = await PermissionsAndroid.request(
+				PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+				{
+					title: 'Microphone Permission',
+					message: 'ExampleApp needs access to your microphone to test react-native-audio-toolkit.',
+					buttonNeutral: 'Ask Me Later',
+					buttonNegative: 'Cancel',
+					buttonPositive: 'OK',
+				},
+			);
+			if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (err) {
+			console.error(err);
+			return false;
+		}
+	}
+
+	toggleLooping(value) {
+		this.setState({
+			loopButtonStatus: value
+		});
+		if (this.player) {
+			this.player.looping = value;
+		}
+	}
+
+	renderTextInput() {
+		const {textMessage} = this.state
+		return (
+			<TextInput
+				onChangeText={(text) => {
+					this.setState({textMessage: text})
+				}}
+				onFocus={() => {
+					this.setState({isShowMediaPanel: false})
+				}}
+				value={textMessage}
+				multiline={true}
+				underlineColorAndroid={'transparent'}
+				placeholder={'Type a message...'}
+				style={{flex: 1, backgroundColor: '#efeff4', height: 36,
+					borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
+				}}/>
+		)
+	}
+
 	renderInputBar() {
-		const {textMessage, isShowMediaPanel} = this.state
+		const {textMessage, isShowMediaPanel, isVoicing} = this.state
 		return(
 			<Animated.View  style={{width: '100%', height: 60, flexDirection: 'row',
 				alignItems: 'center', justifyContent: 'space-between',
@@ -115,32 +339,21 @@ export default class ChatViewController extends Component {
 			}}>
 				<TouchableOpacity onPress={() => {
 					Keyboard.dismiss()
-					this.setState({isShowMediaPanel: !isShowMediaPanel})
+					// this.setState({isShowMediaPanel: !isShowMediaPanel})
+
+					this.playerPlay()
 				}} style={{width: 30, height: 30,marginHorizontal: 10,}} >
 					<Image source={require('../../source/image/chat/add.png')}/>
 				</TouchableOpacity>
 
 				<TouchableOpacity onPress={() => {
 					Keyboard.dismiss()
-					this.setState({isShowMediaPanel: false})
+					this.setState({isShowMediaPanel: false, isVoicing: !isVoicing})
 				}} style={{width: 30, height: 30, marginRight: 10,}} >
 					<Image source={require('../../source/image/chat/voice.png')}/>
 				</TouchableOpacity>
 
-				<TextInput
-					onChangeText={(text) => {
-						this.setState({textMessage: text})
-					}}
-					onFocus={() => {
-						this.setState({isShowMediaPanel: false})
-					}}
-					value={textMessage}
-					multiline={true}
-					underlineColorAndroid={'transparent'}
-					placeholder={'Type a message...'}
-					style={{flex: 1, backgroundColor: '#efeff4', height: 36,
-					borderRadius: 4, fontSize: 16, paddingHorizontal: 4,
-				}}/>
+				{isVoicing ? this.renderVoiceButton() : this.renderTextInput()}
 
 				<TouchableOpacity onPress={() => {
 					if (!(textMessage + '').length ) {
