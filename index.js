@@ -12,6 +12,7 @@ import ProfileViewController from './src/components/profile/ProfileViewControlle
 import MatchViewController from './src/components/match/MatchViewController';
 import UniversalViewController from './src/components/universal/UniversalViewController';
 import VideoPreview from './src/components/chat/VideoPreview';
+import TestViewController from './src/components/baseComponets/TestViewController';
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
 Navigation.registerComponent('ChatViewController', () => ChatViewController);
@@ -21,9 +22,25 @@ Navigation.registerComponent('ProfileViewController', () => ProfileViewControlle
 Navigation.registerComponent('MatchViewController', () => MatchViewController);
 Navigation.registerComponent('UniversalViewController', () => UniversalViewController);
 Navigation.registerComponent('VideoPreview', () => VideoPreview);
-//
+Navigation.registerComponent('TestViewController', () => TestViewController);
 
 Navigation.events().registerAppLaunchedListener(() => {
+  Navigation.setRoot({
+    root: {
+      stack: {
+        children: [
+          {
+            component: {
+              name: 'TestViewController'
+            }
+          }
+        ]
+      }
+    }
+  });
+
+  return
+
   Navigation.setDefaultOptions({
     topBar: {
       drawBehind: false,
