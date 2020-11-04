@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
+    "start": "react-native start --reset-cache",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -22,7 +22,7 @@
     "react-native-image-crop-picker": "^0.35.1",
     "react-native-mov-to-mp4": "^0.2.2",
     "react-native-navigation": "^7.1.0",
-    "react-native-reanimated": "^2.0.0-alpha.7",
+    "react-native-reanimated": "^2.0.0-alpha.8",
     "react-native-video": "^5.1.0-alpha8"
   },
   "devDependencies": {
