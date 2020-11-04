@@ -4,7 +4,7 @@ import {Colors} from '../../utils/styles';
 
 export default function TestController(props) {
 	return(
-		<SafeAreaView style={{flex: 1, backgroundColor: 'red'}}></SafeAreaView>
+		<SafeAreaView style={{flex: 1, backgroundColor: 'blue'}}></SafeAreaView>
 	)
 }
 

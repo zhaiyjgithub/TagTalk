@@ -13,6 +13,7 @@ import MatchViewController from './src/components/match/MatchViewController';
 import UniversalViewController from './src/components/universal/UniversalViewController';
 import VideoPreview from './src/components/chat/VideoPreview';
 import TestViewController from './src/components/baseComponets/TestViewController';
+import GuideViewController from './src/components/signIn/GuideViewController'
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
 Navigation.registerComponent('ChatViewController', () => ChatViewController);
@@ -23,6 +24,8 @@ Navigation.registerComponent('MatchViewController', () => MatchViewController);
 Navigation.registerComponent('UniversalViewController', () => UniversalViewController);
 Navigation.registerComponent('VideoPreview', () => VideoPreview);
 Navigation.registerComponent('TestViewController', () => TestViewController);
+Navigation.registerComponent('GuideViewController', () => GuideViewController);
+//
 
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setRoot({
@@ -31,7 +34,7 @@ Navigation.events().registerAppLaunchedListener(() => {
         children: [
           {
             component: {
-              name: 'TestViewController'
+              name: 'GuideViewController'
             }
           }
         ]
