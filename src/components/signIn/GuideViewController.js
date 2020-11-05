@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {View, SafeAreaView, TouchableOpacity, Text, TouchableWithoutFeedback, Image} from 'react-native';
 import {Colors, FontFamily} from '../../utils/styles';
+import {PLATFORM} from '../../utils/Enums';
+import {Navigation} from 'react-native-navigation'
 
 export default function GuideViewController() {
     const renderButton = (item) => {
@@ -17,6 +19,29 @@ export default function GuideViewController() {
                 </TouchableOpacity>
             </View>
         )
+    }
+
+    const pushToSignIn = () => {
+        let layout = {
+        	component: {
+        		name: 'SignInViewController',
+        		passProps: {
+
+        		},
+        		options: {
+        			modalPresentationStyle: 'fullScreen',
+        			topBar: {
+        				visible: false,
+        			},
+        		}
+        	}
+        }
+
+        if (PLATFORM.isIOS) {
+        	Navigation.showModal(layout)
+        }else {
+        	Navigation.push(this.props.componentId, layout);
+        }
     }
 
     const renderForgotPasswordButton = () => {
