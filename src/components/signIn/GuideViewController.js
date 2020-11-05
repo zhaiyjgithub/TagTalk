@@ -8,7 +8,9 @@ export default function GuideViewController() {
     const renderButton = (item) => {
         return(
             <View style={{width: '100%', height: 50, marginTop: 15}}>
-                <TouchableOpacity style={{flex: 1,
+                <TouchableOpacity onPress={() => {
+                    pushToSignIn()
+                }} style={{flex: 1,
                     backgroundColor: item.bgColor,
                     borderRadius: 4,
                     marginHorizontal: 20, justifyContent: 'center', alignItems: 'center'
