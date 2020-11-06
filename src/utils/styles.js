@@ -11,7 +11,8 @@ const Colors = {
 	lineGray: "#EFEFF4",
 	searchBar: '#E9F0FB',
 	placeholder: '#818BBF',
-	systemGray: '#D9D9D9'
+	systemGray: '#D9D9D9',
+	red: '#FF0000'
 }
 
 const FontFamily = {

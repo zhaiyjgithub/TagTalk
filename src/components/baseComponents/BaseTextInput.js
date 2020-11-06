@@ -5,33 +5,25 @@ import {Colors} from '../../utils/styles';
 export default function BaseTextInput(props) {
     const {
         title = '',
-        placeholder = '',
-        onChangeText = '',
-        keyboardType = 'default',
-        style= {},
+        lineStyle= {},
+        containerStyle= {marginTop: 20},
+        style= {height: 30, fontSize: 18,
+            color: Colors.black, paddingVertical: 0, marginVertical: 8,},
     } = props
 
     return(
         <View style={[{width: '100%', paddingHorizontal: 20,
             minHeight: 62
-        }, style]}>
+        }, containerStyle]}>
             <Text style={{fontSize: 14, color: Colors.blue,
             }}>{title}</Text>
-            <TextInput
-                keyboardType={keyboardType}
-                onChangeText={(text) => {
-                    onChangeText && onChangeText(text)
-                }}
-                clearButtonMode={'while-editing'}
-                placeholder={placeholder}
-                underlineColorAndroid={'transparent'}
-                style={{height: 30, fontSize: 18,
-                color: Colors.black, paddingVertical: 0, marginVertical: 8,
-            }}/>
+            <TextInput style={style}
+                       clearButtonMode={'while-editing'}
+                       {...props} />
 
-            <View style={{height: 1,
-                backgroundColor: Colors.blue
-            }}/>
+            <View style={[{height: 1,
+                backgroundColor: Colors.lineColor
+            }, lineStyle]}/>
         </View>
     )
 }

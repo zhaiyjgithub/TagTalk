@@ -15,6 +15,7 @@ import VideoPreview from './src/components/chat/VideoPreview';
 import TestViewController from './src/components/baseComponents/TestViewController';
 import GuideViewController from './src/components/signIn/GuideViewController'
 import SignInViewController from './src/components/signIn/SignInViewController'
+import SignUpViewController from './src/components/signIn/SignUpViewController'
 //
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
@@ -28,6 +29,7 @@ Navigation.registerComponent('VideoPreview', () => VideoPreview);
 Navigation.registerComponent('TestViewController', () => TestViewController);
 Navigation.registerComponent('GuideViewController', () => GuideViewController);
 Navigation.registerComponent('SignInViewController', () => SignInViewController);
+Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
 //
 
 Navigation.events().registerAppLaunchedListener(() => {

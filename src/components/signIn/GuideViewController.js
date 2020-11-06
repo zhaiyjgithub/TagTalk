@@ -3,24 +3,15 @@ import {View, SafeAreaView, TouchableOpacity, Text, TouchableWithoutFeedback, Im
 import {Colors, FontFamily} from '../../utils/styles';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation'
+import BaseButton from '../baseComponents/BaseButton';
 
 export default function GuideViewController() {
-    const renderButton = (item) => {
-        return(
-            <View style={{width: '100%', height: 50, marginTop: 15}}>
-                <TouchableOpacity onPress={() => {
-                    pushToSignIn()
-                }} style={{flex: 1,
-                    backgroundColor: item.bgColor,
-                    borderRadius: 4,
-                    marginHorizontal: 20, justifyContent: 'center', alignItems: 'center'
-                }}>
-                    <Text style={{fontSize: 16, fontFamily: FontFamily.helvetica,
-                        color: Colors.white
-                    }}>{item.title}</Text>
-                </TouchableOpacity>
-            </View>
-        )
+    const didClick = (type) => {
+        if (type === ActionType.create) {
+            pushToSignUp()
+        }else if (type === ActionType.signIn) {
+            pushToSignIn()
+        }
     }
 
     const pushToSignIn = () => {
@@ -43,6 +34,29 @@ export default function GuideViewController() {
         	Navigation.showModal(layout)
         }else {
         	Navigation.push(this.props.componentId, layout);
+        }
+    }
+
+    const pushToSignUp = () => {
+        let layout = {
+            component: {
+                name: 'SignUpViewController',
+                passProps: {
+
+                },
+                options: {
+                    modalPresentationStyle: 'fullScreen',
+                    topBar: {
+                        visible: false,
+                    },
+                }
+            }
+        }
+
+        if (PLATFORM.isIOS) {
+            Navigation.showModal(layout)
+        }else {
+            Navigation.push(this.props.componentId, layout);
         }
     }
 
@@ -71,7 +85,7 @@ export default function GuideViewController() {
 
     const buttons = [{
         title: 'Sign In',
-        type: ActionType.create,
+        type: ActionType.signIn,
         bgColor: Colors.blue,
     },{
         title: 'Create New Account',
@@ -85,8 +99,19 @@ export default function GuideViewController() {
         }}>
             {renderAppTitle()}
             {renderForgotPasswordButton()}
-            {buttons.map((item) => {
-                return renderButton(item)
+            {buttons.map((item, index) => {
+                return <BaseButton key={index} title={item.title}
+                                   style={{
+                                       backgroundColor: item.bgColor,
+                                   }}
+                                   containerStyle={{
+                                        marginTop: 20,
+                                   }}
+                                   didClick={() => {
+                                       didClick(item.type)
+                                   }
+                                   }
+                />
             })}
 
         </SafeAreaView>
