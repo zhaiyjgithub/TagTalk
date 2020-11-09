@@ -12,8 +12,9 @@ import ProfileViewController from './src/components/profile/ProfileViewControlle
 import MatchViewController from './src/components/match/MatchViewController';
 import UniversalViewController from './src/components/universal/UniversalViewController';
 import VideoPreview from './src/components/chat/VideoPreview';
-import TestViewController from './src/components/baseComponets/TestViewController';
+import TestViewController from './src/components/baseComponents/TestViewController';
 import GuideViewController from './src/components/signIn/GuideViewController'
+import SignInViewController from './src/components/signIn/SignInViewController'
 import SignUpViewController from './src/components/signIn/SignUpViewController'
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
@@ -26,6 +27,8 @@ Navigation.registerComponent('UniversalViewController', () => UniversalViewContr
 Navigation.registerComponent('VideoPreview', () => VideoPreview);
 Navigation.registerComponent('TestViewController', () => TestViewController);
 Navigation.registerComponent('GuideViewController', () => GuideViewController);
+
+Navigation.registerComponent('SignInViewController', () => SignInViewController);
 Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
 //
 
