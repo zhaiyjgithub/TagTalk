@@ -14,6 +14,7 @@ import UniversalViewController from './src/components/universal/UniversalViewCon
 import VideoPreview from './src/components/chat/VideoPreview';
 import TestViewController from './src/components/baseComponets/TestViewController';
 import GuideViewController from './src/components/signIn/GuideViewController'
+import SignUpViewController from './src/components/signIn/SignUpViewController'
 
 Navigation.registerComponent('MessageViewController', () => MessageViewController);
 Navigation.registerComponent('ChatViewController', () => ChatViewController);
@@ -25,6 +26,7 @@ Navigation.registerComponent('UniversalViewController', () => UniversalViewContr
 Navigation.registerComponent('VideoPreview', () => VideoPreview);
 Navigation.registerComponent('TestViewController', () => TestViewController);
 Navigation.registerComponent('GuideViewController', () => GuideViewController);
+Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
 //
 
 Navigation.events().registerAppLaunchedListener(() => {

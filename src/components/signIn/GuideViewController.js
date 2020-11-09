@@ -1,12 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import {View, SafeAreaView, TouchableOpacity, Text, TouchableWithoutFeedback, Image} from 'react-native';
 import {Colors, FontFamily} from '../../utils/styles';
+import {Navigation} from 'react-native-navigation';
+import {BaseNavigatorOptions} from '../../utils/Navigator';
 
 export default function GuideViewController() {
     const renderButton = (item) => {
         return(
             <View style={{width: '100%', height: 50, marginTop: 15}}>
-                <TouchableOpacity style={{flex: 1,
+                <TouchableOpacity onPress={() => {
+                    const {type} = item
+                    if (type === ActionType.create) {
+                        pushToSignUp()
+                    }
+                }} style={{flex: 1,
                     backgroundColor: item.bgColor,
                     borderRadius: 4,
                     marginHorizontal: 20, justifyContent: 'center', alignItems: 'center'
@@ -40,6 +47,44 @@ export default function GuideViewController() {
                 <Text style={{fontSize: 33, color: Colors.black, marginTop: 30}}>{'Welcome, \nDiscover more like-minded people.'}</Text>
             </View>
         )
+    }
+
+    const pushToSignUp = () => {
+        // Navigation.showModal(this.props.componentId, {
+        //     component: {
+        //         name: 'SignUpViewController',
+        //         passProps: {
+        //
+        //         },
+        //         options:  {
+        //             topBar: {
+        //                 visible: false,
+        //
+        //             },
+        //         }
+        //     }
+        // });
+
+        let layout = {
+        	component: {
+        		name: 'SignUpViewController',
+        		passProps: {
+
+        		},
+        		options: {
+        			modalPresentationStyle: 'fullScreen',
+        			topBar: {
+        				visible: false,
+        			},
+        			bottomTabs: {
+        				visible: false,
+        				drawBehind: false,
+        			}
+        		}
+        	}
+        }
+
+        Navigation.showModal(layout)
     }
 
     const buttons = [{
