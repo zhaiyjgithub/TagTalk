@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../utils/styles';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import BaseButton from '../baseComponents/BaseButton';
 
-export default class GuideViewController extends Comment{
+export default class GuideViewController extends Component{
     didClick(type) {
         if (type === ActionType.create) {
             this.pushToSignUp()

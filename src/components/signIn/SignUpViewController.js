@@ -1,13 +1,15 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Alert, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import BaseTextInput from '../baseComponents/BaseTextInput';
 import {Colors} from '../../utils/styles';
 import BaseButton from '../baseComponents/BaseButton';
-import Utils from '../../utils/utils';
+import {Utils} from '../../utils/utils';
+import {HTTP} from '../../utils/HttpTools';
+import {API_User} from '../../utils/API';
 
-export default class SignUpViewController extends Comment{
+export default class SignUpViewController extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,8 +21,25 @@ export default class SignUpViewController extends Comment{
         }
     }
 
+    requestPin() {
+        const {email} = this.state
+        if (!Utils.VerifyEmail(email)) {
+            Alert('Email is incorrect!')
+            return
+        }
+        const param = {
+            Email: email
+        }
+
+        HTTP.post(API_User.SendSignUpPin, param).then((response) => {
+            Utils.Log(response)
+        }).catch((err) => {
+            Utils.Log(err)
+        })
+    }
+
     didClick() {
-        const {email, userName, password, confirmPassword} = this.state
+        const {email, userName, password, confirmPassword, pin} = this.state
         if (!Utils.VerifyEmail(email)) {
             Alert('Email is incorrect!')
             return
@@ -30,6 +49,11 @@ export default class SignUpViewController extends Comment{
         const usernamePattern = /^[A-Za-z0-9]+$/
         if (!usernamePattern.test(userName)) {
             alert('User name can only consist of a string of numbers and 26 letters!')
+            return
+        }
+
+        if (!pin.length) {
+            alert('Captcha can\'t be empty!')
             return
         }
 
@@ -48,6 +72,18 @@ export default class SignUpViewController extends Comment{
             return;
         }
 
+        const param = {
+            Name: userName,
+            Email: email,
+            Password: password,
+            Pin: pin
+        }
+
+        HTTP.post(API_User.RegisterNewDoctor, param).then((response) => {
+            Utils.Log(JSON.stringify(response))
+        }).catch((err) => {
+            Utils.Log(err)
+        })
      }
 
     renderDismissButton() {
@@ -84,7 +120,9 @@ export default class SignUpViewController extends Comment{
                     />
                 </View>
 
-                <TouchableOpacity style={{height: 40, width: 64,
+                <TouchableOpacity onPress={() => {
+                    this.requestPin()
+                }} style={{height: 40, width: 64,
                     justifyContent: 'center', alignContent: 'center',
                     backgroundColor: Colors.blue,
                     marginRight: 20,

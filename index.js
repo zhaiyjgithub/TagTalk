@@ -30,7 +30,8 @@ Navigation.registerComponent('GuideViewController', () => GuideViewController);
 
 Navigation.registerComponent('SignInViewController', () => SignInViewController);
 Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
-//
+
+global.UserInfo = {}
 
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setRoot({
