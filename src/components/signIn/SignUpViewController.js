@@ -1,8 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {
-    View, SafeAreaView, TouchableOpacity, Text, TouchableWithoutFeedback, Image, TextInput,
-    ScrollView, Alert,
-} from 'react-native';
+import React from 'react';
+import {Alert, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import BaseTextInput from '../baseComponents/BaseTextInput';
@@ -10,14 +7,20 @@ import {Colors} from '../../utils/styles';
 import BaseButton from '../baseComponents/BaseButton';
 import Utils from '../../utils/utils';
 
-export default function SignUpViewController(props) {
-    const [password, setPassword] = useState('')
-    const [userName, setUserName] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [email, setEmail] = useState('')
-    const [pin, setPin] = useState('')
+export default class SignUpViewController extends Comment{
+    constructor(props) {
+        super(props);
+        this.state = {
+            password: '',
+            userName: '',
+            confirmPassword: '',
+            email: '',
+            pin: ''
+        }
+    }
 
-    const didClick = () => {
+    didClick() {
+        const {email, userName, password, confirmPassword} = this.state
         if (!Utils.VerifyEmail(email)) {
             Alert('Email is incorrect!')
             return
@@ -47,13 +50,13 @@ export default function SignUpViewController(props) {
 
      }
 
-    const renderDismissButton = () => {
+    renderDismissButton() {
         return (
             <TouchableOpacity onPress={() => {
                 if (PLATFORM.isIOS) {
-                    Navigation.dismissModal(props.componentId)
+                    Navigation.dismissModal(this.props.componentId)
                 }else {
-                    Navigation.pop(props.componentId)
+                    Navigation.pop(this.props.componentId)
                 }
             }} style={{
                 position: 'absolute',
@@ -67,7 +70,7 @@ export default function SignUpViewController(props) {
         )
     }
 
-    const renderCodeView = () => {
+    renderCodeView() {
         return(
             <View style={{width: '100', flexDirection: 'row', alignItems: 'center'}}>
                 <View style={{flex: 1}}>
@@ -76,7 +79,7 @@ export default function SignUpViewController(props) {
                         title = {'Captcha#'}
                         placeholder={'6-digital pin'}
                         onChangeText={(text) => {
-                            setPin(text)
+                            this.setState({pin: text})
                         }}
                     />
                 </View>
@@ -93,73 +96,76 @@ export default function SignUpViewController(props) {
         )
     }
 
-    let isEqualPwd = confirmPassword === password
-    let lineColor= confirmPassword.length ? (isEqualPwd ? Colors.green: Colors.red) : Colors.lineColor
-    return(
-        <SafeAreaView style={{flex:1,}}>
-            <ScrollView style={{flex: 1}}>
-                <Text style={{fontSize: 32, marginVertical: 20,
-                    marginHorizontal: 20, color: Colors.black,
-                    fontWeight: 'bold'
-                }}>{'Sign up with your email.'}</Text>
+    render() {
+        const {confirmPassword, password} = this.state
+        let isEqualPwd = confirmPassword === password
+        let lineColor= confirmPassword.length ? (isEqualPwd ? Colors.green: Colors.red) : Colors.lineColor
+        return(
+            <SafeAreaView style={{flex:1,}}>
+                <ScrollView style={{flex: 1}}>
+                    <Text style={{fontSize: 32, marginVertical: 20,
+                        marginHorizontal: 20, color: Colors.black,
+                        fontWeight: 'bold'
+                    }}>{'Sign up with your email.'}</Text>
 
-                <BaseTextInput
-                    containerStyle={{marginTop: 20}}
-                    keyboardType={'email-address'}
-                    title = {'Email#'}
-                    placeholder={'Enter your email'}
-                    onChangeText={(text) => {
-                        setEmail(text)
-                    }}
-                />
+                    <BaseTextInput
+                        containerStyle={{marginTop: 20}}
+                        keyboardType={'email-address'}
+                        title = {'Email#'}
+                        placeholder={'Enter your email'}
+                        onChangeText={(text) => {
+                            this.setState({email: text})
+                        }}
+                    />
 
-                <BaseTextInput
-                    containerStyle={{marginTop: 20}}
-                    title = {'User Name#'}
-                    placeholder={'Numbers and letters only...'}
-                    onChangeText={(text) => {
-                        setUserName(text)
-                    }}
-                />
+                    <BaseTextInput
+                        containerStyle={{marginTop: 20}}
+                        title = {'User Name#'}
+                        placeholder={'Numbers and letters only...'}
+                        onChangeText={(text) => {
+                            this.setState({userName: text})
+                        }}
+                    />
 
-                {renderCodeView()}
+                    {this.renderCodeView()}
 
-                <BaseTextInput
-                    lineStyle={{backgroundColor: lineColor}}
-                    containerStyle={{marginTop: 20}}
-                    title = {'Password#'}
-                    placeholder={'Enter your password'}
-                    onChangeText={(text) => {
-                        setPassword(text)
-                    }}
-                />
+                    <BaseTextInput
+                        lineStyle={{backgroundColor: lineColor}}
+                        containerStyle={{marginTop: 20}}
+                        title = {'Password#'}
+                        placeholder={'Enter your password'}
+                        onChangeText={(text) => {
+                            this.setState({password: text})
+                        }}
+                    />
 
-                <BaseTextInput
-                    lineStyle={{backgroundColor: lineColor}}
-                    containerStyle={{marginTop: 20}}
-                    title = {'Confirmed Password#'}
-                    placeholder={'Enter your confirmed password'}
-                    secureTextEntry={true}
-                    onChangeText={(text) => {
-                        setConfirmPassword(text)
-                    }}
-                />
+                    <BaseTextInput
+                        lineStyle={{backgroundColor: lineColor}}
+                        containerStyle={{marginTop: 20}}
+                        title = {'Confirmed Password#'}
+                        placeholder={'Enter your confirmed password'}
+                        secureTextEntry={true}
+                        onChangeText={(text) => {
+                            this.setState({confirmPassword: text})
+                        }}
+                    />
 
-                <BaseButton title={'Create Now'}
-                            style={{
-                                backgroundColor: Colors.blue,
-                            }}
-                            containerStyle={{
-                                marginTop: 20,
-                            }}
-                            didClick={() => {
-                                didClick()
-                            }
-                            }
-                />
-            </ScrollView>
+                    <BaseButton title={'Create Now'}
+                                style={{
+                                    backgroundColor: Colors.blue,
+                                }}
+                                containerStyle={{
+                                    marginTop: 20,
+                                }}
+                                didClick={() => {
+                                    this.didClick()
+                                }
+                                }
+                    />
+                </ScrollView>
 
-            {renderDismissButton()}
-        </SafeAreaView>
-    )
+                {this.renderDismissButton()}
+            </SafeAreaView>
+        )
+    }
 }

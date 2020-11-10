@@ -1,19 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import {View, SafeAreaView, TouchableOpacity, Text, TouchableWithoutFeedback, Image, TextInput} from 'react-native';
+import React from 'react';
+import {Image, SafeAreaView, Text, TouchableOpacity} from 'react-native';
 import {Colors} from '../../utils/styles';
 import BaseTextInput from '../baseComponents/BaseTextInput';
-import {Navigation} from 'react-native-navigation'
+import {Navigation} from 'react-native-navigation';
 import {PLATFORM} from '../../utils/Enums';
 
-export default function SignInViewController(props) {
-
-    const renderDismissButton = () => {
+export default class SignInViewController extends Comment{
+    renderDismissButton(){
         return (
             <TouchableOpacity onPress={() => {
                 if (PLATFORM.isIOS) {
-                    Navigation.dismissModal(props.componentId)
+                    Navigation.dismissModal(this.props.componentId)
                 }else {
-                    Navigation.pop(props.componentId)
+                    Navigation.pop(this.props.componentId)
                 }
             }} style={{
                 position: 'absolute',
@@ -27,32 +26,34 @@ export default function SignInViewController(props) {
         )
     }
 
-    return (
-        <SafeAreaView style={{flex: 1}}>
-            <Text style={{fontSize: 32, marginVertical: 20,
-                marginHorizontal: 20, color: Colors.black,
-                fontWeight: 'bold'
-            }}>{'Sign in with your email.'}</Text>
+    render() {
+        return (
+            <SafeAreaView style={{flex: 1}}>
+                <Text style={{fontSize: 32, marginVertical: 20,
+                    marginHorizontal: 20, color: Colors.black,
+                    fontWeight: 'bold'
+                }}>{'Sign in with your email.'}</Text>
 
-            <BaseTextInput
-                keyboardType={'email-address'}
-                title = {'Email#'}
-                placeholder={'Enter your email'}
-                onChangeText={(text) => {
+                <BaseTextInput
+                    keyboardType={'email-address'}
+                    title = {'Email#'}
+                    placeholder={'Enter your email'}
+                    onChangeText={(text) => {
 
-                }}
-            />
+                    }}
+                />
 
-            <BaseTextInput
-                style={{marginTop: 20}}
-                title = {'Password#'}
-                placeholder={'Enter your password'}
-                onChangeText={(text) => {
+                <BaseTextInput
+                    style={{marginTop: 20}}
+                    title = {'Password#'}
+                    placeholder={'Enter your password'}
+                    onChangeText={(text) => {
 
-                }}
-            />
+                    }}
+                />
 
-            {renderDismissButton()}
-        </SafeAreaView>
-    )
+                {this.renderDismissButton()}
+            </SafeAreaView>
+        )
+    }
 }
