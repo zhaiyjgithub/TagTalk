@@ -4,8 +4,15 @@ import {Colors} from '../../utils/styles';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import BaseButton from '../baseComponents/BaseButton';
+import LoadingSpinner from '../baseComponents/LoadingSpinner';
 
 export default class GuideViewController extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+        }
+    }
+
     didClick(type) {
         if (type === ActionType.create) {
             this.pushToSignUp()
@@ -113,7 +120,6 @@ export default class GuideViewController extends Component{
                                        }
                     />
                 })}
-
             </SafeAreaView>
         )
     }

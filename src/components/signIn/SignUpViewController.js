@@ -8,6 +8,7 @@ import BaseButton from '../baseComponents/BaseButton';
 import {Utils} from '../../utils/utils';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
+import LoadingSpinner from '../baseComponents/LoadingSpinner';
 
 export default class SignUpViewController extends Component {
     constructor(props) {
@@ -17,31 +18,35 @@ export default class SignUpViewController extends Component {
             userName: '',
             confirmPassword: '',
             email: '',
-            pin: ''
+            pin: '',
+            isShowSpinner: false
         }
     }
 
     requestPin() {
         const {email} = this.state
         if (!Utils.VerifyEmail(email)) {
-            Alert('Email is incorrect!')
+            alert('Email is incorrect!')
             return
         }
         const param = {
             Email: email
         }
 
+        this.showSpinner()
         HTTP.post(API_User.SendSignUpPin, param).then((response) => {
+            this.hideSpinner()
             Utils.Log(response)
         }).catch((err) => {
-            Utils.Log(err)
+            this.hideSpinner()
+            alert(err)
         })
     }
 
     didClick() {
         const {email, userName, password, confirmPassword, pin} = this.state
         if (!Utils.VerifyEmail(email)) {
-            Alert('Email is incorrect!')
+            alert('Email is incorrect!')
             return
         }
 
@@ -79,10 +84,13 @@ export default class SignUpViewController extends Component {
             Pin: pin
         }
 
+        this.showSpinner()
         HTTP.post(API_User.RegisterNewDoctor, param).then((response) => {
+            this.hideSpinner()
             Utils.Log(JSON.stringify(response))
         }).catch((err) => {
-            Utils.Log(err)
+            this.hideSpinner()
+            alert(err)
         })
      }
 
@@ -134,8 +142,16 @@ export default class SignUpViewController extends Component {
         )
     }
 
+    showSpinner() {
+        this.setState({isShowSpinner: true})
+    }
+
+    hideSpinner() {
+        this.setState({isShowSpinner: false})
+    }
+
     render() {
-        const {confirmPassword, password} = this.state
+        const {confirmPassword, password, isShowSpinner} = this.state
         let isEqualPwd = confirmPassword === password
         let lineColor= confirmPassword.length ? (isEqualPwd ? Colors.green: Colors.red) : Colors.lineColor
         return(
@@ -203,6 +219,8 @@ export default class SignUpViewController extends Component {
                 </ScrollView>
 
                 {this.renderDismissButton()}
+
+                <LoadingSpinner visible={isShowSpinner}/>
             </SafeAreaView>
         )
     }
