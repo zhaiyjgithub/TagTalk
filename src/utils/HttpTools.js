@@ -2,6 +2,7 @@
  * Created by zack on 2018/3/14.
  */
 import {BaseUrl} from './API'
+import {Utils} from './utils';
 // import {//LoginTools } from './UserTools';
 
 const parseJSON = (response) => {
@@ -26,8 +27,8 @@ const checkStatus = (response) => {
 
 const  request = (url, options) => {
 	const requestUrl = `${BaseUrl}${url}`;
-	// DLogger(requestUrl + '\n')
-	// DLogger(JSON.stringify(options.body) + '\n')
+	Utils.Log(requestUrl + '\n')
+	Utils.Log(JSON.stringify(options.body) + '\n')
 
 	let token = (global.UserInfo.Token ? global.UserInfo.Token : '')
 	return fetch(requestUrl, Object.assign({}, {

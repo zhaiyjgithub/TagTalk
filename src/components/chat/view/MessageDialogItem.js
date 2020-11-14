@@ -19,8 +19,8 @@ export default class MessageDialogItem extends Component{
             <TouchableOpacity onPress={() => {
                 const {didSelectedItem} = this.props
                 didSelectedItem && didSelectedItem()
-            }} style={{marginHorizontal: 20, paddingBottom: 20}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            }} style={{marginHorizontal: 20, marginTop: 20,}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, paddingBottom: 10,}}>
                     <Image style={{width: 66, height: 66, borderRadius: 33, overflow: 'hidden'}} source={require('../../../source/image/test/Group7.png')}/>
 
                     <View style={{justifyContent: 'center', marginLeft: 13, flex: 1}}>
@@ -30,6 +30,8 @@ export default class MessageDialogItem extends Component{
                         </View>
                         <Text numberOfLines={1} style={{fontFamily: 'Helvetica', fontSize: 14, color: Colors.gray, marginTop: 8}}>{'Sounds cool'}</Text>
                     </View>
+
+                    <View style={{position: 'absolute', left: 0, right: 0, height: 1, bottom: 0, backgroundColor: Colors.lineColor}}/>
                 </View>
             </TouchableOpacity>
         )

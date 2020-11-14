@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Alert, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {PLATFORM} from '../../utils/Enums';
+import {PLATFORM, ResponseCode} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import BaseTextInput from '../baseComponents/BaseTextInput';
 import {Colors} from '../../utils/styles';
@@ -9,6 +9,7 @@ import {Utils} from '../../utils/utils';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
 import LoadingSpinner from '../baseComponents/LoadingSpinner';
+import ToastMsg from '../../utils/ToastMsg';
 
 export default class SignUpViewController extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ export default class SignUpViewController extends Component {
     requestPin() {
         const {email} = this.state
         if (!Utils.VerifyEmail(email)) {
-            alert('Email is incorrect!')
+            ToastMsg.show('Email is incorrect!')
             return
         }
         const param = {
@@ -36,44 +37,50 @@ export default class SignUpViewController extends Component {
         this.showSpinner()
         HTTP.post(API_User.SendSignUpPin, param).then((response) => {
             this.hideSpinner()
-            Utils.Log(response)
+            if (response.code === ResponseCode.ok) {
+                ToastMsg.show("Captcha has been sent to your email.")
+            }else if (response.code === ResponseCode.isExist) {
+                ToastMsg.show('This is email has been registered before.')
+            } else {
+                ToastMsg.show('Send failed.')
+            }
         }).catch((err) => {
             this.hideSpinner()
-            alert(err)
+            ToastMsg.show('Request failed')
         })
     }
 
     didClick() {
         const {email, userName, password, confirmPassword, pin} = this.state
         if (!Utils.VerifyEmail(email)) {
-            alert('Email is incorrect!')
+            ToastMsg.show('Email is incorrect!')
             return
         }
 
         // 只能输入由数字和26个英文字母组成的字符串："^[A-Za-z0-9]+$"。
         const usernamePattern = /^[A-Za-z0-9]+$/
         if (!usernamePattern.test(userName)) {
-            alert('User name can only consist of a string of numbers and 26 letters!')
+            ToastMsg.show('User name can only consist of a string of numbers and 26 letters!')
             return
         }
 
         if (!pin.length) {
-            alert('Captcha can\'t be empty!')
+            ToastMsg.show('Captcha can\'t be empty!')
             return
         }
 
         if (!password.length) {
-            alert('Password can\'t be empty!')
+            ToastMsg.show('Password can\'t be empty!')
             return
         }
 
         if (!confirmPassword.length) {
-            alert('ConfirmPassword can\'t be empty!')
+            ToastMsg.show('ConfirmPassword can\'t be empty!')
             return
         }
 
         if (password !== confirmPassword) {
-            alert('The passwords don\'t match.')
+            ToastMsg.show('The passwords don\'t match.')
             return;
         }
 
@@ -87,10 +94,31 @@ export default class SignUpViewController extends Component {
         this.showSpinner()
         HTTP.post(API_User.RegisterNewDoctor, param).then((response) => {
             this.hideSpinner()
+            if (response.code === ResponseCode.ok) {
+                Alert.alert(
+                    'Register successfully.',
+                    'You can sign in now. ',
+                    [
+                        {text: 'Sign In', onPress: () => {
+                                const {registerCb} = this.props
+                                registerCb && registerCb(email)
+
+                                if (PLATFORM.isIOS) {
+                                    Navigation.dismissModal(this.props.componentId)
+                                }else {
+                                    Navigation.pop(this.props.componentId)
+                                }
+                            }},
+                    ],
+                    { cancelable: false }
+                )
+            }else {
+                ToastMsg.show('Sign in failed!')
+            }
             Utils.Log(JSON.stringify(response))
         }).catch((err) => {
             this.hideSpinner()
-            alert(err)
+            ToastMsg.show(err)
         })
      }
 

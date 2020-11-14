@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/art": "^1.2.0",
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/audio-toolkit": "^2.0.3",
     "@react-native-community/slider": "^3.0.3",
     "react": "16.13.1",
@@ -23,7 +24,9 @@
     "react-native-mov-to-mp4": "^0.2.2",
     "react-native-navigation": "^7.1.0",
     "react-native-reanimated": "^2.0.0-alpha.8",
+    "react-native-smart-tip": "^2.2.1",
     "react-native-spinkit": "^1.5.1",
+    "react-native-storage": "^1.0.1",
     "react-native-video": "^5.1.0-alpha8"
   },
   "devDependencies": {

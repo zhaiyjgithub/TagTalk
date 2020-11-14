@@ -15,6 +15,16 @@ const EventName = {
 	}
 }
 
+const CacheKey = {
+	userInfo: 'userInfo'
+}
+
+const ResponseCode = {
+	ok: 0,
+	fail: 1,
+	isExist: 4
+}
+
 const MessageType = {
 	Text: 0,
 	Image: 1,
@@ -27,5 +37,7 @@ const MessageType = {
 export {
 	PLATFORM,
 	EventName,
-	MessageType
+	MessageType,
+	CacheKey,
+	ResponseCode
 }

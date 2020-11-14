@@ -1,28 +1,27 @@
-const CacheDB = {
-	load: (key, response, error) => {
-		STORAGE.load({
+
+const CacheTool = {
+	load: (key, cb, error) => {
+		global.storage.load({
 			key: key,
 			autoSync: true,
 			syncInBackground: true,
-		}).then(ret => {
-			response && response(ret)
+		}).then(response => {
+			cb && cb(response)
 		}).catch((err) => {
 			error && error(err)
 		})
 	},
 	save:(key, obj) => {
-		STORAGE.save({
+		global.storage.save({
 			key: key,
 			data: obj
 		})
 	},
 	remove: (key) => {
-		STORAGE.remove({
+		global.storage.remove({
 			key: key
 		})
 	}
 }
 
-export {
-	CacheDB
-}
+export default CacheTool

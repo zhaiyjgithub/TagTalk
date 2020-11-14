@@ -1,5 +1,6 @@
 
 const BaseUrl = "http://localhost:8090/"
+const WebsocketBaseUrl = "ws://localhost:8090/"
 
 const API_User = {
 	SendSignUpPin: 'User/SendSignUpPin',
@@ -9,5 +10,6 @@ const API_User = {
 
 export {
 	BaseUrl,
+	WebsocketBaseUrl,
 	API_User
 }

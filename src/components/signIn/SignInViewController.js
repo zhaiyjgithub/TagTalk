@@ -3,18 +3,22 @@ import {Image, SafeAreaView, Text, TouchableOpacity} from 'react-native';
 import {Colors} from '../../utils/styles';
 import BaseTextInput from '../baseComponents/BaseTextInput';
 import {Navigation} from 'react-native-navigation';
-import {PLATFORM} from '../../utils/Enums';
+import {CacheKey, PLATFORM, ResponseCode} from '../../utils/Enums';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
 import {Utils} from '../../utils/utils';
 import BaseButton from '../baseComponents/BaseButton';
+import ToastMsg from '../../utils/ToastMsg';
+import CacheTool from '../../utils/CacheTool';
+import LoadingSpinner from '../baseComponents/LoadingSpinner';
 
 export default class SignInViewController extends Component{
     constructor(props) {
         super(props);
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            isShowSpinner: false
         }
     }
 
@@ -42,12 +46,12 @@ export default class SignInViewController extends Component{
         const {email, password} = this.state
 
         if (!email.length) {
-            alert('Email can\'t be empty!')
+            ToastMsg.show('Email can\'t be empty!')
             return
         }
 
         if (!password.length) {
-            alert('Password can\'t be empty!')
+            ToastMsg.show('Password can\'t be empty!')
             return
         }
 
@@ -56,14 +60,31 @@ export default class SignInViewController extends Component{
             Password: password
         }
 
+        this.showSpinner()
         HTTP.post(API_User.Login, param).then((response) => {
-            Utils.Log(JSON.stringify(response))
+            this.hideSpinner()
+            if (response.code === ResponseCode.ok) {
+                global.UserInfo = response.data
+                CacheTool.save(CacheKey.userInfo, JSON.stringify(response.data))
+            }else {
+                ToastMsg.show('Sign in Failed.')
+            }
         }).catch((err) => {
-            Utils.Log(err)
+            this.hideSpinner()
+            ToastMsg.show('Request failed.')
         })
     }
 
+    showSpinner() {
+        this.setState({isShowSpinner: true})
+    }
+
+    hideSpinner() {
+        this.setState({isShowSpinner: false})
+    }
+
     render() {
+        const {isShowSpinner} = this.state
         return (
             <SafeAreaView style={{flex: 1}}>
                 <Text style={{fontSize: 32, marginVertical: 20,
@@ -103,6 +124,8 @@ export default class SignInViewController extends Component{
                 />
 
                 {this.renderDismissButton()}
+
+                <LoadingSpinner visible={isShowSpinner}/>
             </SafeAreaView>
         )
     }

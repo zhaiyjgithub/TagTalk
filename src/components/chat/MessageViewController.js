@@ -19,6 +19,8 @@ import MessageDialogItem from './view/MessageDialogItem';
 import ContactItem from '../contacts/view/contactItem';
 import {BaseNavigatorOptions} from '../../utils/Navigator';
 import RNFS from "react-native-fs"
+import {BaseUrl, WebsocketBaseUrl} from '../../utils/API';
+import {Utils} from '../../utils/utils';
 
 export default class MessageViewController extends Component{
 	constructor(props) {
@@ -39,6 +41,10 @@ export default class MessageViewController extends Component{
 		}).catch(() => {
 
 		})
+	}
+
+	getUserInfo() {
+		return global.UserInfo
 	}
 
 	createFile() {
@@ -110,7 +116,9 @@ export default class MessageViewController extends Component{
 	}
 
 	initWebsocket() {
-		let ws = new WebSocket("ws://localhost:8090/ws?uid=3378")
+		const {Email} = this.getUserInfo()
+		let url = (WebsocketBaseUrl + "ws?uid=" + Email)
+		let ws = new WebSocket(url)
 		this.ws = ws
 
 		ws.onopen = () => {

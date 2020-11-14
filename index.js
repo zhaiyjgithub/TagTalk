@@ -3,227 +3,41 @@
  */
 
 import {Navigation} from 'react-native-navigation';
-import ChatViewController from './src/components/chat/ChatViewController';
-import MessageViewController from './src/components/chat/MessageViewController';
 import {Colors, FontFamily} from './src/utils/styles';
-import RecordVideoViewController from './src/components/chat/RecordVideoViewController';
-import ContactsViewController from './src/components/contacts/ContactsViewController';
-import ProfileViewController from './src/components/profile/ProfileViewController';
-import MatchViewController from './src/components/match/MatchViewController';
-import UniversalViewController from './src/components/universal/UniversalViewController';
-import VideoPreview from './src/components/chat/VideoPreview';
-import TestViewController from './src/components/baseComponents/TestViewController';
-import GuideViewController from './src/components/signIn/GuideViewController'
-import SignInViewController from './src/components/signIn/SignInViewController'
-import SignUpViewController from './src/components/signIn/SignUpViewController'
+import Storage from 'react-native-storage'
+import AsyncStorage from '@react-native-community/async-storage';
+import {Router} from './src/route/routerMap';
+import {CacheKey} from './src/utils/Enums';
+import CacheTool from './src/utils/CacheTool';
 
-Navigation.registerComponent('MessageViewController', () => MessageViewController);
-Navigation.registerComponent('ChatViewController', () => ChatViewController);
-Navigation.registerComponent('RecordVideoViewController', () => RecordVideoViewController);
-Navigation.registerComponent('ContactsViewController', () => ContactsViewController);
-Navigation.registerComponent('ProfileViewController', () => ProfileViewController);
-Navigation.registerComponent('MatchViewController', () => MatchViewController);
-Navigation.registerComponent('UniversalViewController', () => UniversalViewController);
-Navigation.registerComponent('VideoPreview', () => VideoPreview);
-Navigation.registerComponent('TestViewController', () => TestViewController);
-Navigation.registerComponent('GuideViewController', () => GuideViewController);
+Router.run()
 
-Navigation.registerComponent('SignInViewController', () => SignInViewController);
-Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
+const storage = new Storage({
+  // 最大容量，默认值1000条数据循环存储
+  size: 1000,
 
+  // 存储引擎：对于RN使用AsyncStorage，对于web使用window.localStorage
+  // 如果不指定则数据只会保存在内存中，重启后即丢失
+  storageBackend: AsyncStorage,
+
+  // 数据过期时间，默认一整天（1000 * 3600 * 24 毫秒），设为null则永不过期
+  defaultExpires: null,
+
+  // 读写时在内存中缓存数据。默认启用。
+  enableCache: true,
+})
+global.storage = storage
 global.UserInfo = {}
 
 Navigation.events().registerAppLaunchedListener(() => {
-  Navigation.setRoot({
-    root: {
-      stack: {
-        children: [
-          {
-            component: {
-              name: 'GuideViewController'
-            }
-          }
-        ]
+    CacheTool.load(CacheKey.userInfo, (response) => {
+      if (response && JSON.parse(response)) {
+        global.UserInfo = JSON.parse(response)
+        Router.showHomePage()
+      }else {
+        Router.showGuide()
       }
-    }
-  });
-
-  return
-
-  Navigation.setDefaultOptions({
-    topBar: {
-      drawBehind: false,
-      leftButtonColor: Colors.black,
-      rightButtonColor: Colors.black,
-      title: {
-        color: Colors.black,
-        fontSize: 24,
-        fontFamily: 'Helvetica'
-      },
-      backButton: {
-        color: Colors.black,
-        showTitle: false
-      }
-    },
-  });
-
-  MessageViewController.options = {
-    topBar: {
-      title: {
-        text: 'Chats'
-      }
-    }
-  }
-
-  ContactsViewController.options = {
-    topBar: {
-      title: {
-        text: 'Contacts'
-      }
-    }
-  }
-
-  MatchViewController.options = {
-    topBar: {
-      title: {
-        text: 'Match'
-      }
-    }
-  }
-
-  UniversalViewController.options = {
-    topBar: {
-      title: {
-        text: 'Universal'
-      }
-    }
-  }
-
-  ProfileViewController.options = {
-    topBar: {
-      title: {
-        text: 'Profile'
-      }
-    }
-  }
-
-  Navigation.setRoot({
-    root: {
-      bottomTabs: {
-        children: [
-          {
-            stack: {
-              children: [{
-                component: {
-                  name: 'MessageViewController',
-                  passProps: {
-                    text: 'This is tab 1'
-                  }
-                }
-              }],
-              options: {
-                bottomTab: {
-                  text: 'Chats',
-                  icon: require('./src/source/image/tab/chats.png'),
-                  testID: 'finder',
-                  fontFamily: FontFamily.helvetica,
-                  selectedTextColor: Colors.black,
-                  selectedIconColor: Colors.black,
-                }
-              }
-            }
-          },
-          {
-            stack: {
-              children: [{
-                component: {
-                  name: 'ContactsViewController',
-                  passProps: {
-                    text: 'This is tab 1'
-                  }
-                }
-              }],
-              options: {
-                bottomTab: {
-                  text: 'Contacts',
-                  icon: require('./src/source/image/tab/contacts.png'),
-                  testID: 'Universal',
-                  fontFamily: FontFamily.helvetica,
-                  selectedTextColor: Colors.black,
-                  selectedIconColor: Colors.black,
-                },
-              }
-            }
-          },
-          {
-            stack: {
-              children: [{
-                component: {
-                  name: 'MatchViewController',
-                  passProps: {
-                    text: 'This is tab 1'
-                  }
-                }
-              }],
-              options: {
-                bottomTab: {
-                  text: 'Match',
-                  icon: require('./src/source/image/tab/match.png'),
-                  testID: 'Universal',
-                  fontFamily: FontFamily.helvetica,
-                  selectedTextColor: Colors.black,
-                  selectedIconColor: Colors.black,
-                },
-              }
-            }
-          },
-          {
-            stack: {
-              children: [{
-                component: {
-                  name: 'UniversalViewController',
-                  passProps: {
-                    text: 'This is tab 1'
-                  }
-                }
-              }],
-              options: {
-                bottomTab: {
-                  text: 'Universal',
-                  icon: require('./src/source/image/tab/universal.png'),
-                  testID: 'Universal',
-                  fontFamily: FontFamily.helvetica,
-                  selectedTextColor: Colors.black,
-                  selectedIconColor: Colors.black,
-                },
-              }
-            }
-          },
-          {
-            stack: {
-              children: [{
-                component: {
-                  name: 'ProfileViewController',
-                  passProps: {
-                    text: 'This is tab 1'
-                  }
-                }
-              }],
-              options: {
-                bottomTab: {
-                  text: 'Profile',
-                  icon: require('./src/source/image/tab/profile.png'),
-                  testID: 'Universal',
-                  fontFamily: FontFamily.helvetica,
-                  selectedTextColor: Colors.black,
-                  selectedIconColor: Colors.black,
-                },
-              }
-            }
-          }
-        ]
-      },
-
-    }
-  })
+    }, () => {
+      Router.showGuide()
+    })
 });
