@@ -11,6 +11,7 @@ import BaseButton from '../baseComponents/BaseButton';
 import ToastMsg from '../../utils/ToastMsg';
 import CacheTool from '../../utils/CacheTool';
 import LoadingSpinner from '../baseComponents/LoadingSpinner';
+import {Router} from '../../route/routerMap';
 
 export default class SignInViewController extends Component{
     constructor(props) {
@@ -66,6 +67,8 @@ export default class SignInViewController extends Component{
             if (response.code === ResponseCode.ok) {
                 global.UserInfo = response.data
                 CacheTool.save(CacheKey.userInfo, JSON.stringify(response.data))
+
+                Router.showHomePage()
             }else {
                 ToastMsg.show('Sign in Failed.')
             }

@@ -22,7 +22,12 @@ export default class ContactsViewController extends Component{
 
         }
 
-
+        let info = {
+            email: '',
+            name: '',
+            chatId: '',
+            headerIcon: '',
+        }
     }
 
     componentDidMount() {

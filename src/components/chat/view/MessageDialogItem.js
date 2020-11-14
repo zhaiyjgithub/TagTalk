@@ -19,7 +19,7 @@ export default class MessageDialogItem extends Component{
             <TouchableOpacity onPress={() => {
                 const {didSelectedItem} = this.props
                 didSelectedItem && didSelectedItem()
-            }} style={{marginHorizontal: 20, marginTop: 20,}}>
+            }} style={{marginHorizontal: 20, marginBottom: 20,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, paddingBottom: 10,}}>
                     <Image style={{width: 66, height: 66, borderRadius: 33, overflow: 'hidden'}} source={require('../../../source/image/test/Group7.png')}/>
 
