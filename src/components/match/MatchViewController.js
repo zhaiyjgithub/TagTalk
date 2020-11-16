@@ -63,6 +63,10 @@ export default class MatchViewController extends Component{
 
         if (item.likes.has(ChatID)) {
             //匹配成功
+            //创建本地数据库，记录聊天列表
+            //进入聊天界面
+            // 创建双方的好友关系
+            //发送消息给对方。如果对方收到，就收到websocket 消息。本地处理如上。否则，收到推送。
         }
     }
 
