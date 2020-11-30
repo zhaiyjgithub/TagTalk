@@ -10,6 +10,7 @@ import GuideViewController from '../components/signIn/GuideViewController';
 import SignInViewController from '../components/signIn/SignInViewController';
 import SignUpViewController from '../components/signIn/SignUpViewController';
 import {Colors, FontFamily} from '../utils/styles';
+import DBTestController from '../test/DBTestController';
 
 const Router = {
 	run() {
@@ -24,6 +25,7 @@ const Router = {
 		Navigation.registerComponent('GuideViewController', () => GuideViewController);
 		Navigation.registerComponent('SignInViewController', () => SignInViewController);
 		Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
+		Navigation.registerComponent('DBTestController', () => DBTestController);
 	},
 	showGuide() {
 		Navigation.setRoot({
@@ -32,7 +34,7 @@ const Router = {
 					children: [
 						{
 							component: {
-								name: 'GuideViewController'
+								name: 'DBTestController'//'GuideViewController'
 							}
 						}
 					]

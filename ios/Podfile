@@ -5,7 +5,8 @@ platform :ios, '11.0'
 
 target 'TagTalk' do
   config = use_native_modules!
-
+  
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
   use_react_native!(:path => config["reactNativePath"])
 
   target 'TagTalkTests' do
