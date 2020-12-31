@@ -15,8 +15,8 @@ import {
 } from 'react-native';
 import {Database, Q} from '@nozbe/watermelondb'
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
-import {mySchema} from '../model/schema';
-import Post from '../model/Post';
+import {mySchema} from '../database/schema';
+import Post from '../database/Post';
 
 const adapter = new SQLiteAdapter({
 	dbName: 'WatermelonDemo',

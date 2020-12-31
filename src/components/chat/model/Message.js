@@ -20,6 +20,8 @@
 // }
 
 
+import {ChannelType, MessageType} from '../../../utils/Enums';
+
 class User {
 	constructor() {
 		this.id = 0
@@ -31,20 +33,17 @@ class User {
 class Message {
 	constructor() {
 		this.id = ''
-		this.roomId = ''
 
 		this.nickName = ''
 		this.avatar = ''
-		this.user = null
+		this.user = {}
 		this.memtions = []
 
-		this.type = ''
-		this.text = ''
-		this.imageURL = ''
-		this.audioURL = ''
-		this.videoURL = ''
-		this.webviewURL = ''
-		this.mapview = {}
+		this.channelType = ChannelType.single
+		this.channelId =  0
+
+		this.messageType = MessageType.Text
+		this.message = ''
 
 		this.createdAt = null
 		this.updatedAt = null

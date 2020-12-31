@@ -62,7 +62,7 @@ export default class MatchViewController extends Component{
         let item = dataSource[0]
 
         if (item.likes.has(ChatID)) {
-            //匹配成功
+            //匹配成功l
             //创建本地数据库，记录聊天列表
             //进入聊天界面
             // 创建双方的好友关系

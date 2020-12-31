@@ -34,10 +34,18 @@ const MessageType = {
 	MapView: 5,
 }
 
+const ChannelType =  {
+	single  : 1,
+	group  : 2,
+	broadcast  : 3
+}
+
+
 export {
 	PLATFORM,
 	EventName,
 	MessageType,
 	CacheKey,
-	ResponseCode
+	ResponseCode,
+	ChannelType
 }

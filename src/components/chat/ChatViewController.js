@@ -11,7 +11,7 @@ import {
 	Image,
 	Animated,
 	Keyboard,
-	TouchableWithoutFeedback,
+	TouchableWithoutFeedback, PermissionsAndroid,
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
@@ -348,9 +348,9 @@ export default class ChatViewController extends Component {
 
 	appendNewTextMessage(text) {
 		let message = new Message()
-		message.type = MessageType.Text
+		message.messageType = MessageType.Text
 		message.user = this.getUser()
-		message.text = text
+		message.message = text
 		message.createdAt = this.getDateTimeISO()
 		message.updatedAt = message.createdAt
 
@@ -456,9 +456,9 @@ export default class ChatViewController extends Component {
 
 	appendNewImageMessage(type, url) {
 		let message = new Message()
-		message.type = type
+		message.messageType = type
 		message.user = this.getUser()
-		message.imageURL = url
+		message.message = url
 		message.createdAt = this.getDateTimeISO()
 		message.updatedAt = message.createdAt
 
