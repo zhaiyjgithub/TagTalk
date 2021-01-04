@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import {Alert, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {PLATFORM, ResponseCode} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
-import BaseTextInput from '../baseComponents/BaseTextInput';
+import BaseTextInput from '../commonComponents/BaseTextInput';
 import {Colors} from '../../utils/styles';
-import BaseButton from '../baseComponents/BaseButton';
+import BaseButton from '../commonComponents/BaseButton';
 import {Utils} from '../../utils/utils';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
-import LoadingSpinner from '../baseComponents/LoadingSpinner';
+import LoadingSpinner from '../commonComponents/LoadingSpinner';
 import ToastMsg from '../../utils/ToastMsg';
 
 export default class SignUpViewController extends Component {

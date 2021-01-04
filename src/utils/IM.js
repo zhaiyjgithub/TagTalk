@@ -4,8 +4,8 @@ import {DeviceEventEmitter} from 'react-native';
 
 const IM = {
 	ws: null,
-	initWebsocket(uid) {
-		const url = (WebsocketBaseUrl + "ws?uid=" + uid)
+	initWebsocket(chatId) {
+		const url = (WebsocketBaseUrl + "ws?chatID=" + chatId)
 		let ws = new WebSocket(url)
 		this.ws = ws
 		ws.onopen = () => {

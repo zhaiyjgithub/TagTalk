@@ -22,40 +22,54 @@ import RNFS from "react-native-fs"
 import {BaseUrl, WebsocketBaseUrl} from '../../utils/API';
 import {Utils} from '../../utils/utils';
 import {IM} from '../../utils/IM';
+import MessageService from './service/MessageService';
 
 export default class MessageViewController extends Component{
 	constructor(props) {
 		super(props)
 		this.state = {
 			msg: '',
+			dialogDataSource: []
 		}
 
 		this.ws = null
+		this.messageService = new MessageService()
+
+		this.addEventListener()
 	}
 
 	componentDidMount() {
-		const {Email } = this.getUserInfo()
-		IM.initWebsocket(Email)
+		this.login()
+	}
+
+	addEventListener() {
+		DeviceEventEmitter.addListener(EventName.websocket.onOpen, () => {
+			this.requestDialog()
+		})
+	}
+
+	login() {
+		const {ChatID} = this.getUserInfo()
+		IM.initWebsocket(ChatID)
+	}
+
+	requestDialog() {
+		const {ChatID} = this.getUserInfo()
+		this.messageService.requestDialogMessageList(ChatID, (data) => {
+			this.setState({dialogDataSource: data})
+		})
 	}
 
 	getUserInfo() {
 		return global.UserInfo
 	}
 
-	pushToChatRoom() {
-		// Navigation.push(this.props.componentId, {
-		// 	component: {
-		// 		name: 'ChatViewController',
-		// 		passProps: {
-		// 			uid: 98
-		// 		},
-		// 		options: BaseNavigatorOptions('Chat')
-		// 	}
-		// });
 
+
+	pushToChatRoom() {
 		Navigation.push(this.props.componentId, {
 			component: {
-				name: 'DBTestController',
+				name: 'ChatViewController',
 				passProps: {
 					uid: 98
 				},

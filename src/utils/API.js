@@ -8,8 +8,13 @@ const API_User = {
 	Login: 'User/Login'
 }
 
+const API_Contacts = {
+	GetContactsByChatID: 'Contacts/GetContactsByChatID'
+}
+
 export {
 	BaseUrl,
 	WebsocketBaseUrl,
-	API_User
+	API_User,
+	API_Contacts
 }

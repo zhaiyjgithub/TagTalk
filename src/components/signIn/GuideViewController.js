@@ -3,8 +3,8 @@ import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../utils/styles';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
-import BaseButton from '../baseComponents/BaseButton';
-import LoadingSpinner from '../baseComponents/LoadingSpinner';
+import BaseButton from '../commonComponents/BaseButton';
+import LoadingSpinner from '../commonComponents/LoadingSpinner';
 
 export default class GuideViewController extends Component{
     constructor(props) {

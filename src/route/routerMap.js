@@ -34,7 +34,7 @@ const Router = {
 					children: [
 						{
 							component: {
-								name: 'DBTestController'//'GuideViewController'
+								name: 'GuideViewController'
 							}
 						}
 					]

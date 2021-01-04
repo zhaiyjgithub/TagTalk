@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity} from 'react-native';
 import {Colors} from '../../utils/styles';
-import BaseTextInput from '../baseComponents/BaseTextInput';
+import BaseTextInput from '../commonComponents/BaseTextInput';
 import {Navigation} from 'react-native-navigation';
 import {CacheKey, PLATFORM, ResponseCode} from '../../utils/Enums';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
 import {Utils} from '../../utils/utils';
-import BaseButton from '../baseComponents/BaseButton';
+import BaseButton from '../commonComponents/BaseButton';
 import ToastMsg from '../../utils/ToastMsg';
 import CacheTool from '../../utils/CacheTool';
-import LoadingSpinner from '../baseComponents/LoadingSpinner';
+import LoadingSpinner from '../commonComponents/LoadingSpinner';
 import {Router} from '../../route/routerMap';
 
 export default class SignInViewController extends Component{

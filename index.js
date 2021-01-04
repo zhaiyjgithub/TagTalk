@@ -31,8 +31,9 @@ global.UserInfo = {}
 
 Navigation.events().registerAppLaunchedListener(() => {
     CacheTool.load(CacheKey.userInfo, (response) => {
-      if (response && JSON.parse(response)) {
-        global.UserInfo = JSON.parse(response)
+        let userInfo = JSON.parse(response)
+      if (response && userInfo) {
+        global.UserInfo = userInfo
         Router.showHomePage()
       }else {
         Router.showGuide()
