@@ -12,6 +12,7 @@ import {Colors, FontFamily} from '../../../utils/styles';
 import FastImage from 'react-native-fast-image'
 import {ScreenDimensions} from '../../../utils/Dimemsions';
 import {MessageType} from '../../../utils/Enums';
+import {Message} from '../model/Message';
 
 export default class ChatItem extends Component{
 	constructor(props){
@@ -22,13 +23,11 @@ export default class ChatItem extends Component{
 		}
 	}
 
-	shouldComponentUpdate(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean {
-		return this.state.message.text !== nextProps.message.text ||
-			this.state.message.imageURL !== nextProps.message.imageURL ||
-			this.state.message.audioURL !== nextProps.message.audioURL ||
-			this.state.message.videoURL !== nextProps.message.videoURL ||
-			this.state.message.isPeer !== nextProps.message.isPeer
-	}
+	// shouldComponentUpdate(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean {
+	// 	return this.state.message.text !== nextProps.message.text ||
+	// 		this.state.message.message !== nextProps.message.message ||
+	// 		this.state.isPeer !== nextProps.isPeer
+	// }
 
 	renderUserIcon(isPeer) {
 		return(
@@ -39,7 +38,7 @@ export default class ChatItem extends Component{
 		)
 	}
 
-	renderTextMessage(isPeer, message) {
+	renderTextMessage(isPeer, message: Message) {
 		return (
 			<View style={[{maxWidth: '65%',
 				backgroundColor: isPeer ? Colors.lightBlue : Colors.blue,
@@ -50,29 +49,29 @@ export default class ChatItem extends Component{
 					fontSize: 16,
 					color: isPeer ? Colors.black : Colors.white,
 					fontFamily: FontFamily.helvetica
-				}}>{message.text}</Text>
+				}}>{message.message}</Text>
 			</View>
 
 		)
 	}
 
-	renderImageMessage(isPeer, message) {
+	renderImageMessage(isPeer, message: Message) {
 		let size = (ScreenDimensions.width - 100) *0.65
-		const {imageURL} = message
+		const url = message.message
 		const {previewImageAction} = this.props
 		return (
 			<TouchableOpacity onPress={() => {
-				previewImageAction && previewImageAction(imageURL)
+				previewImageAction && previewImageAction(url)
 			}} style={[{
 				backgroundColor: isPeer ? Colors.lightBlue : Colors.blue,
 				minHeight: 40, minWidth: 40,
 				marginHorizontal: 8,
 			}, isPeer ? styles.peerTextContainer : styles.myTextContainer, {backgroundColor: Colors.white}]}>
-				{imageURL && imageURL.startsWith('http') ? (
+				{url && url.startsWith('http') ? (
 					<FastImage
 						style={{ width: size, height: size, }}
 						source={{
-							uri:  imageURL,
+							uri:  url,
 							priority: FastImage.priority.normal,
 						}}
 						resizeMode={FastImage.resizeMode.contain}
@@ -81,7 +80,7 @@ export default class ChatItem extends Component{
 					<Image
 						style={{ width: size, height: size, }}
 						source={{
-							uri:  imageURL,
+							uri:  url,
 						}}
 						resizeMode={'contain'}
 					/>
@@ -91,8 +90,8 @@ export default class ChatItem extends Component{
 		)
 	}
 
-	renderMediaContent(isPeer, message) {
-		switch (message.type) {
+	renderMediaContent(isPeer, message: Message) {
+		switch (message.messageType) {
 			case MessageType.Text:
 				return this.renderTextMessage(isPeer, message)
 			case MessageType.Image:

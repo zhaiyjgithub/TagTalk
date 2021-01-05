@@ -15,17 +15,18 @@ import {
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
-import {MessageType, PLATFORM} from '../../utils/Enums';
+import {ChannelType, MessageType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import {BaseNavigatorOptions} from '../../utils/Navigator';
 import { Player, Recorder, MediaStates } from '@react-native-community/audio-toolkit';
 import RNFS from 'react-native-fs'
+import ChatService from './service/ChatService';
 
 export default class ChatViewController extends Component {
 	static defaultProps = {
-		uid: 0
+		friendInfo: {}
 	}
 
 	constructor(props) {
@@ -43,6 +44,7 @@ export default class ChatViewController extends Component {
 		this.inputViewMarginBottom = new Animated.Value(0)
 
 		this.recorder = null;
+		this.chatService = new ChatService()
 	}
 
 	componentDidMount() {
@@ -55,10 +57,13 @@ export default class ChatViewController extends Component {
 		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
 	}
 
-	getUser() {
-		return {
-			id: 1,
-		}
+	getUserInfo() {
+		return global.UserInfo
+	}
+
+	getFriendInfo() {
+		const {friendInfo} = this.props
+		return friendInfo
 	}
 
 	refreshToLoadMore() {
@@ -86,15 +91,15 @@ export default class ChatViewController extends Component {
 
 	addKeyboardListener() {
 		if (PLATFORM.isIOS) {
-			this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
-			this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
+			this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
+			this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
 		}else {
-			this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow.bind(this));
-			this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide.bind(this));
+			this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow);
+			this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide);
 		}
 	}
 
-	keyboardWillShow(event) {
+	keyboardWillShow = (event) => {
 		this.keyboardDuration = event.duration
 		if (PLATFORM.isIOS) {
 			let safeAreaViewHeight = PLATFORM.isX ? 34 : 0
@@ -104,7 +109,7 @@ export default class ChatViewController extends Component {
 		}
 	}
 
-	keyboardWillHide(event) {
+	keyboardWillHide = (event) => {
 		if (PLATFORM.isIOS) {
 			Animated.timing(this.inputViewMarginBottom,{duration: this.keyboardDuration,toValue:0, useNativeDriver: false}).start()
 		}else {
@@ -349,12 +354,15 @@ export default class ChatViewController extends Component {
 	appendNewTextMessage(text) {
 		let message = new Message()
 		message.messageType = MessageType.Text
-		message.user = this.getUser()
+		message.senderId = this.getUserInfo().ChatID
 		message.message = text
+		message.channelType = ChannelType.single
+		message.channelId = this.getFriendInfo().ChatID
 		message.createdAt = this.getDateTimeISO()
 		message.updatedAt = message.createdAt
-
 		this.appendNewMessage(message)
+
+		this.chatService.sendMessage(message)
 	}
 
 	appendNewMessage(message) {
@@ -447,7 +455,6 @@ export default class ChatViewController extends Component {
 			cropping: true,
 		}).then(image => {
 			console.log(image);
-
 			if (image) {
 				this.appendNewImageMessage(MessageType.Image, image.path)
 			}
@@ -457,7 +464,7 @@ export default class ChatViewController extends Component {
 	appendNewImageMessage(type, url) {
 		let message = new Message()
 		message.messageType = type
-		message.user = this.getUser()
+		message.senderId = this.getUserInfo().ChatID
 		message.message = url
 		message.createdAt = this.getDateTimeISO()
 		message.updatedAt = message.createdAt
@@ -511,7 +518,7 @@ export default class ChatViewController extends Component {
 		return (
 			<ChatItem
 				message = {message}
-				isPeer = {message.user.id !== this.getUser().id}
+				isPeer = {message.senderId !== this.getUserInfo().ChatID}
 				previewImageAction={(url) => {
 					this.previewImage(url)
 				}}

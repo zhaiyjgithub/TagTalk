@@ -36,7 +36,7 @@ class Message {
 
 		this.nickName = ''
 		this.avatar = ''
-		this.user = {}
+		this.senderId = ''
 		this.memtions = []
 
 		this.channelType = ChannelType.single

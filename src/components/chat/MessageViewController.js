@@ -64,25 +64,25 @@ export default class MessageViewController extends Component{
 		return global.UserInfo
 	}
 
-
-
-	pushToChatRoom() {
+	pushToChatRoom(friendInfo) {
+		const {Name} = friendInfo
 		Navigation.push(this.props.componentId, {
 			component: {
 				name: 'ChatViewController',
 				passProps: {
-					uid: 98
+					friendInfo: friendInfo
 				},
-				options: BaseNavigatorOptions('Chat')
+				options: BaseNavigatorOptions(Name)
 			}
 		});
 	}
 
-	renderItem() {
+	renderItem(item) {
 		return(
 			<MessageDialogItem
+				info = {item}
 				didSelectedItem={() =>{
-					this.pushToChatRoom()
+					this.pushToChatRoom(item)
 				}}
 			/>
 		)
@@ -108,11 +108,12 @@ export default class MessageViewController extends Component{
 	}
 
 	render() {
+		const {dialogDataSource} = this.state
 		return(
 			<SafeAreaView style={{flex: 1}}>
 				<FlatList
 					style={{flex: 1}}
-					data={[1, 2, 3]}
+					data={dialogDataSource}
 					renderItem={({item}) => this.renderItem(item)}
 					keyExtractor={(item, index) => {
 						return 'key' + item.key + index
