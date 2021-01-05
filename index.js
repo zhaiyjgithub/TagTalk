@@ -6,11 +6,12 @@ import {Navigation} from 'react-native-navigation';
 import {Colors, FontFamily} from './src/utils/styles';
 import Storage from 'react-native-storage'
 import AsyncStorage from '@react-native-community/async-storage';
-import {Router} from './src/route/routerMap';
+import {RouterMapper} from './src/route/mapper';
+import {Router} from './src/route/router';
 import {CacheKey} from './src/utils/Enums';
 import CacheTool from './src/utils/CacheTool';
 
-Router.run()
+RouterMapper.run()
 
 const storage = new Storage({
   // 最大容量，默认值1000条数据循环存储

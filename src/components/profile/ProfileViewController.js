@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import CacheTool from '../../utils/CacheTool';
 import {CacheKey} from '../../utils/Enums';
-import {Router} from '../../route/routerMap';
+import {Router} from '../../route/router';
 
 export default class ProfileViewController extends Component{
     render() {

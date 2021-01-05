@@ -6,12 +6,11 @@ import {Navigation} from 'react-native-navigation';
 import {CacheKey, PLATFORM, ResponseCode} from '../../utils/Enums';
 import {HTTP} from '../../utils/HttpTools';
 import {API_User} from '../../utils/API';
-import {Utils} from '../../utils/utils';
 import BaseButton from '../commonComponents/BaseButton';
 import ToastMsg from '../../utils/ToastMsg';
 import CacheTool from '../../utils/CacheTool';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
-import {Router} from '../../route/routerMap';
+import {Router} from '../../route/router';
 
 export default class SignInViewController extends Component{
     constructor(props) {
