@@ -11,11 +11,11 @@ import {
 	Image,
 	Animated,
 	Keyboard,
-	TouchableWithoutFeedback, PermissionsAndroid,
+	TouchableWithoutFeedback, PermissionsAndroid, DeviceEventEmitter,
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
-import {ChannelType, MessageType, PLATFORM} from '../../utils/Enums';
+import {ChannelType, EventName, MessageType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
@@ -45,16 +45,19 @@ export default class ChatViewController extends Component {
 
 		this.recorder = null;
 		this.chatService = new ChatService()
+
+		this.addKeyboardListener()
+		this.addEventListener()
 	}
 
 	componentDidMount() {
-		this.addKeyboardListener()
+
 		// this.refresh()
 	}
 
 	componentWillUnmount() {
-		this.keyboardWillShowSub && this.keyboardWillShowSub.remove()
-		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
+		this.removeKeyboardListener()
+		this.removeEventListener()
 	}
 
 	getUserInfo() {
@@ -99,6 +102,11 @@ export default class ChatViewController extends Component {
 		}
 	}
 
+	removeKeyboardListener() {
+		this.keyboardWillShowSub && this.keyboardWillShowSub.remove()
+		this.keyboardWillHideSub && this.keyboardWillHideSub.remove()
+	}
+
 	keyboardWillShow = (event) => {
 		this.keyboardDuration = event.duration
 		if (PLATFORM.isIOS) {
@@ -115,6 +123,19 @@ export default class ChatViewController extends Component {
 		}else {
 			Animated.timing(this.inputViewMarginBottom,{duration: this.keyboardDuration,toValue: 0, useNativeDriver: false}).start()
 		}
+	}
+
+	addEventListener() {
+		this.onMessageReceiverListener = DeviceEventEmitter.addListener(EventName.websocket.onmessage, (e) => {
+			if (e && e.data) {
+				let message = JSON.parse(e.data)
+				this.appendNewMessage(message)
+			}
+		})
+	}
+
+	removeEventListener() {
+		this.onMessageReceiverListener && this.onMessageReceiverListener.remove()
 	}
 
 	renderVoiceButton() {

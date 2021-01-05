@@ -9,6 +9,11 @@ import {Colors, FontFamily} from '../utils/styles';
 
 const Router = {
 	showGuide() {
+		Navigation.setDefaultOptions({
+			topBar: {
+				visible: false,
+			},
+		});
 		Navigation.setRoot({
 			root: {
 				stack: {

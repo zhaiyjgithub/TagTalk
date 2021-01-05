@@ -29,7 +29,7 @@ export default class ChatItem extends Component{
 	// 		this.state.isPeer !== nextProps.isPeer
 	// }
 
-	renderUserIcon(isPeer) {
+	renderAvatar(isPeer) {
 		return(
 			<View style={{width: 34, height: 34, borderRadius: 17, marginRight: isPeer ? 4 : 0, marginLeft: isPeer ? 0 : 4}}>
 				<Image source={require('../../../source/image/test/Group7.png')} style={{width: 34, height: 34, overflow: 'hidden'}}/>
@@ -104,10 +104,10 @@ export default class ChatItem extends Component{
 	}
 
 	render() {
-		const {isPeer, message} = this.state
+		const {isPeer, message} = this.props
 		return(
 			<View style={isPeer ? styles.peerContainer : styles.myContainer}>
-					{this.renderUserIcon(isPeer)}
+					{this.renderAvatar(isPeer)}
 					{this.renderMediaContent(isPeer, message)}
 			</View>
 		)
@@ -116,12 +116,12 @@ export default class ChatItem extends Component{
 
 const styles = StyleSheet.create({
 	peerContainer: {
-		marginHorizontal: 22,
+		marginHorizontal: 15,
 		flexDirection: 'row',
 		marginBottom: 20
 	},
 	myContainer: {
-		marginHorizontal: 22,
+		marginHorizontal: 15,
 		flexDirection: 'row-reverse',
 		marginBottom: 20
 	},

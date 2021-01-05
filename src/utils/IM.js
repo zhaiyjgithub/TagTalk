@@ -16,19 +16,19 @@ const IM = {
 
 		ws.onmessage = (e) => {
 			// a message was received
-			console.log(e.data);
-			this.sendEvents(EventName.websocket.onOpen, e)
+			console.log("onmessage: " + e.data);
+			this.sendEvents(EventName.websocket.onmessage, e)
 		};
 
 		ws.onerror = (e) => {
 			// an error occurred
-			console.log(e)
+			console.log("onerror: " + e)
 			this.sendEvents(EventName.websocket.onerror, e)
 		};
 
 		ws.onclose = (e) => {
 			// connection closed
-			console.log(e)
+			console.log('on close: ' + e)
 			this.sendEvents(EventName.websocket.onclose, e)
 		};
 	},

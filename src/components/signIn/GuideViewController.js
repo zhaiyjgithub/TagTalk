@@ -69,7 +69,7 @@ export default class GuideViewController extends Component{
     renderForgotPasswordButton(){
         return(
             <TouchableOpacity>
-                <Text style={{color: Colors.blue, fontSize: 16, marginTop: 30}}>{'Forgot password?'}</Text>
+                <Text style={{color: Colors.blue, fontSize: 16, marginTop: 30, marginBottom: 20}}>{'Forgot password?'}</Text>
             </TouchableOpacity>
         )
     }
