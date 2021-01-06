@@ -374,6 +374,9 @@ export default class ChatViewController extends Component {
 
 	appendNewTextMessage(text) {
 		let message = new Message()
+
+		const {Name} = this.getUserInfo()
+		message.nickName = Name
 		message.messageType = MessageType.Text
 		message.senderId = this.getUserInfo().ChatID
 		message.message = text
@@ -484,6 +487,9 @@ export default class ChatViewController extends Component {
 
 	appendNewImageMessage(type, url) {
 		let message = new Message()
+
+		const {Name} = this.getUserInfo()
+		message.nickName = Name
 		message.messageType = type
 		message.senderId = this.getUserInfo().ChatID
 		message.message = url

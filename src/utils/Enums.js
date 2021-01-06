@@ -40,6 +40,12 @@ const ChannelType =  {
 	broadcast  : 3
 }
 
+const MatchLikeTyp = {
+	like: 0,
+	disLike: 1,
+	star: 2,
+}
+
 
 export {
 	PLATFORM,
@@ -47,5 +53,6 @@ export {
 	MessageType,
 	CacheKey,
 	ResponseCode,
-	ChannelType
+	ChannelType,
+	MatchLikeTyp
 }

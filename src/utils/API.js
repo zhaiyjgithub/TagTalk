@@ -9,12 +9,19 @@ const API_User = {
 }
 
 const API_Contacts = {
-	GetContactsByChatID: 'Contacts/GetContactsByChatID'
+	GetContactsByChatID: 'Contacts/GetContactsByChatID',
+	AddNewFriend: 'AddNewFriend'
+}
+
+const API_Match = {
+	GetNearByPeople: 'Match/GetNearByPeople',
+	AddLikeStatus: 'Match/AddLikeStatus'
 }
 
 export {
 	BaseUrl,
 	WebsocketBaseUrl,
 	API_User,
-	API_Contacts
+	API_Contacts,
+	API_Match,
 }

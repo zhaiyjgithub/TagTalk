@@ -7,6 +7,10 @@ export default class BaseService {
 		return global.UserInfo
 	}
 
+	getUserChatID() {
+		return this.getUserInfo().ChatID
+	}
+
 	sendRequest(api, param, success, fail) {
 		HTTP.post(api, param).then((response) => {
 			console.log(JSON.stringify(response))

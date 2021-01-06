@@ -9,9 +9,13 @@ import {
     TouchableOpacity,
     Image,
     DeviceEventEmitter,
-    TextInput
+    TextInput,
+    ScrollView
 } from 'react-native';
 import {Colors} from '../../utils/styles';
+import MatchService from './MatchService';
+import {MatchLikeTyp} from '../../utils/Enums';
+import ToastMsg from '../../utils/ToastMsg';
 
 export default class MatchViewController extends Component{
     constructor(props) {
@@ -19,10 +23,12 @@ export default class MatchViewController extends Component{
         this.state = {
             dataSource: [],
         }
+
+        this.matchService = new MatchService()
     }
 
     componentDidMount() {
-        this.setState({dataSource: this.requestNearByPeople})
+       this.requestNearByPeople()
     }
 
     getUserInfo() {
@@ -30,56 +36,84 @@ export default class MatchViewController extends Component{
     }
 
     requestNearByPeople() {
-        const {Email} = this.getUserInfo()
-        if (Email === 'yuanji.zhai@outlook.com') {
-            return [
-                {
-                    user: {
-                        name: 'yuanji',
-                        headerIcon: '',
-                        chatId: 334082907746340864,
-                    },
-                    likes: new Set([334080379222757376]) //Set()
-                }
-            ]
-        }else {
-            return [
-                {
-                    user: {
-                        name: 'yuanji',
-                        headerIcon: '',
-                        chatId: 334080379222757376,
-                    },
-                    likes: new Set([334082907746340864]) //Set()
-                }
-            ]
+        const {ChatID} = this.getUserInfo()
+        this.matchService.getNearbyPeople(ChatID, (data) => {
+            this.setState({dataSource: data})
+        }, () => {
+
+        })
+    }
+
+    clickToLike(item) {
+        const {User} = item
+        const peerChatId = User.ChatID
+        const chatId = this.getUserInfo().ChatID
+
+        this.addLikeStatus(peerChatId)
+
+        const {Likes} = item
+        if (Likes.findIndex((val) => {
+            return val === chatId
+        }) !== -1) {
+            //如果是互粉， 那么就创建好友关系
+            this.addNewFriend(chatId, peerChatId)
         }
     }
 
-    clickLike() {
-        const {dataSource} = this.state
-        const {ChatID} = this.getUserInfo()
-        let item = dataSource[0]
+    addLikeStatus(peerChatId) {
+        this.matchService.addLikeStatus(peerChatId, MatchLikeTyp.like, (isSuccess) => {
+            console.log(isSuccess ? 'Success' : 'Failed')
+        }, () => {
 
-        if (item.likes.has(ChatID)) {
-            //匹配成功l
-            //创建本地数据库，记录聊天列表
-            //进入聊天界面
-            // 创建双方的好友关系
-            //发送消息给对方。如果对方收到，就收到websocket 消息。本地处理如上。否则，收到推送。
-        }
+        })
+    }
+
+    addNewFriend(chatId,friendId) {
+        this.matchService.addNewFriend(chatId, friendId, (isSuccess) => {
+            console.log('add new friend: ' + isSuccess ? 'Success' : 'Failed')
+        }, () => {
+
+        })
+    }
+
+
+
+    renderLikesItem(dataSource) {
+        return dataSource.map((item, index) => {
+            return(
+                <Text key={index} style={{fontSize: 16, color: Colors.blue}}>{item}</Text>
+            )
+        })
+    }
+
+    renderItem() {
+        const {dataSource} = this.state
+        return dataSource.map((item, index) => {
+            const {User, Likes} = item
+            const {ChatID, Name} = User
+            return (
+                <TouchableOpacity onPress={() => {
+                    this.clickToLike(item)
+                }} key={index} style={{width: '100%', minHeight: 100, backgroundColor: Colors.white,
+                    marginVertical: 10,
+                }}>
+                    <Text style={{fontSize: 18, color: Colors.black}}>{ChatID}</Text>
+                    <Text style={{fontSize: 18, color: Colors.black}}>{Name}</Text>
+
+                    {this.renderLikesItem(Likes)}
+                </TouchableOpacity>
+            )
+        })
     }
 
     render() {
+        const {ChatID} = this.getUserInfo()
         return(
             <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <TouchableOpacity onPress={() => {
-                    this.clickLike()
-                }} style={{width: 100, height: 100, justifyContent: 'center', alignItems: 'center',
-                    backgroundColor: Colors.blue
-                }}>
-                    <Text>{'Match'}</Text>
-                </TouchableOpacity>
+                <Text style={{fontSize: 20, color: 'red'}}>{'MY ChatID: ' + ChatID}</Text>
+                <ScrollView style={{flex: 1,}} contentContainerStyle={{backgroundColor: Colors.gray}}>
+                    {this.renderItem()}
+                </ScrollView>
             </SafeAreaView>
         )
     }

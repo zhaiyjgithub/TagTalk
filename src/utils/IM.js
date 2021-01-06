@@ -1,6 +1,7 @@
 import {WebsocketBaseUrl} from './API';
 import {EventName} from './Enums';
 import {DeviceEventEmitter} from 'react-native';
+import {json} from '@nozbe/watermelondb/decorators';
 
 const IM = {
 	ws: null,
@@ -22,13 +23,13 @@ const IM = {
 
 		ws.onerror = (e) => {
 			// an error occurred
-			console.log("onerror: " + e)
+			console.log("onerror: " + JSON.stringify(e))
 			this.sendEvents(EventName.websocket.onerror, e)
 		};
 
 		ws.onclose = (e) => {
 			// connection closed
-			console.log('on close: ' + e)
+			console.log('on close: ' + JSON.stringify(e))
 			this.sendEvents(EventName.websocket.onclose, e)
 		};
 	},
