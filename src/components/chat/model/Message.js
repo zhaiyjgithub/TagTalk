@@ -20,7 +20,7 @@
 // }
 
 
-import {ChannelType, MessageType} from '../../../utils/Enums';
+import {ChannelType, MessageCategory, MessageMediaType} from '../../../utils/Enums';
 
 class User {
 	constructor() {
@@ -42,7 +42,8 @@ class Message {
 		this.channelType = ChannelType.single
 		this.channelId =  0
 
-		this.messageType = MessageType.Text
+		this.category = MessageCategory.normal
+		this.mediaType = MessageMediaType.text
 		this.message = ''
 
 		this.createdAt = null

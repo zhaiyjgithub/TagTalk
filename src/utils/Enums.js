@@ -25,13 +25,18 @@ const ResponseCode = {
 	isExist: 4
 }
 
-const MessageType = {
-	Text: 0,
-	Image: 1,
-	Audio: 2,
-	Video: 3,
-	WebView: 4,
-	MapView: 5,
+const MessageMediaType = {
+	text: 0,
+	image: 1,
+	audio: 2,
+	video: 3,
+	webView: 4,
+	mapView: 5,
+}
+
+const MessageCategory = {
+	normal: 0,
+	newDialog: 1,
 }
 
 const ChannelType =  {
@@ -50,9 +55,10 @@ const MatchLikeTyp = {
 export {
 	PLATFORM,
 	EventName,
-	MessageType,
+	MessageMediaType,
 	CacheKey,
 	ResponseCode,
 	ChannelType,
-	MatchLikeTyp
+	MatchLikeTyp,
+	MessageCategory
 }

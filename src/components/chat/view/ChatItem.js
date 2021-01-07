@@ -11,7 +11,7 @@ import {
 import {Colors, FontFamily} from '../../../utils/styles';
 import FastImage from 'react-native-fast-image'
 import {ScreenDimensions} from '../../../utils/Dimemsions';
-import {MessageType} from '../../../utils/Enums';
+import {MessageMediaType} from '../../../utils/Enums';
 import {Message} from '../model/Message';
 
 export default class ChatItem extends Component{
@@ -91,12 +91,12 @@ export default class ChatItem extends Component{
 	}
 
 	renderMediaContent(isPeer, message: Message) {
-		switch (message.messageType) {
-			case MessageType.Text:
+		switch (message.mediaType) {
+			case MessageMediaType.text:
 				return this.renderTextMessage(isPeer, message)
-			case MessageType.Image:
+			case MessageMediaType.image:
 				return this.renderImageMessage(isPeer, message)
-			case MessageType.Video:
+			case MessageMediaType.video:
 				return this.renderTextMessage(isPeer, message)
 			default:
 				return this.renderTextMessage(isPeer, message)

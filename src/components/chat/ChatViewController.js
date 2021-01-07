@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
-import {ChannelType, EventName, MessageType, PLATFORM} from '../../utils/Enums';
+import {ChannelType, EventName, MessageMediaType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
@@ -377,7 +377,7 @@ export default class ChatViewController extends Component {
 
 		const {Name} = this.getUserInfo()
 		message.nickName = Name
-		message.messageType = MessageType.Text
+		message.mediaType = MessageMediaType.text
 		message.senderId = this.getUserInfo().ChatID
 		message.message = text
 		message.channelType = ChannelType.single
@@ -466,7 +466,7 @@ export default class ChatViewController extends Component {
 
 			if (images && images.length) {
 				images.map((item) => {
-					this.appendNewImageMessage(MessageType.Image, item.path)
+					this.appendNewImageMessage(MessageMediaType.image, item.path)
 				})
 			}
 		});
@@ -480,7 +480,7 @@ export default class ChatViewController extends Component {
 		}).then(image => {
 			console.log(image);
 			if (image) {
-				this.appendNewImageMessage(MessageType.Image, image.path)
+				this.appendNewImageMessage(MessageMediaType.image, image.path)
 			}
 		});
 	}
@@ -490,7 +490,7 @@ export default class ChatViewController extends Component {
 
 		const {Name} = this.getUserInfo()
 		message.nickName = Name
-		message.messageType = type
+		message.mediaType = type
 		message.senderId = this.getUserInfo().ChatID
 		message.message = url
 		message.createdAt = this.getDateTimeISO()

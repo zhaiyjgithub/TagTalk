@@ -11,7 +11,7 @@ import {
 import {Colors, FontFamily} from '../../../utils/styles';
 import FastImage from 'react-native-fast-image'
 import {ScreenDimensions} from '../../../utils/Dimemsions';
-import {MessageType} from '../../../utils/Enums';
+import {MessageMediaType} from '../../../utils/Enums';
 
 export default class MessageDialogItem extends Component{
     static defaultProps = {
