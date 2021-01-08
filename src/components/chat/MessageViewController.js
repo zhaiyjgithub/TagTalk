@@ -11,7 +11,7 @@ import {
 	DeviceEventEmitter,
 	TextInput
 } from 'react-native';
-import {EventName} from '../../utils/Enums';
+import {EventName, MessageCategory} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 import {Colors, FontFamily} from '../../utils/styles';
 import StoryHeader from './view/StoryHeader';
@@ -42,9 +42,25 @@ export default class MessageViewController extends Component{
 		this.login()
 	}
 
+	componentWillUnmount(): void {
+		this.onMessageOpenListener && this.onMessageOpenListener.remove()
+		this.onMessageReceiverListener && this.onMessageReceiverListener.remove()
+	}
+
 	addEventListener() {
-		DeviceEventEmitter.addListener(EventName.websocket.onOpen, () => {
-			this.requestDialog()
+		this.onMessageOpenListener = DeviceEventEmitter.addListener(EventName.websocket.onOpen, () => {
+			this.requestDialogList()
+		})
+
+		this.onMessageReceiverListener = DeviceEventEmitter.addListener(EventName.websocket.onmessage, (e) => {
+			if (e && e.data) {
+				let message = JSON.parse(e.data)
+				console.log(this.props.componentId + ' receive message: ' + JSON.stringify(message))
+
+				if (message.category === MessageCategory.newDialog) {
+					alert('New dialog')
+				}
+			}
 		})
 	}
 
@@ -53,9 +69,9 @@ export default class MessageViewController extends Component{
 		IM.initWebsocket(ChatID)
 	}
 
-	requestDialog() {
+	requestDialogList() {
 		const {ChatID} = this.getUserInfo()
-		this.messageService.requestDialogMessageList(ChatID, (data) => {
+		this.messageService.requestDialogList(ChatID, (data) => {
 			this.setState({dialogDataSource: data})
 		})
 	}

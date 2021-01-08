@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import ChatItem from './view/ChatItem';
 import {Colors} from '../../utils/styles';
-import {ChannelType, EventName, MessageMediaType, PLATFORM} from '../../utils/Enums';
+import {ChannelType, EventName, MessageCategory, MessageMediaType, PLATFORM} from '../../utils/Enums';
 import {Message} from './model/Message'
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
@@ -129,6 +129,10 @@ export default class ChatViewController extends Component {
 		this.onMessageReceiverListener = DeviceEventEmitter.addListener(EventName.websocket.onmessage, (e) => {
 			if (e && e.data) {
 				let message = JSON.parse(e.data)
+				if (message.category !== MessageCategory.normal) {
+					return
+				}
+
 				this.appendNewMessage(message)
 			}
 		})

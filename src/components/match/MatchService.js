@@ -1,6 +1,7 @@
 import BaseService from '../commonComponents/BaseService';
 import {API_Contacts, API_Match} from '../../utils/API';
 import {ResponseCode} from '../../utils/Enums';
+import {IM} from '../../utils/IM';
 
 export default class MatchService {
 	constructor() {
@@ -49,7 +50,8 @@ export default class MatchService {
 		})
 	}
 
-	createNewMessageDialog() {
+	sendNewMessageDialog(message) {
 		//在线/离线消息
+		IM.sendMessage(message)
 	}
 }

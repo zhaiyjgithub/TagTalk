@@ -14,8 +14,9 @@ import {
 } from 'react-native';
 import {Colors} from '../../utils/styles';
 import MatchService from './MatchService';
-import {MatchLikeTyp} from '../../utils/Enums';
+import {ChannelType, MatchLikeTyp, MessageCategory, MessageMediaType} from '../../utils/Enums';
 import ToastMsg from '../../utils/ToastMsg';
+import {Message} from '../chat/model/Message';
 
 export default class MatchViewController extends Component{
     constructor(props) {
@@ -47,6 +48,7 @@ export default class MatchViewController extends Component{
     clickToLike(item) {
         const {User} = item
         const peerChatId = User.ChatID
+        const senderName = this.getUserInfo().Name
         const chatId = this.getUserInfo().ChatID
 
         this.addLikeStatus(peerChatId)
@@ -57,6 +59,7 @@ export default class MatchViewController extends Component{
         }) !== -1) {
             //如果是互粉， 那么就创建好友关系
             this.addNewFriend(chatId, peerChatId)
+            this.sendCreateNewDialogMessage(senderName, chatId, peerChatId)
         }
     }
 
@@ -76,7 +79,24 @@ export default class MatchViewController extends Component{
         })
     }
 
+    sendCreateNewDialogMessage(senderName, chatId, friendId) {
+        let message = new Message()
+        message.nickName = senderName
+        message.mediaType = MessageMediaType.text
+        message.senderId = chatId
+        message.message = ''
+        message.category = MessageCategory.newDialog
+        message.channelType = ChannelType.single
+        message.channelId = friendId
+        message.createdAt = this.getDateTimeISO()
+        message.updatedAt = message.createdAt
 
+        this.matchService.sendNewMessageDialog(JSON.stringify(message))
+    }
+
+    getDateTimeISO() {
+        return (new Date()).toISOString()
+    }
 
 
     renderLikesItem(dataSource) {

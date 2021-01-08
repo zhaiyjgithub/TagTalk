@@ -10,7 +10,7 @@ const API_User = {
 
 const API_Contacts = {
 	GetContactsByChatID: 'Contacts/GetContactsByChatID',
-	AddNewFriend: 'AddNewFriend'
+	AddNewFriend: 'Contacts/AddNewFriend'
 }
 
 const API_Match = {

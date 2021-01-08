@@ -8,7 +8,7 @@ export default class MessageService {
 		this.baseService = new BaseService()
 	}
 
-	requestDialogMessageList(chatId, success, fail) {
+	requestDialogList(chatId, success, fail) {
 		let param = {
 			ChatID: chatId
 		}
