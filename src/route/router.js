@@ -28,6 +28,26 @@ const Router = {
 			}
 		});
 	},
+	showTestPage() {
+		Navigation.setDefaultOptions({
+			topBar: {
+				visible: true,
+			},
+		});
+		Navigation.setRoot({
+			root: {
+				stack: {
+					children: [
+						{
+							component: {
+								name: 'AnimationViewController'
+							}
+						}
+					]
+				}
+			}
+		});
+	},
 	showHomePage() {
 		Navigation.setDefaultOptions({
 			topBar: {

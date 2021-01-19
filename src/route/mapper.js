@@ -11,11 +11,12 @@ import SignInViewController from '../components/signIn/SignInViewController';
 import SignUpViewController from '../components/signIn/SignUpViewController';
 import {Colors, FontFamily} from '../utils/styles';
 import DBTestController from '../test/DBTestController';
+import AnimationViewController from '../test/animationViewController';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 const RouterMapper = {
 	run() {
 		Navigation.registerComponent('MessageViewController', () => MessageViewController);
 		Navigation.registerComponent('ChatViewController', () => ChatViewController);
-		Navigation.registerComponent('RecordVideoViewController', () => RecordVideoViewController);
 		Navigation.registerComponent('ContactsViewController', () => ContactsViewController);
 		Navigation.registerComponent('ProfileViewController', () => ProfileViewController);
 		Navigation.registerComponent('MatchViewController', () => MatchViewController);
@@ -25,6 +26,8 @@ const RouterMapper = {
 		Navigation.registerComponent('SignInViewController', () => SignInViewController);
 		Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
 		Navigation.registerComponent('DBTestController', () => DBTestController);
+		Navigation.registerComponent('AnimationViewController', () => gestureHandlerRootHOC(AnimationViewController));
+
 	},
 }
 

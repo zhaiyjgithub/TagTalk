@@ -31,6 +31,8 @@ global.storage = storage
 global.UserInfo = {}
 
 Navigation.events().registerAppLaunchedListener(() => {
+    Router.showTestPage()
+    return
     CacheTool.load(CacheKey.userInfo, (response) => {
         let userInfo = JSON.parse(response)
       if (response && userInfo) {

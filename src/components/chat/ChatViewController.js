@@ -328,9 +328,7 @@ export default class ChatViewController extends Component {
 			}}>
 				<TouchableOpacity onPress={() => {
 					Keyboard.dismiss()
-					// this.setState({isShowMediaPanel: !isShowMediaPanel})
-
-					this.playerPlay()
+					this.setState({isShowMediaPanel: !isShowMediaPanel})
 				}} style={{width: 30, height: 30,marginHorizontal: 10,}} >
 					<Image source={require('../../source/image/chat/add.png')}/>
 				</TouchableOpacity>
