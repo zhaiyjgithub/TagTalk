@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, } from "react"
 import {SafeAreaView, Button, View, Text, Dimensions} from 'react-native'
 import {Colors} from '../utils/styles';
-import Animated, {
+import Animated,  {
 	useSharedValue,
 	withTiming,
 	useAnimatedStyle,
@@ -10,10 +10,8 @@ import Animated, {
 	withSpring,
 	interpolate,
 	concat,
-
 } from 'react-native-reanimated';
-import {PanGestureHandler} from 'react-native-gesture-handler'
-
+import {PanGestureHandler, State} from 'react-native-gesture-handler'
 const {width} = Dimensions.get('window')
 
 const AnimationViewController = (props) => {
@@ -29,16 +27,17 @@ const AnimationViewController = (props) => {
 		},
 		onActive: (event, ctx) => {
 			translation.x.value = ctx.startX + event.translationX
-			translation.y.value = ctx.startY + event.translationY
+			translation.y.value = ctx.startY + (event.translationY > 100 ? 100 : event.translationY)
 		},
 		onEnd: (event, ctx) => {
-			translation.x.value = withSpring(0)
+			console.log('on end....' + translation.x.value)
+			translation.x.value = withSpring(translation.x.value + 100)
 			translation.y.value = withSpring(0)
 		}
 	})
 
 	const style = useAnimatedStyle(() => {
-		const rotateZ = interpolate(translation.x.value, [0, width/2.0], [0, 35], 'clamp') + 'deg'
+		const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
 		return {transform: [
 			{translateX: translation.x.value,},
 			{translateY: translation.y.value},
@@ -46,9 +45,13 @@ const AnimationViewController = (props) => {
 			]}
 	})
 
+	const handlerStageChanged = ({nativeEvent}) => {
+		console.log('hello: ' + nativeEvent.state)
+	}
+
 	return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
-			<PanGestureHandler onGestureEvent={gestureHandler}>
+			<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
 				<Animated.View style={[{width: 200, height: 380, backgroundColor: Colors.red}, style]}>
 
 				</Animated.View>
