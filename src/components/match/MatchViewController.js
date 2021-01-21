@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../utils/styles';
 import MatchService from './MatchService';
 import {ChannelType, MatchLikeTyp, MessageCategory, MessageMediaType} from '../../utils/Enums';
@@ -15,9 +15,9 @@ import Animated, {
     runOnUI,
     runOnJS,
 } from 'react-native-reanimated';
-import {PanGestureHandler} from "react-native-gesture-handler";
+import {PanGestureHandler, State} from "react-native-gesture-handler";
 import Card from './view/Card';
-const {width} = Dimensions.get('window')
+const {width, height} = Dimensions.get('window')
 
 const MatchViewController = (props) => {
     const [dataSource, setDataSource] = useState([])
@@ -34,54 +34,58 @@ const MatchViewController = (props) => {
         restSpeedThreshold: 1,
         restDisplacementThreshold: 0.5,
     }
-    let isEnd = false
 
+    let gestureState = useSharedValue(State.UNDETERMINED)
+    let images= [
+        require('../../source/image/test/let.jpg'),
+        require('../../source/image/test/blunt.jpg'),
+    ]
+
+    let index = 0
     useEffect(() => {
         // requestNearByPeople()
     })
 
+    //同步调用但是不涉及UI使用worklet。 需要在UI线程，需要
+    const show = () => {
+        // 'worklet';
+        console.log('show')
+    }
+
     const gestureHandler = useAnimatedGestureHandler({
         onStart:(_, ctx) => {
             ctx.startX = translation.x.value
-            // ctx.startY = translation.y.value
+            ctx.startY = translation.y.value
         },
         onActive: (event, ctx) => {
             translation.x.value = ctx.startX + event.translationX
-            // translation.y.value = ctx.startY + (event.translationY > 50 ? 50 : event.translationY)
+            translation.y.value = ctx.startY + (event.translationY > 30 ? 30 : event.translationY)
         },
         onEnd: (event, ctx) => {
             let endPositionX = 0
-
             if (translation.x.value < 0) {
                 endPositionX =  -(width - 60 + 100)
             }else {
                 endPositionX = (width - 60 + 100)
             }
-            translation.x.value = withSequence(withSpring(endPositionX, springConfig, () => {
-                //这里表明了已经出去了可是范围， 那么card的opacity 已经设置到 0。
-                isEnd = true
-            }), withTiming(0, {
-                duration: 50,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-            }, () => {
-                isEnd = false // 这个回到原点过程不需要根据translationX进行opacity 变化
-                //这里创建一个渐变动画， 显示第二张图的opacity.
+            translation.x.value = withSequence(withSpring(endPositionX, springConfig), withTiming(0, {
+                duration: 0,
             }))
-            translation.y.value = withSpring(0)
-
-            // runOnUI(someWorklet)('')
+            translation.y.value = withSequence(withSpring(0), withTiming(0))
         }
     })
 
-    const someWorklet = (greeting) => {
-        console.log(greeting, 'From the UI thread');
-    }
-
     const style = useAnimatedStyle(() => {
         const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
-        const opacity = interpolate(Math.abs(translation.x.value), [0, width/2.0], [1, 0.1], 'clamp')
-        if (!isEnd) {//这个回到原点过程不需要根据translationX进行opacity 变化
+
+        let opacity = 1.0
+        if (gestureState.value === State.BEGAN || gestureState.value === State.UNDETERMINED) {
+            opacity = 1.0
+        } else if (gestureState.value === State.ACTIVE ) {//这个回到原点过程不需要根据translationX进行opacity 变化
             //这里使用translationX 用来计算card opacity。。。。
+            opacity = interpolate(Math.abs(translation.x.value), [0, width/2.0], [1, 0.3], 'clamp')
+        }else if (gestureState.value === State.END) {
+            opacity = 0.0
         }
         return {
             opacity: opacity,
@@ -93,7 +97,7 @@ const MatchViewController = (props) => {
     })
 
     const handlerStageChanged = ({nativeEvent}) => {
-        console.log('hello: ' + nativeEvent.state)
+        gestureState.value = nativeEvent.state
     }
 
     const getUserInfo = () => {return global.UserInfo}
@@ -179,13 +183,20 @@ const MatchViewController = (props) => {
         })
     }
 
+
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
-			<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-				<Animated.View style={[{marginTop: 30,}, style]}>
-                    <Card />
-				</Animated.View>
-			</PanGestureHandler>
+            <View style={{width: width - 60, marginTop: 30}}>
+                <View style={{position: 'absolute'}}>
+                    <Card imageSource={images[index + 1]}/>
+                </View>
+                <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
+                    <Animated.View style={[{}, style]}>
+                        <Card imageSource={images[index]}/>
+                    </Animated.View>
+                </PanGestureHandler>
+            </View>
+
 
 		</SafeAreaView>
 	)

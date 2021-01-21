@@ -2,11 +2,13 @@ import React, {useEffect, useState, memo} from 'react';
 import {Dimensions, SafeAreaView, View, Text, TouchableOpacity, Image} from 'react-native';
 import {Colors} from '../../../utils/styles';
 
-const Card = memo(function Card() {
+const Card = memo(function Card(props) {
 	const {width, height} = Dimensions.get('window')
+
+	const {imageSource} = props
 	return (
 		<View style={{width: width - 60}}>
-			<Image source={require('../../../source/image/test/blunt.jpg')} style={{width: '100%', height: height*0.6,
+			<Image source={imageSource} style={{width: '100%', height: height*0.6,
 				borderRadius: 8
 			}} />
 			<View style={{width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 15,
