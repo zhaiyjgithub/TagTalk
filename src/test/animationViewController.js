@@ -10,6 +10,7 @@ import Animated,  {
 	withSpring,
 	interpolate,
 	concat,
+	withSequence
 } from 'react-native-reanimated';
 import {PanGestureHandler, State} from 'react-native-gesture-handler'
 const {width} = Dimensions.get('window')
@@ -19,6 +20,8 @@ const AnimationViewController = (props) => {
 		x: useSharedValue(0),
 		y: useSharedValue(0)
 	}
+
+	let isEnd = false
 
 	const gestureHandler = useAnimatedGestureHandler({
 		onStart:(_, ctx) => {
@@ -30,14 +33,26 @@ const AnimationViewController = (props) => {
 			translation.y.value = ctx.startY + (event.translationY > 100 ? 100 : event.translationY)
 		},
 		onEnd: (event, ctx) => {
-			console.log('on end....' + translation.x.value)
-			translation.x.value = withSpring(translation.x.value + 100)
+			translation.x.value = withSequence(withSpring(translation.x.value + 200, {}, () => {
+				//这里表明了已经出去了可是范围， 那么card的opacity 已经设置到 0。
+				isEnd = true
+			}), withTiming(0, {
+				duration: 100,
+				easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+			}, () => {
+				isEnd = false // 这个回到原点过程不需要根据translationX进行opacity 变化
+				//这里创建一个渐变动画， 显示第二张图的opacity.
+			}))
 			translation.y.value = withSpring(0)
 		}
 	})
 
 	const style = useAnimatedStyle(() => {
 		const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
+
+		if (!isEnd) {//这个回到原点过程不需要根据translationX进行opacity 变化
+			//这里使用translationX 用来计算card opacity。。。。
+		}
 		return {transform: [
 			{translateX: translation.x.value,},
 			{translateY: translation.y.value},

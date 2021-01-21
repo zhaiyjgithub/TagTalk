@@ -6,7 +6,11 @@ const Utils = {
     },
     Log(msg) {
         console.log(msg)
+    },
+    GetDateTimeISO() {
+        return (new Date()).toISOString()
     }
+
 }
 
 

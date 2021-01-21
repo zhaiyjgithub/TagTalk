@@ -40,7 +40,7 @@ const Router = {
 					children: [
 						{
 							component: {
-								name: 'AnimationViewController'
+								name: 'MatchViewController'
 							}
 						}
 					]

@@ -21,6 +21,7 @@
 
 
 import {ChannelType, MessageCategory, MessageMediaType} from '../../../utils/Enums';
+import {Utils} from '../../../utils/utils';
 
 class User {
 	constructor() {
@@ -46,8 +47,8 @@ class Message {
 		this.mediaType = MessageMediaType.text
 		this.message = ''
 
-		this.createdAt = null
-		this.updatedAt = null
+		this.createdAt = Utils.getDateTimeISO()
+		this.updatedAt = Utils.getDateTimeISO()
 	}
 }
 
