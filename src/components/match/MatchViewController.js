@@ -21,6 +21,10 @@ const {width, height} = Dimensions.get('window')
 
 const MatchViewController = (props) => {
     const [dataSource, setDataSource] = useState([])
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+
+
+
     const matchService: MatchService = new MatchService()
     const translation = {
         x: useSharedValue(0),
@@ -39,6 +43,8 @@ const MatchViewController = (props) => {
     let images= [
         require('../../source/image/test/let.jpg'),
         require('../../source/image/test/blunt.jpg'),
+        require('../../source/image/test/solo.jpg'),
+        require('../../source/image/test/law.jpg'),
     ]
 
     let index = 0
@@ -50,6 +56,13 @@ const MatchViewController = (props) => {
     const show = () => {
         // 'worklet';
         console.log('show')
+    }
+
+    const handleSkipToNext = () => {
+        let len = images.length
+        let newIndex = (selectedImageIndex === (len -1)) ? 0 : selectedImageIndex + 1
+        setSelectedImageIndex(newIndex)
+        console.log('new index')
     }
 
     const gestureHandler = useAnimatedGestureHandler({
@@ -71,7 +84,9 @@ const MatchViewController = (props) => {
             translation.x.value = withSequence(withSpring(endPositionX, springConfig), withTiming(0, {
                 duration: 0,
             }))
-            translation.y.value = withSequence(withSpring(0), withTiming(0))
+            translation.y.value = withSequence(withSpring(translation.y.value), withTiming(0))
+
+            runOnJS(handleSkipToNext)
         }
     })
 
@@ -109,6 +124,7 @@ const MatchViewController = (props) => {
 
         })
     }
+
     const clickToLike = (item) => {
         const {User} = item
         const peerChatId = User.ChatID
@@ -183,21 +199,22 @@ const MatchViewController = (props) => {
         })
     }
 
+    const getImageByIndex = (index) => {
+        return images[(index === dataSource.length - 1) ? 0 : index]
+    }
 
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
             <View style={{width: width - 60, marginTop: 30}}>
                 <View style={{position: 'absolute'}}>
-                    <Card imageSource={images[index + 1]}/>
+                    <Card imageSource={getImageByIndex(selectedImageIndex + 1)}/>
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
                     <Animated.View style={[{}, style]}>
-                        <Card imageSource={images[index]}/>
+                        <Card imageSource={getImageByIndex(selectedImageIndex)}/>
                     </Animated.View>
                 </PanGestureHandler>
             </View>
-
-
 		</SafeAreaView>
 	)
 }
