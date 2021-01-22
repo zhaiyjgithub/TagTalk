@@ -19,13 +19,18 @@ import {PanGestureHandler, State} from "react-native-gesture-handler";
 import Card from './view/Card';
 const {width, height} = Dimensions.get('window')
 
+const Position = {
+    origin: 0,
+    edge: 1,
+    mid: 2,
+}
+
 const MatchViewController = (props) => {
     const [dataSource, setDataSource] = useState([])
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-
-
-
+    const [bgImageIndex, setBgImageIndex] = useState(1)
     const matchService: MatchService = new MatchService()
+    const currentUserInfo = global.UserInfo
     const translation = {
         x: useSharedValue(0),
         y: useSharedValue(0)
@@ -39,7 +44,8 @@ const MatchViewController = (props) => {
         restDisplacementThreshold: 0.5,
     }
 
-    let gestureState = useSharedValue(State.UNDETERMINED)
+    let position = useSharedValue(Position.origin)
+        let gestureState = useSharedValue(State.UNDETERMINED)
     let images= [
         require('../../source/image/test/let.jpg'),
         require('../../source/image/test/blunt.jpg'),
@@ -47,32 +53,32 @@ const MatchViewController = (props) => {
         require('../../source/image/test/law.jpg'),
     ]
 
-    let index = 0
     useEffect(() => {
         // requestNearByPeople()
     })
 
-    //同步调用但是不涉及UI使用worklet。 需要在UI线程，需要
-    const show = () => {
-        // 'worklet';
-        console.log('show')
-    }
-
     const handleSkipToNext = () => {
         let len = images.length
-        let newIndex = (selectedImageIndex === (len -1)) ? 0 : selectedImageIndex + 1
+        let newIndex = (selectedImageIndex === (len - 1)) ? 0 : selectedImageIndex + 1
         setSelectedImageIndex(newIndex)
-        console.log('new index')
+    }
+
+    const handelUpdateBgImageIndex = () => {
+        let len = images.length
+        let newIndex = (bgImageIndex === (len - 1)) ? 0 : bgImageIndex + 1
+        setBgImageIndex(newIndex)
     }
 
     const gestureHandler = useAnimatedGestureHandler({
         onStart:(_, ctx) => {
             ctx.startX = translation.x.value
             ctx.startY = translation.y.value
+            position.value = Position.origin
         },
         onActive: (event, ctx) => {
             translation.x.value = ctx.startX + event.translationX
             translation.y.value = ctx.startY + (event.translationY > 30 ? 30 : event.translationY)
+            position.value = Position.mid
         },
         onEnd: (event, ctx) => {
             let endPositionX = 0
@@ -81,25 +87,36 @@ const MatchViewController = (props) => {
             }else {
                 endPositionX = (width - 60 + 100)
             }
-            translation.x.value = withSequence(withSpring(endPositionX, springConfig), withTiming(0, {
-                duration: 0,
-            }))
-            translation.y.value = withSequence(withSpring(translation.y.value), withTiming(0))
 
-            runOnJS(handleSkipToNext)
+            translation.y.value = withSpring(0)
+
+            position.value = Position.mid
+            translation.x.value = withSpring(endPositionX, springConfig, () => {
+
+                position.value = Position.edge
+                runOnJS(handleSkipToNext)()
+
+                translation.x.value = withTiming(0, {
+                    duration: 500,
+                }, () => {
+                    position.value = Position.origin
+                    runOnJS(handelUpdateBgImageIndex)()
+                })
+            })
+
         }
     })
 
     const style = useAnimatedStyle(() => {
         const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
 
-        let opacity = 1.0
-        if (gestureState.value === State.BEGAN || gestureState.value === State.UNDETERMINED) {
+        let opacity = 0.0
+        let positionVal = position.value
+        if (positionVal === Position.origin) {
             opacity = 1.0
-        } else if (gestureState.value === State.ACTIVE ) {//这个回到原点过程不需要根据translationX进行opacity 变化
-            //这里使用translationX 用来计算card opacity。。。。
+        } else if (positionVal === Position.mid) {
             opacity = interpolate(Math.abs(translation.x.value), [0, width/2.0], [1, 0.3], 'clamp')
-        }else if (gestureState.value === State.END) {
+        }else if (positionVal === Position.edge) {
             opacity = 0.0
         }
         return {
@@ -115,9 +132,8 @@ const MatchViewController = (props) => {
         gestureState.value = nativeEvent.state
     }
 
-    const getUserInfo = () => {return global.UserInfo}
     const requestNearByPeople = () => {
-        const {ChatID} = getUserInfo()
+        const {ChatID} = currentUserInfo
         matchService.getNearbyPeople(ChatID, (data) => {
             setDataSource(data)
         }, () => {
@@ -128,8 +144,8 @@ const MatchViewController = (props) => {
     const clickToLike = (item) => {
         const {User} = item
         const peerChatId = User.ChatID
-        const senderName = getUserInfo().Name
-        const chatId = getUserInfo().ChatID
+        const senderName = currentUserInfo.Name
+        const chatId = currentUserInfo.ChatID
 
         addLikeStatus(peerChatId)
 
@@ -200,14 +216,14 @@ const MatchViewController = (props) => {
     }
 
     const getImageByIndex = (index) => {
-        return images[(index === dataSource.length - 1) ? 0 : index]
+        return images[((index >= images.length) ? 0 : index)]
     }
 
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
-            <View style={{width: width - 60, marginTop: 30}}>
+            <View style={{width: width - 60, marginTop: 30, }}>
                 <View style={{position: 'absolute'}}>
-                    <Card imageSource={getImageByIndex(selectedImageIndex + 1)}/>
+                    <Card imageSource={getImageByIndex(bgImageIndex)}/>
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
                     <Animated.View style={[{}, style]}>
