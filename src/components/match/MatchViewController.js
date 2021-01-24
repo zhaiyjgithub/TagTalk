@@ -77,22 +77,35 @@ const MatchViewController = (props) => {
         },
         onActive: (event, ctx) => {
             translation.x.value = ctx.startX + event.translationX
-            translation.y.value = ctx.startY + (event.translationY > 30 ? 30 : event.translationY)
+
+            let offsetY = 0
+            if (event.translationY > 0) {
+                offsetY = ctx.startY + (event.translationY > 30 ? 30 : event.translationY)
+            }
+            translation.y.value = offsetY
             position.value = Position.mid
         },
         onEnd: (event, ctx) => {
             let endPositionX = 0
+
+            if (Math.abs(event.translationX) < width/4.0) {
+                translation.x.value = withTiming(0)
+                translation.y.value = withTiming(0)
+
+                position.value = Position.origin
+                return
+            }
+
             if (translation.x.value < 0) {
                 endPositionX =  -(width - 60 + 100)
             }else {
                 endPositionX = (width - 60 + 100)
             }
 
-            translation.y.value = withSpring(0)
+            translation.y.value = withSequence(withSpring(30), withTiming(0))
 
             position.value = Position.mid
             translation.x.value = withSpring(endPositionX, springConfig, () => {
-
                 position.value = Position.edge
                 runOnJS(handleSkipToNext)()
 
@@ -103,7 +116,6 @@ const MatchViewController = (props) => {
                     runOnJS(handelUpdateBgImageIndex)()
                 })
             })
-
         }
     })
 

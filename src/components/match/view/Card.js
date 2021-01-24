@@ -5,9 +5,9 @@ import {Colors} from '../../../utils/styles';
 const Card = memo(function Card(props) {
 	const {width, height} = Dimensions.get('window')
 
-	const {imageSource} = props
+	const {imageSource, style} = props
 	return (
-		<View style={{width: width - 60}}>
+		<View style={[{width: width - 60}, style]}>
 			<Image source={imageSource} style={{width: '100%', height: height*0.6,
 				borderRadius: 8
 			}} />
