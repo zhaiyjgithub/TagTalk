@@ -153,6 +153,23 @@ const MatchViewController = (props) => {
         }
     })
 
+    const skipToNext = (isLike: true) => {
+        let edgeX = isLike ? MaxEdgePositionX : -MaxEdgePositionX
+
+        position.value = Position.mid
+        translation.y.value = withSequence(withSpring(0))
+        translation.x.value = withSpring(edgeX, springConfig, () => {
+            position.value = Position.edge
+            runOnJS(handleSkipToNext)()
+            translation.x.value = withTiming(0, {
+                duration: 500,
+            }, () => {
+                position.value = Position.origin
+                runOnJS(handelUpdateBgImageIndex)()
+            })
+        })
+    }
+
     const handlerStageChanged = ({nativeEvent}) => {
         gestureState.value = nativeEvent.state
     }
@@ -257,6 +274,28 @@ const MatchViewController = (props) => {
                         <Card imageSource={getImageByIndex(selectedImageIndex)}/>
                     </Animated.View>
                 </PanGestureHandler>
+            </View>
+
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                width: CardSize.width, marginTop: 30
+            }}>
+                <TouchableOpacity onPress={() => {
+                    skipToNext(false)
+                }} style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 8
+                }}>
+                    <Text style={{fontSize: 18}}>{'Skip'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 8
+                }}>
+                    <Text style={{fontSize: 18}}>{'Like'}</Text>
+                </TouchableOpacity>
             </View>
 		</SafeAreaView>
 	)
