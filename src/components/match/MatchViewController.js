@@ -60,7 +60,7 @@ const MatchViewController = (props) => {
         // requestNearByPeople()
     })
 
-    const handleSkipToNext = () => {
+    const updateFrontImageIndex = () => {
         let len = images.length
         let newIndex = (selectedImageIndex === (len - 1)) ? 0 : selectedImageIndex + 1
         setSelectedImageIndex(newIndex)
@@ -93,7 +93,7 @@ const MatchViewController = (props) => {
 
             if (Math.abs(event.translationX) < width/4.0) {
                 translation.x.value = withTiming(0)
-                translation.y.value = withTiming(0)
+                translation.y.value = withTiming(10)
 
                 position.value = Position.origin
                 return
@@ -105,15 +105,13 @@ const MatchViewController = (props) => {
                 endPositionX = MaxEdgePositionX
             }
 
-            translation.y.value = withSequence(withSpring(30), withTiming(0))
-
             position.value = Position.mid
+            translation.y.value = withTiming(0)
             translation.x.value = withSpring(endPositionX, springConfig, () => {
                 position.value = Position.edge
-                runOnJS(handleSkipToNext)()
-
+                runOnJS(updateFrontImageIndex)()
                 translation.x.value = withTiming(0, {
-                    duration: 500,
+                    duration: 100,
                 }, () => {
                     position.value = Position.origin
                     runOnJS(handelUpdateBgImageIndex)()
@@ -145,24 +143,40 @@ const MatchViewController = (props) => {
 
     const bgImageStyle = useAnimatedStyle(() => {
         const translationX = Math.abs(translation.x.value)
-        const scale = position.value !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.7, 1.0], 'clamp') : 1.0
+        const positionVal = position.value
+        const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
+
+        let translationY = 0
+        if (positionVal === Position.mid) {
+            translationY = interpolate(translationX, [0, MaxEdgePositionX], [0, 8], 'clamp')
+        }else if (positionVal === Position.edge) {
+            translationY = 8
+        }
 
         return {
             width: CardSize.width*scale,
-            height: CardSize.height*scale
+            height: CardSize.height*scale,
+            transform: [
+                {translateY: translationY},
+            ]
         }
     })
 
     const skipToNext = (isLike: true) => {
+        let positionVal = position.value
+        if (positionVal !== Position.origin) {
+            return
+        }
+
         let edgeX = isLike ? MaxEdgePositionX : -MaxEdgePositionX
 
         position.value = Position.mid
-        translation.y.value = withSequence(withSpring(0))
+        translation.y.value = withSpring(0)
         translation.x.value = withSpring(edgeX, springConfig, () => {
             position.value = Position.edge
-            runOnJS(handleSkipToNext)()
+            runOnJS(updateFrontImageIndex)()
             translation.x.value = withTiming(0, {
-                duration: 500,
+                duration: 100,
             }, () => {
                 position.value = Position.origin
                 runOnJS(handelUpdateBgImageIndex)()
@@ -264,13 +278,13 @@ const MatchViewController = (props) => {
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
             <View style={{width: CardSize.width, marginTop: 30, }}>
-                <View style={{position: 'absolute', width: '100%', height: CardSize.height,
-                    justifyContent: 'center', alignItems: 'center'
+                <View style={{position: 'absolute', width: '100%',
+                    alignItems: 'center'
                 }}>
                     <Animated.Image source={getImageByIndex(bgImageIndex)} style={[{borderRadius: 8}, bgImageStyle]} />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{}, frontImageStyle]}>
+                    <Animated.View style={[{marginTop: 8}, frontImageStyle]}>
                         <Card imageSource={getImageByIndex(selectedImageIndex)}/>
                     </Animated.View>
                 </PanGestureHandler>
@@ -289,7 +303,9 @@ const MatchViewController = (props) => {
                     <Text style={{fontSize: 18}}>{'Skip'}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
+                <TouchableOpacity onPress={() => {
+                    skipToNext(true)
+                }} style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
                     justifyContent: 'center',
                     alignItems: 'center',
                     borderRadius: 8
