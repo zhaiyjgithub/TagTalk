@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View,
+    Image} from 'react-native';
 import {Colors} from '../../utils/styles';
 import MatchService from './MatchService';
 import {ChannelType, MatchLikeTyp, MessageCategory, MessageMediaType} from '../../utils/Enums';
@@ -16,7 +17,7 @@ import Animated, {
     runOnJS,
 } from 'react-native-reanimated';
 import {PanGestureHandler, State} from "react-native-gesture-handler";
-import Card from './view/Card';
+import Card, {CardSize} from './view/Card';
 const {width, height} = Dimensions.get('window')
 
 const Position = {
@@ -24,6 +25,8 @@ const Position = {
     edge: 1,
     mid: 2,
 }
+
+const MaxEdgePositionX = (width - 60 + 100)
 
 const MatchViewController = (props) => {
     const [dataSource, setDataSource] = useState([])
@@ -97,9 +100,9 @@ const MatchViewController = (props) => {
             }
 
             if (translation.x.value < 0) {
-                endPositionX =  -(width - 60 + 100)
+                endPositionX = -MaxEdgePositionX
             }else {
-                endPositionX = (width - 60 + 100)
+                endPositionX = MaxEdgePositionX
             }
 
             translation.y.value = withSequence(withSpring(30), withTiming(0))
@@ -119,7 +122,7 @@ const MatchViewController = (props) => {
         }
     })
 
-    const style = useAnimatedStyle(() => {
+    const frontImageStyle = useAnimatedStyle(() => {
         const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
 
         let opacity = 0.0
@@ -138,6 +141,16 @@ const MatchViewController = (props) => {
                 {translateY: translation.y.value},
                 {rotateZ: rotateZ}
             ]}
+    })
+
+    const bgImageStyle = useAnimatedStyle(() => {
+        const translationX = Math.abs(translation.x.value)
+        const scale = position.value !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.7, 1.0], 'clamp') : 1.0
+
+        return {
+            width: CardSize.width*scale,
+            height: CardSize.height*scale
+        }
     })
 
     const handlerStageChanged = ({nativeEvent}) => {
@@ -233,12 +246,14 @@ const MatchViewController = (props) => {
 
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
-            <View style={{width: width - 60, marginTop: 30, }}>
-                <View style={{position: 'absolute'}}>
-                    <Card imageSource={getImageByIndex(bgImageIndex)}/>
+            <View style={{width: CardSize.width, marginTop: 30, }}>
+                <View style={{position: 'absolute', width: '100%', height: CardSize.height,
+                    justifyContent: 'center', alignItems: 'center'
+                }}>
+                    <Animated.Image source={getImageByIndex(bgImageIndex)} style={[{borderRadius: 8}, bgImageStyle]} />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{}, style]}>
+                    <Animated.View style={[{}, frontImageStyle]}>
                         <Card imageSource={getImageByIndex(selectedImageIndex)}/>
                     </Animated.View>
                 </PanGestureHandler>

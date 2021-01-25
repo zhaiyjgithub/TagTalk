@@ -1,33 +1,26 @@
-import React, {useEffect, useState, memo} from 'react';
-import {Dimensions, SafeAreaView, View, Text, TouchableOpacity, Image} from 'react-native';
-import {Colors} from '../../../utils/styles';
+import React, {memo} from 'react';
+import {Dimensions, Image, View} from 'react-native';
+const {width, height} = Dimensions.get('window')
+
+const CardSize = {
+	width: (width - 60),
+	height: height*0.6
+}
+
+export {
+	CardSize
+}
 
 const Card = memo(function Card(props) {
-	const {width, height} = Dimensions.get('window')
-
-	const {imageSource, style} = props
+	const {imageSource} = props
 	return (
-		<View style={[{width: width - 60}, style]}>
-			<Image source={imageSource} style={{width: '100%', height: height*0.6,
+		<View style={[{width: CardSize.width}]}>
+			<Image source={imageSource} style={{width: '100%', height: CardSize.height,
 				borderRadius: 8
 			}} />
-			<View style={{width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 15,
-				justifyContent: 'space-between', paddingVertical: 10,
-			}}>
-				<TouchableOpacity style={{height: 50, width: 60, borderWidth: 1, borderColor: Colors.lineGray,
-					borderRadius: 8, justifyContent: 'center', alignItems: 'center'
-				}}>
-					<Text style={{fontSize: 20, color: Colors.red}}>{'No'}</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity style={{height: 50, width: 60, borderWidth: 1, borderColor: Colors.lineGray,
-					borderRadius: 8, justifyContent: 'center', alignItems: 'center'
-				}}>
-					<Text style={{fontSize: 20, color: Colors.green}}>{'Like'}</Text>
-				</TouchableOpacity>
-			</View>
 		</View>
 	)
 })
+
 
 export default Card
