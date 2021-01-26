@@ -47,8 +47,9 @@ const MatchViewController = (props) => {
         restDisplacementThreshold: 0.5,
     }
 
+    let moveStep = useSharedValue(0)
     let position = useSharedValue(Position.origin)
-        let gestureState = useSharedValue(State.UNDETERMINED)
+    let gestureState = useSharedValue(State.UNDETERMINED)
     let images= [
         require('../../source/image/test/let.jpg'),
         require('../../source/image/test/blunt.jpg'),
@@ -141,10 +142,11 @@ const MatchViewController = (props) => {
             ]}
     })
 
-    const bgImageStyle = useAnimatedStyle(() => {
+    const secondImageStyle = useAnimatedStyle(() => {
         const translationX = Math.abs(translation.x.value)
         const positionVal = position.value
         const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
+        const top = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [40, 60], 'clamp') : 40
 
         let translationY = 0
         if (positionVal === Position.mid) {
@@ -154,11 +156,12 @@ const MatchViewController = (props) => {
         }
 
         return {
+            top: top,
             width: CardSize.width*scale,
             height: CardSize.height*scale,
-            transform: [
-                {translateY: translationY},
-            ]
+            // transform: [
+            //     {translateY: translationY},
+            // ]
         }
     })
 
@@ -277,17 +280,31 @@ const MatchViewController = (props) => {
 
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
-            <View style={{width: CardSize.width, marginTop: 30, }}>
-                <View style={{position: 'absolute', width: '100%',
-                    alignItems: 'center'
-                }}>
-                    <Animated.Image source={getImageByIndex(bgImageIndex)} style={[{borderRadius: 8}, bgImageStyle]} />
-                </View>
+            <View style={{width: CardSize.width, marginTop: 30, height: CardSize.height + 20*3}}>
+                {/*<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>*/}
+                {/*    <Animated.View style={[{position: 'absolute',top: 0}, frontImageStyle]}>*/}
+                {/*        <Card imageSource={getImageByIndex(0)}/>*/}
+                {/*    </Animated.View>*/}
+                {/*</PanGestureHandler>*/}
+
+                {/*<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>*/}
+                {/*    <Animated.View style={[{position: 'absolute',top: 20}, frontImageStyle]}>*/}
+                {/*        <Card imageSource={getImageByIndex(1)}/>*/}
+                {/*    </Animated.View>*/}
+                {/*</PanGestureHandler>*/}
+
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{marginTop: 8}, frontImageStyle]}>
-                        <Card imageSource={getImageByIndex(selectedImageIndex)}/>
+                    <Animated.View style={[{position: 'absolute'}, secondImageStyle]}>
+                        <Card imageSource={getImageByIndex(2)}/>
                     </Animated.View>
                 </PanGestureHandler>
+
+                <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
+                    <Animated.View style={[{position: 'absolute',top: 60}, frontImageStyle]}>
+                        <Card imageSource={getImageByIndex(3)}/>
+                    </Animated.View>
+                </PanGestureHandler>
+
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
