@@ -29,8 +29,11 @@ const Position = {
 const MaxEdgePositionX = (width - 60 + 100)
 
 const MatchViewController = (props) => {
+    const [moveIndex, setMoveIndex] = useState(0)
     const [dataSource, setDataSource] = useState([])
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+    const [frontViewZIndex, setFrontViewZIndex] = useState(101)
+    const [bgViewZIndex, setBgViewZIndex] = useState(100)
     const [bgImageIndex, setBgImageIndex] = useState(1)
     const matchService: MatchService = new MatchService()
     const currentUserInfo = global.UserInfo
@@ -73,6 +76,11 @@ const MatchViewController = (props) => {
         setBgImageIndex(newIndex)
     }
 
+    const updateViewZIndex = () => {
+        setFrontViewZIndex(100)
+        setBgViewZIndex(101)
+    }
+
     const gestureHandler = useAnimatedGestureHandler({
         onStart:(_, ctx) => {
             ctx.startX = translation.x.value
@@ -110,20 +118,21 @@ const MatchViewController = (props) => {
             translation.y.value = withTiming(0)
             translation.x.value = withSpring(endPositionX, springConfig, () => {
                 position.value = Position.edge
-                runOnJS(updateFrontImageIndex)()
+                // runOnJS(updateFrontImageIndex)()
                 translation.x.value = withTiming(0, {
                     duration: 100,
                 }, () => {
                     position.value = Position.origin
-                    runOnJS(handelUpdateBgImageIndex)()
+                    moveStep.value = moveStep.value + 1
+                    // runOnJS(handelUpdateBgImageIndex)()
+                    runOnJS(updateViewZIndex)()
                 })
             })
         }
     })
 
-    const frontImageStyle = useAnimatedStyle(() => {
+    const frontImageContainerStyle = useAnimatedStyle(() => {
         const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
-
         let opacity = 0.0
         let positionVal = position.value
         if (positionVal === Position.origin) {
@@ -133,7 +142,10 @@ const MatchViewController = (props) => {
         }else if (positionVal === Position.edge) {
             opacity = 0.0
         }
+
         return {
+            top: 20,
+            borderRadius: 8,
             opacity: opacity,
             transform: [
                 {translateX: translation.x.value,},
@@ -142,26 +154,47 @@ const MatchViewController = (props) => {
             ]}
     })
 
-    const secondImageStyle = useAnimatedStyle(() => {
+    const frontImageStyle = useAnimatedStyle(() => {
+        return {
+            borderRadius: 8,
+            width: CardSize.width,
+            height: CardSize.height
+        }
+    })
+
+    const secondImageContainerStyle = useAnimatedStyle(() => {
         const translationX = Math.abs(translation.x.value)
         const positionVal = position.value
-        const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
-        const top = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [40, 60], 'clamp') : 40
 
         let translationY = 0
         if (positionVal === Position.mid) {
-            translationY = interpolate(translationX, [0, MaxEdgePositionX], [0, 8], 'clamp')
+            translationY = interpolate(translationX, [0, MaxEdgePositionX], [0, 20], 'clamp')
         }else if (positionVal === Position.edge) {
-            translationY = 8
+            translationY = 20
         }
 
+        const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
+
         return {
-            top: top,
+            left: CardSize.width*(1 - scale)/2.0,
             width: CardSize.width*scale,
             height: CardSize.height*scale,
-            // transform: [
-            //     {translateY: translationY},
-            // ]
+            transform: [
+                {translateY: translationY},
+            ]
+        }
+    })
+
+    const secondImageStyle = useAnimatedStyle(() => {
+        const translationX = Math.abs(translation.x.value)
+        const positionVal = position.value
+
+        const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
+
+        return {
+            borderRadius: 8,
+            width: CardSize.width*scale,
+            height: CardSize.height*scale,
         }
     })
 
@@ -278,33 +311,61 @@ const MatchViewController = (props) => {
         return images[((index >= images.length) ? 0 : index)]
     }
 
+    const cardIndexMap = new Map()
+    cardIndexMap.set('0', 0)
+    cardIndexMap.set('1', 1)
+    cardIndexMap.set('2', 2)
+
+    const cardCompleteHandler = (cardIndex) => {
+        let len = 3
+        cardIndexMap.forEach((order, key, m) => {
+            let newOrder = (order + 1) >= len ? 0 : (order + 1)
+            console.log('new order', newOrder)
+            cardIndexMap.set(key, newOrder)
+        })
+
+        console.log('new map: ', cardIndexMap)
+        setMoveIndex(moveIndex + 1)
+    }
+
+    const getCardPositionTop = (cardIndex) => {
+        let order = cardIndexMap.get(cardIndex + '')
+        return order*20
+    }
+
+    const getCardViewZIndex = (cardIndex) => {
+        let baseViewZIndex = 100
+        let order = cardIndexMap.get(cardIndex + '')
+        console.log('current order: ', order)
+
+        return (baseViewZIndex + order)
+    }
+
+    const handleUpdateCardStyle = (cardIndex) => {
+        let top = getCardPositionTop(cardIndex)
+        let zIndex = getCardViewZIndex(cardIndex)
+
+        console.log('handleUpdateCardStyle', {
+            top: top,
+            zIndex: zIndex
+        })
+
+        return {
+            top: top,
+            zIndex: zIndex
+        }
+    }
+
+    useEffect(() => {
+        console.log('update')
+    }, [moveIndex])
+
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
             <View style={{width: CardSize.width, marginTop: 30, height: CardSize.height + 20*3}}>
-                {/*<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>*/}
-                {/*    <Animated.View style={[{position: 'absolute',top: 0}, frontImageStyle]}>*/}
-                {/*        <Card imageSource={getImageByIndex(0)}/>*/}
-                {/*    </Animated.View>*/}
-                {/*</PanGestureHandler>*/}
-
-                {/*<PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>*/}
-                {/*    <Animated.View style={[{position: 'absolute',top: 20}, frontImageStyle]}>*/}
-                {/*        <Card imageSource={getImageByIndex(1)}/>*/}
-                {/*    </Animated.View>*/}
-                {/*</PanGestureHandler>*/}
-
-                <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{position: 'absolute'}, secondImageStyle]}>
-                        <Card imageSource={getImageByIndex(2)}/>
-                    </Animated.View>
-                </PanGestureHandler>
-
-                <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{position: 'absolute',top: 60}, frontImageStyle]}>
-                        <Card imageSource={getImageByIndex(3)}/>
-                    </Animated.View>
-                </PanGestureHandler>
-
+                <Card cardIndex={0} style={handleUpdateCardStyle(0)} imageSource={getImageByIndex(0)} completeHandler={cardCompleteHandler}/>
+                <Card cardIndex={1} style={handleUpdateCardStyle(1)} imageSource={getImageByIndex(1)} completeHandler={cardCompleteHandler}/>
+                <Card cardIndex={2} style={handleUpdateCardStyle(2)} imageSource={getImageByIndex(2)} completeHandler={cardCompleteHandler}/>
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -327,7 +388,7 @@ const MatchViewController = (props) => {
                     alignItems: 'center',
                     borderRadius: 8
                 }}>
-                    <Text style={{fontSize: 18}}>{'Like'}</Text>
+                    <Text style={{fontSize: 18}}>{moveIndex}</Text>
                 </TouchableOpacity>
             </View>
 		</SafeAreaView>
