@@ -12,6 +12,7 @@ const Colors = {
 	searchBar: '#E9F0FB',
 	placeholder: '#818BBF',
 	systemGray: '#D9D9D9',
+	cardBgColor: '#F3F4F8',
 	red: '#FF0000'
 }
 

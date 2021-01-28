@@ -17,7 +17,7 @@ import Animated, {
     runOnJS,
 } from 'react-native-reanimated';
 import {PanGestureHandler, State} from "react-native-gesture-handler";
-import Card, {CardSize} from './view/Card';
+import AnimationCard, {CardSize} from './view/AnimationCard';
 const {width, height} = Dimensions.get('window')
 
 const Position = {
@@ -133,7 +133,10 @@ const MatchViewController = (props) => {
             opacity = 0.0
         }
         return {
+            borderRadius: 8,
             opacity: opacity,
+            width: CardSize.width,
+            height: CardSize.height,
             transform: [
                 {translateX: translation.x.value,},
                 {translateY: translation.y.value},
@@ -154,6 +157,7 @@ const MatchViewController = (props) => {
         }
 
         return {
+            borderRadius: 8,
             width: CardSize.width*scale,
             height: CardSize.height*scale,
             // transform: [
@@ -276,22 +280,24 @@ const MatchViewController = (props) => {
     }
 
     return(
-		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
+		<SafeAreaView style={{flex: 1, backgroundColor: Colors.cardBgColor, alignItems: 'center'}}>
             <View style={{width: CardSize.width, marginTop: 30, }}>
                 <View style={{position: 'absolute', width: '100%',
                     alignItems: 'center',
                 }}>
-                    <Animated.Image source={getImageByIndex(bgImageIndex)} style={[{borderRadius: 8}, bgImageStyle]} />
+                    <AnimationCard imageSource={getImageByIndex(bgImageIndex)}
+                                   style={bgImageStyle}
+                    />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{marginTop: 0}, frontImageStyle]}>
-                        <Card imageSource={getImageByIndex(selectedImageIndex)}/>
+                    <Animated.View style={frontImageStyle}>
+                        <AnimationCard imageSource={getImageByIndex(selectedImageIndex)} style={{borderRadius: 8, width: CardSize.width, height: CardSize.height}}/>
                     </Animated.View>
                 </PanGestureHandler>
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                width: CardSize.width, marginTop: 30
+                width: CardSize.width, marginTop: 80
             }}>
                 <TouchableOpacity onPress={() => {
                     skipToNext(false)
