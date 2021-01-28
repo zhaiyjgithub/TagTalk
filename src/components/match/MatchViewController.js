@@ -93,7 +93,7 @@ const MatchViewController = (props) => {
 
             if (Math.abs(event.translationX) < width/4.0) {
                 translation.x.value = withTiming(0)
-                translation.y.value = withTiming(10)
+                translation.y.value = withTiming(0)
 
                 position.value = Position.origin
                 return
@@ -156,9 +156,9 @@ const MatchViewController = (props) => {
         return {
             width: CardSize.width*scale,
             height: CardSize.height*scale,
-            transform: [
-                {translateY: translationY},
-            ]
+            // transform: [
+            //     {translateY: 0},
+            // ]
         }
     })
 
@@ -279,12 +279,12 @@ const MatchViewController = (props) => {
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white, alignItems: 'center'}}>
             <View style={{width: CardSize.width, marginTop: 30, }}>
                 <View style={{position: 'absolute', width: '100%',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}>
                     <Animated.Image source={getImageByIndex(bgImageIndex)} style={[{borderRadius: 8}, bgImageStyle]} />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[{marginTop: 8}, frontImageStyle]}>
+                    <Animated.View style={[{marginTop: 0}, frontImageStyle]}>
                         <Card imageSource={getImageByIndex(selectedImageIndex)}/>
                     </Animated.View>
                 </PanGestureHandler>
