@@ -120,7 +120,7 @@ const MatchViewController = (props) => {
         }
     })
 
-    const frontImageStyle = useAnimatedStyle(() => {
+    const frontImageContainerStyle = useAnimatedStyle(() => {
         const rotateZ = interpolate(translation.x.value, [-width/2.0, width/2.0], [15, -15], 'clamp') + 'deg'
 
         let opacity = 0.0
@@ -128,7 +128,7 @@ const MatchViewController = (props) => {
         if (positionVal === Position.origin) {
             opacity = 1.0
         } else if (positionVal === Position.mid) {
-            opacity = interpolate(Math.abs(translation.x.value), [0, width/2.0], [1, 0.3], 'clamp')
+            opacity = 1.0//interpolate(Math.abs(translation.x.value), [0, width/2.0], [1, 0.3], 'clamp')
         }else if (positionVal === Position.edge) {
             opacity = 0.0
         }
@@ -136,7 +136,6 @@ const MatchViewController = (props) => {
             borderRadius: 8,
             opacity: opacity,
             width: CardSize.width,
-            height: CardSize.height,
             transform: [
                 {translateX: translation.x.value,},
                 {translateY: translation.y.value},
@@ -144,25 +143,49 @@ const MatchViewController = (props) => {
             ]}
     })
 
+    const frontImageStyle = useAnimatedStyle(() => {
+        return {
+            borderRadius: 8,
+            width: CardSize.width,
+            height: CardSize.height,
+        }
+    })
+
     const bgImageStyle = useAnimatedStyle(() => {
         const translationX = Math.abs(translation.x.value)
         const positionVal = position.value
         const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
 
-        let translationY = 0
-        if (positionVal === Position.mid) {
-            translationY = interpolate(translationX, [0, MaxEdgePositionX], [0, 8], 'clamp')
-        }else if (positionVal === Position.edge) {
-            translationY = 8
-        }
-
         return {
             borderRadius: 8,
             width: CardSize.width*scale,
             height: CardSize.height*scale,
-            // transform: [
-            //     {translateY: 0},
-            // ]
+        }
+    })
+
+    const bgImageContainerStyle = useAnimatedStyle(() => {
+        const translationX = Math.abs(translation.x.value)
+        const positionVal = position.value
+        const scale = positionVal !== Position.edge ? interpolate(translationX, [0, MaxEdgePositionX], [0.9, 1.0], 'clamp') : 1.0
+        return {
+            borderRadius: 8,
+            width: CardSize.width*scale,
+        }
+    })
+
+    const nopeContainerStyle = useAnimatedStyle(() => {
+        const translationX = translation.x.value
+        const opacity = translationX < 10 ? interpolate(Math.abs(translationX), [10, width/2.0], [0.1, 1.0], 'clamp') : 0.0
+        return {
+            opacity: opacity
+        }
+    })
+
+    const likeContainerStyle = useAnimatedStyle(() => {
+        const translationX = translation.x.value
+        const opacity = translationX > 10 ? interpolate(Math.abs(translationX), [10, width/2.0], [0.1, 1.0], 'clamp') : 0.0
+        return {
+            opacity: opacity
         }
     })
 
@@ -287,11 +310,19 @@ const MatchViewController = (props) => {
                 }}>
                     <AnimationCard imageSource={getImageByIndex(bgImageIndex)}
                                    style={bgImageStyle}
+                                   containerStyle={bgImageContainerStyle}
+                                   likeContainerStyle={likeContainerStyle}
+                                   nopeContainerStyle={nopeContainerStyle}
                     />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
-                    <Animated.View style={frontImageStyle}>
-                        <AnimationCard imageSource={getImageByIndex(selectedImageIndex)} style={{borderRadius: 8, width: CardSize.width, height: CardSize.height}}/>
+                    <Animated.View>
+                        <AnimationCard imageSource={getImageByIndex(selectedImageIndex)}
+                                       style={frontImageStyle}
+                                       containerStyle={frontImageContainerStyle}
+                                       likeContainerStyle={likeContainerStyle}
+                                       nopeContainerStyle={nopeContainerStyle}
+                        />
                     </Animated.View>
                 </PanGestureHandler>
             </View>
