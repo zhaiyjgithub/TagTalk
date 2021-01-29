@@ -38,6 +38,7 @@ const MatchViewController = (props) => {
         x: useSharedValue(0),
         y: useSharedValue(0)
     }
+    const starLikeOpacity = useSharedValue(0)
     const springConfig = {
         damping: 15,
         mass: 0.5,
@@ -174,16 +175,34 @@ const MatchViewController = (props) => {
     })
 
     const nopeContainerStyle = useAnimatedStyle(() => {
+        if (starLikeOpacity.value > 0) {
+            return {
+                opacity: 0.0
+            }
+        }
         const translationX = translation.x.value
-        const opacity = translationX < 10 ? interpolate(Math.abs(translationX), [10, width/2.0], [0.1, 1.0], 'clamp') : 0.0
+        const opacity = translationX < -10 ? interpolate(Math.abs(translationX), [10, width/2.0], [0.1, 1.0], 'clamp') : 0.0
         return {
             opacity: opacity
         }
     })
 
     const likeContainerStyle = useAnimatedStyle(() => {
+        if (starLikeOpacity.value > 0) {
+            return {
+                opacity: 0.0
+            }
+        }
         const translationX = translation.x.value
         const opacity = translationX > 10 ? interpolate(Math.abs(translationX), [10, width/2.0], [0.1, 1.0], 'clamp') : 0.0
+        return {
+            opacity: opacity
+        }
+    })
+
+    const starLikeContainerStyle = useAnimatedStyle(() => {
+        const val = starLikeOpacity.value
+        const opacity = interpolate(val, [0, 1.0], [0.0, 1.0], 'clamp')
         return {
             opacity: opacity
         }
@@ -206,8 +225,18 @@ const MatchViewController = (props) => {
                 duration: 100,
             }, () => {
                 position.value = Position.origin
+                starLikeOpacity.value = 0.0
                 runOnJS(handelUpdateBgImageIndex)()
             })
+        })
+    }
+
+    const animationStarLikeOpacity = () => {
+        starLikeOpacity.value = withSpring(1.0, {
+            duration: 600,
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        }, () => {
+            runOnJS(skipToNext)(true)
         })
     }
 
@@ -302,9 +331,50 @@ const MatchViewController = (props) => {
         return images[((index >= images.length) ? 0 : index)]
     }
 
+    const didClickToolBarButton = (item) => {
+        const {type} = item
+        if (type === ToolBarType.like) {
+            skipToNext(true)
+        }else if (type === ToolBarType.nope) {
+            skipToNext(false)
+        }else if (type === ToolBarType.star) {
+            animationStarLikeOpacity()
+        }
+    }
+
+    const renderToolBar = () => {
+        const datas = [
+            {type: ToolBarType.back, imageSource: require('../../source/image/match/Rewind.png'), bgColor: Colors.white},
+            {type: ToolBarType.nope, imageSource: require('../../source/image/match/Nope.png'), bgColor: Colors.white},
+            {type: ToolBarType.star, imageSource: require('../../source/image/match/Star.png'), bgColor: Colors.white},
+            {type: ToolBarType.like, imageSource: require('../../source/image/match/Like.png'), bgColor: Colors.white},
+        ]
+
+        const size = 55
+        return (
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                width: CardSize.width, marginTop: 20,
+            }}>
+                {datas.map((item, idx) => {
+                    return (
+                        <TouchableOpacity key={idx} onPress={() => {
+                           didClickToolBarButton(item)
+                        }} style={{width: size, height: size, backgroundColor: item.bgColor,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: size/2.0
+                        }}>
+                            <Image source={item.imageSource}/>
+                        </TouchableOpacity>
+                    )
+                })}
+            </View>
+        )
+    }
+
     return(
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.cardBgColor, alignItems: 'center'}}>
-            <View style={{width: CardSize.width, marginTop: 30, }}>
+            <View style={{width: CardSize.width, marginTop: 30,}}>
                 <View style={{position: 'absolute', width: '100%',
                     alignItems: 'center',
                 }}>
@@ -313,6 +383,7 @@ const MatchViewController = (props) => {
                                    containerStyle={bgImageContainerStyle}
                                    likeContainerStyle={likeContainerStyle}
                                    nopeContainerStyle={nopeContainerStyle}
+                                   starLikeContainerStyle={starLikeContainerStyle}
                     />
                 </View>
                 <PanGestureHandler onHandlerStateChange={handlerStageChanged} onGestureEvent={gestureHandler}>
@@ -322,37 +393,23 @@ const MatchViewController = (props) => {
                                        containerStyle={frontImageContainerStyle}
                                        likeContainerStyle={likeContainerStyle}
                                        nopeContainerStyle={nopeContainerStyle}
+                                       starLikeContainerStyle={starLikeContainerStyle}
                         />
                     </Animated.View>
                 </PanGestureHandler>
             </View>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                width: CardSize.width, marginTop: 80
-            }}>
-                <TouchableOpacity onPress={() => {
-                    skipToNext(false)
-                }} style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 8
-                }}>
-                    <Text style={{fontSize: 18}}>{'Skip'}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => {
-                    skipToNext(true)
-                }} style={{width: 70, height: 70, borderWidth: 1, borderColor: Colors.lineGray,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 8
-                }}>
-                    <Text style={{fontSize: 18}}>{'Like'}</Text>
-                </TouchableOpacity>
-            </View>
+            {renderToolBar()}
 		</SafeAreaView>
 	)
 }
 
 export default MatchViewController
+
+const ToolBarType = {
+    nope: 0,
+    like: 1,
+    star: 2,
+    back: 3,
+}
 
