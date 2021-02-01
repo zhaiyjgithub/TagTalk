@@ -83,10 +83,10 @@ const AnimationCard = memo(function AnimationCard(props) {
 						}}/>
 					</View>
 					<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',}}>
-						<Image source={require('../../../source/image/match/intersection.png')} style={{width: 20, height: 20,marginRight: 5,
+						<Image source={require('../../../source/image/match/intersection.png')} style={{width: 15, height: 15,marginRight: 5,
 							tintColor: Colors.black
 						}}/>
-						<Text style={{fontSize: 18, color: Colors.black, fontWeight: '500'}}>{'99%'}</Text>
+						<Text style={{fontSize: 16, color: Colors.black, fontWeight: '500'}}>{'99%'}</Text>
 					</View>
 				</View>
 				<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10,

@@ -11,6 +11,7 @@ import ToastMsg from '../../utils/ToastMsg';
 import CacheTool from '../../utils/CacheTool';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
 import {Router} from '../../route/router';
+import NavigatorDismissButton from '../commonComponents/NavigatorDismissButton';
 
 export default class SignInViewController extends Component{
     constructor(props) {
@@ -20,26 +21,6 @@ export default class SignInViewController extends Component{
             password: '',
             isShowSpinner: false
         }
-    }
-
-    renderDismissButton(){
-        return (
-            <TouchableOpacity onPress={() => {
-                if (PLATFORM.isIOS) {
-                    Navigation.dismissModal(this.props.componentId)
-                }else {
-                    Navigation.pop(this.props.componentId)
-                }
-            }} style={{
-                position: 'absolute',
-                left: 20, bottom: 50,
-                height: 44, width: 44,
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-                <Image source={require('../../source/image/chat/close.png')} />
-            </TouchableOpacity>
-        )
     }
 
     logIn() {
@@ -125,7 +106,7 @@ export default class SignInViewController extends Component{
                             }
                 />
 
-                {this.renderDismissButton()}
+                <NavigatorDismissButton componentId={this.props.componentId}/>
 
                 <LoadingSpinner visible={isShowSpinner}/>
             </SafeAreaView>

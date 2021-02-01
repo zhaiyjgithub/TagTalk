@@ -18,11 +18,11 @@ export default class BaseButton extends Component{
                     didClick && didClick()
                 }} style={[{flex: 1,
                     backgroundColor: Colors.blue,
-                    borderRadius: 4,
+                    borderRadius: 2,
                     marginHorizontal: 20, justifyContent: 'center', alignItems: 'center'
                 }, style]}>
-                    <Text style={{fontSize: 16, fontFamily: FontFamily.helvetica,
-                        color: Colors.white
+                    <Text style={{fontSize: 18, fontFamily: FontFamily.helvetica,
+                        color: Colors.white, fontWeight: '500'
                     }}>{title}</Text>
                 </TouchableOpacity>
             </View>

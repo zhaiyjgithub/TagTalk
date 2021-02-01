@@ -13,6 +13,9 @@ import {Colors, FontFamily} from '../utils/styles';
 import DBTestController from '../test/DBTestController';
 import AnimationViewController from '../test/animationViewController';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import ProfileSetUpViewController from '../components/profile/ProfileSetUpViewController';
+
+
 const RouterMapper = {
 	run() {
 		Navigation.registerComponent('MessageViewController', () => MessageViewController);
@@ -27,6 +30,8 @@ const RouterMapper = {
 		Navigation.registerComponent('SignUpViewController', () => SignUpViewController);
 		Navigation.registerComponent('DBTestController', () => DBTestController);
 		Navigation.registerComponent('AnimationViewController', () => gestureHandlerRootHOC(AnimationViewController));
+		Navigation.registerComponent('ProfileSetUpViewController', () => ProfileSetUpViewController);
+		//
 
 	},
 }

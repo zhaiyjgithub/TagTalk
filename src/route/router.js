@@ -31,7 +31,7 @@ const Router = {
 	showTestPage() {
 		Navigation.setDefaultOptions({
 			topBar: {
-				visible: true,
+				visible: false,
 			},
 		});
 		Navigation.setRoot({
@@ -40,7 +40,7 @@ const Router = {
 					children: [
 						{
 							component: {
-								name: 'MatchViewController'
+								name: 'ProfileSetUpViewController'
 							}
 						}
 					]

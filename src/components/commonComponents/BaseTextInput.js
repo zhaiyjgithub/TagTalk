@@ -7,28 +7,29 @@ export default class BaseTextInput extends Component{
         title:'',
         lineStyle: {},
         containerStyle: {marginTop: 20},
-        style: {height: 30, fontSize: 18,
-            color: Colors.black, paddingVertical: 0, marginVertical: 8,},
+        textInputStyle: {},
     }
 
     render() {
         const {
             title = '',
-            lineStyle= {},
-            containerStyle= {marginTop: 20},
-            style= {height: 30, fontSize: 18,
-                color: Colors.black, paddingVertical: 0, marginVertical: 8,},
+            lineStyle,
+            containerStyle,
+            textInputStyle,
         } = this.props
 
         return(
             <View style={[{width: '100%', paddingHorizontal: 20,
-                minHeight: 62
+                minHeight: 62, marginTop: 20
             }, containerStyle]}>
                 <Text style={{fontSize: 14, color: Colors.blue,
                 }}>{title}</Text>
-                <TextInput style={style}
-                           clearButtonMode={'while-editing'}
-                           {...this.props} />
+                <TextInput
+                    {...this.props}
+                    clearButtonMode={'while-editing'}
+                    style={[{height: 30, fontSize: 18,
+                        color: Colors.black, paddingVertical: 0, marginVertical: 8}, textInputStyle]}
+                />
 
                 <View style={[{height: 1,
                     backgroundColor: Colors.lineColor
@@ -36,5 +37,13 @@ export default class BaseTextInput extends Component{
             </View>
         )
     }
-
 }
+
+export const KeyboardType = {
+    default: 'default',
+    numberPad: 'number-pad',
+    decimalPad: 'decimal-pad',
+    numeric: 'numeric',
+    email: 'email-address',
+    phone: 'phone-pad'
+};
