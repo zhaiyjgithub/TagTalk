@@ -17,10 +17,8 @@ import {PanGestureHandler, State} from 'react-native-gesture-handler'
 
 const Item = (props) => {
 	const {bgColor, orderId, positions} = props
-
-
-
 	const isActive = useSharedValue(false)
+	const dataSourceLength = Object.keys(positions).length
 
 	const calcNewPosition = (orderNumber) => {
 		"worklet";
@@ -38,10 +36,13 @@ const Item = (props) => {
 
 	const calcOrder = (translationX, translationY) => {
 		"worklet";
+		const maxHeight = Math.floor((dataSourceLength - 1)/COL)*ItemSize.height
 		const offsetX = Math.max(translationX, 0)
 		const offsetY = Math.max(translationY, 0)
+		const maxOffsetY = Math.min(maxHeight, offsetY)
+
 		const row = Math.round(offsetX/ItemSize.width) // over 0.5*ItemSize.height, so change to order
-		const column = Math.round(offsetY/ItemSize.height)
+		const column = Math.round(maxOffsetY/ItemSize.height)
 		return (column*COL + row)
 	}
 
@@ -72,6 +73,7 @@ const Item = (props) => {
 			const oldOrder = positions.value[orderId]
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
 
+			console.log('new order:', newOrder)
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
 			let orderIdToSwap = Object.keys(newPositions).find((key) => {
 				return newPositions[key] === newOrder
