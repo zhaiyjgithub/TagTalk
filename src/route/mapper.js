@@ -14,6 +14,7 @@ import DBTestController from '../test/DBTestController';
 import AnimationViewController from '../test/animationViewController';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import ProfileSetUpViewController from '../components/profile/ProfileSetUpViewController';
+import sortableViewController from '../test/sortableViewController';
 
 
 const RouterMapper = {
@@ -31,8 +32,9 @@ const RouterMapper = {
 		Navigation.registerComponent('DBTestController', () => DBTestController);
 		Navigation.registerComponent('AnimationViewController', () => gestureHandlerRootHOC(AnimationViewController));
 		Navigation.registerComponent('ProfileSetUpViewController', () => ProfileSetUpViewController);
-		//
 
+		Navigation.registerComponent('sortableViewController', () => sortableViewController);
+		//
 	},
 }
 
