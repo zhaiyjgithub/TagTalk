@@ -45,11 +45,18 @@ const Item = (props) => {
 		return (column*COL + row)
 	}
 
-	useAnimatedReaction(() => {
-		return positions
-	}, () => {
 
+	useAnimatedReaction(() => {
+		return positions.value[orderId]
+	}, (orderNumber) => {
+		if (!isActive.value) {
+			console.log('reaction position: ', orderNumber)
+			const pos = calcNewPosition(orderNumber)
+			translation.x.value = withTiming(pos.x, animationConfig)
+			translation.y.value = withTiming(pos.y, animationConfig)
+		}
 	})
+
 
 	const gestureHandler = useAnimatedGestureHandler({
 		onStart:(_, ctx) => {
@@ -64,16 +71,19 @@ const Item = (props) => {
 
 			const oldOrder = positions.value[orderId]
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
-			console.log('newOrder: ', newOrder)
-			// positions.value[orderId] = newOrder
-			console.log("before: " + positions.value[orderId])
 
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
+			let orderIdToSwap = Object.keys(newPositions).find((key) => {
+				return newPositions[key] === newOrder
+			})
+
+			console.log('orderIdToSwap: ', orderIdToSwap)
 			newPositions[orderId] = newOrder
+			newPositions[orderIdToSwap] = oldOrder
 			positions.value = newPositions
-			console.log("after: " + positions.value[orderId])
-			// console.log(positions.value)
-			// positions.value['blue'] = 0
+
+			console.log('new positions: ', JSON.stringify(newPositions))
+
 		},
 		onEnd: (event, ctx) => {
 			let position = calcNewPosition(positions.value[orderId])
