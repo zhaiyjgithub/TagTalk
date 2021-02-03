@@ -47,53 +47,35 @@ const Item = (props) => {
 		return (column*COL + row)
 	}
 
-
-	useAnimatedReaction(() => {
-		return positions.value[orderId]
-	}, (orderNumber) => {
-		if (!isActive.value) {
-			const pos = calcNewPosition(orderNumber)
-			translation.x.value = withTiming(pos.x, animationConfig)
-			translation.y.value = withTiming(pos.y, animationConfig)
-		}
-	})
-
-	const moveForward = (pos, fromNumber, toNumber, fromOrderId) => {
+	const moveForward = (newPositions, fromOrder, toOrder, fromId) => {
 		"worklet";
-
-		if (fromNumber === toNumber) {
-			return pos
+		if (fromOrder === toOrder) {
+			return position
 		}
-		const newPositions = JSON.parse(JSON.stringify(pos))
-		let keys = Object.keys(newPositions)
-		keys.map((key, index) => {
+		Object.keys(newPositions).map((key, index) => {
 			let curNumber = newPositions[key]
-			if (curNumber > fromNumber && curNumber <= toNumber) {
+			if (curNumber > fromOrder && curNumber <= toOrder) {
 				newPositions[key] = curNumber - 1
 			}
 		})
+		newPositions[fromId] = toOrder
 
-		newPositions[fromOrderId] = toNumber
 		return newPositions
 	}
 
-	const moveBack = (pos, fromNumber, toNumber, fromOrderId) => {
+	const moveBack = (newPositions, fromOrder, toOrder, fromId) => {
 		"worklet";
-
-		if (fromNumber === toNumber) {
-			return pos
+		if (fromOrder === toOrder) {
+			return position
 		}
-
-		const newPositions = JSON.parse(JSON.stringify(pos))
-		let keys = Object.keys(newPositions)
-		keys.map((key, index) => {
+		Object.keys(newPositions).map((key, index) => {
 			let curNumber = newPositions[key]
-			if (curNumber >= toNumber && curNumber < fromNumber) {
+			if (curNumber >= toOrder && curNumber < fromOrder) {
 				newPositions[key] = curNumber + 1
 			}
 		})
+		newPositions[fromId] = toOrder
 
-		newPositions[fromOrderId] = toNumber
 		return newPositions
 	}
 
@@ -110,20 +92,7 @@ const Item = (props) => {
 
 			const oldOrder = positions.value[orderId]
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
-
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
-
-			// let orderIdToSwap = Object.keys(newPositions).find((key) => {
-			// 	return newPositions[key] === newOrder
-			// })
-			//
-			// newPositions[orderId] = newOrder
-			// newPositions[orderIdToSwap] = oldOrder
-			// if (oldOrder !== newOrder) {
-			// 	positions.value = oldOrder > newOrder ? moveForward(newPositions, oldOrder, newOrder, orderId) :
-			// }
-
-			// positions.value = moveForward(newPositions, oldOrder, newOrder, orderId)
 			if (oldOrder > newOrder) {
 				positions.value = moveBack(newPositions, oldOrder, newOrder, orderId)
 			}else if (oldOrder < newOrder) {
@@ -141,9 +110,18 @@ const Item = (props) => {
 		}
 	})
 
+	useAnimatedReaction(() => {
+		return positions.value[orderId]
+	}, (orderNumber) => {
+		if (!isActive.value) {
+			const pos = calcNewPosition(orderNumber)
+			translation.x.value = withTiming(pos.x, animationConfig)
+			translation.y.value = withTiming(pos.y, animationConfig)
+		}
+	})
+
 	const style = useAnimatedStyle(() => {
 		const zIndex = isActive.value ? 101 : 100
-
 		return {
 			position: 'absolute',
 			left: 0,
