@@ -1,26 +1,9 @@
-import React, { useState, useEffect, } from "react"
-import {SafeAreaView, Button, View, Text, Dimensions, ScrollView} from 'react-native'
-import {Colors} from '../utils/styles';
-import Animated,  {
-	useSharedValue,
-	withTiming,
-	useAnimatedStyle,
-	Easing,
-	useAnimatedGestureHandler,
-	withSpring,
-	interpolate,
-	concat,
-	withSequence
-} from 'react-native-reanimated';
-import {PanGestureHandler, State} from 'react-native-gesture-handler'
-import Item from './Item';
-import {ItemPosition} from './tool';
-const {width} = Dimensions.get('window')
-
+import React from 'react';
+import {TouchableOpacity, SafeAreaView, View, Text} from 'react-native';
+import {useSharedValue} from 'react-native-reanimated';
+import SortableItem from './SortableItem';
 
 const sortableViewController = () => {
-	// const positions = useSharedValue({})
-
 	let list = [
 		{bgColor: 'red', id: 'red'},
 		{bgColor: 'blue', id: 'blue'},
@@ -41,17 +24,34 @@ const sortableViewController = () => {
 	}
 	const positions = useSharedValue(dataSourceToShardedValue(list));
 
+	const renderItem = (item) => {
+		const {id} = item
+		return (
+			<TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+				<Text style={{fontSize: 30, color: '#fff'}}>{id}</Text>
+			</TouchableOpacity>
+		)
+	}
+
 	return(
-		<View style={{flex: 1,}}>
-			<ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: 'wrap'}}>
+		<SafeAreaView style={{flex: 1,}}>
+			<View contentContainerStyle={{flexDirection: 'row', flexWrap: 'wrap'}}>
 				{list.map((_item, idx) => {
 					const {id, bgColor} = _item
 					return (
-						<Item key={idx} bgColor={bgColor} orderId={id} positions={positions}/>
+						<SortableItem key={idx}
+									  bgColor={bgColor}
+									  orderId={id}
+									  positions={positions}
+									  numberOfColumn={4}
+									  renderItem={() => {
+									  	return renderItem(_item)
+									  }}
+						/>
 					)
 				})}
-			</ScrollView>
-		</View>
+			</View>
+		</SafeAreaView>
 	)
 }
 

@@ -1,24 +1,36 @@
 import React from 'react';
 import Animated, {
+	Easing,
 	useAnimatedGestureHandler,
 	useAnimatedReaction,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 } from 'react-native-reanimated';
-import {animationConfig, COL, ItemSize} from './tool';
 import {PanGestureHandler} from 'react-native-gesture-handler';
+import {ScreenDimensions} from '../utils/Dimemsions';
 
-const Item = (props) => {
-	const {bgColor, orderId, positions} = props
+const animationConfig = {
+	easing: Easing.inOut(Easing.ease),
+	duration: 250,
+}
+
+const SortableItem = (props) => {
+	const {bgColor, orderId,
+		positions, renderItem,
+		numberOfColumn
+	} = props
+	const itemHeight = ScreenDimensions.width/numberOfColumn
+	const itemWidth = ScreenDimensions.width/numberOfColumn
+
 	const isActive = useSharedValue(false)
 	const dataSourceLength = Object.keys(positions.value).length
 
 	const calcNewPosition = (orderNumber) => {
 		"worklet";
 		return {
-			x: (orderNumber % COL)*ItemSize.width,
-			y: Math.floor(orderNumber/COL)*ItemSize.height
+			x: (orderNumber % numberOfColumn)*itemWidth,
+			y: Math.floor(orderNumber/numberOfColumn)*itemHeight
 		}
 	}
 
@@ -30,15 +42,15 @@ const Item = (props) => {
 
 	const calcOrder = (translationX, translationY) => {
 		"worklet";
-		const maxHeight = Math.floor((dataSourceLength - 1)/COL)*ItemSize.height
+		const maxHeight = Math.floor((dataSourceLength - 1)/numberOfColumn)*itemHeight
 		const offsetX = Math.max(translationX, 0)
 		const offsetY = Math.max(translationY, 0)
 		const maxOffsetY = Math.min(maxHeight, offsetY)
 
-		const row = Math.round(offsetX/ItemSize.width) // over 0.5*ItemSize.height, so change to order
-		const column = Math.round(maxOffsetY/ItemSize.height)
+		const row = Math.round(offsetX/itemWidth) // over 0.5*ItemSize.height, so change to order
+		const column = Math.round(maxOffsetY/itemHeight)
 
-		return Math.min((column*COL + row), (dataSourceLength - 1))
+		return Math.min((column*numberOfColumn + row), (dataSourceLength - 1))
 	}
 
 	const moveForward = (newPositions, fromOrder, toOrder, fromId) => {
@@ -131,10 +143,10 @@ const Item = (props) => {
 	return (
 		<Animated.View style={style}>
 			<PanGestureHandler onGestureEvent={gestureHandler}>
-				<Animated.View get style={[{width: ItemSize.width, height: ItemSize.height, borderRadius: 10,
+				<Animated.View get style={[{width: itemWidth, height: itemHeight,
 					backgroundColor: bgColor, justifyContent: 'center', alignItems: 'center'
 				}]}>
-					{/*<Text style={{fontSize: 30, color: '#fff', fontWeight: 'bold'}}>{positions.value[orderId]}</Text>*/}
+					{renderItem && renderItem()}
 				</Animated.View>
 			</PanGestureHandler>
 		</Animated.View>
@@ -142,4 +154,4 @@ const Item = (props) => {
 	)
 }
 
-export default Item
+export default SortableItem
