@@ -5,8 +5,8 @@ const {width, height} = Dimensions.get('window')
 
 export const COL = 2
 export const ItemSize = {
-	width: width/2.0,
-	height: width/2.0
+	width: width/COL,
+	height: width/COL
 }
 
 export const ItemPosition = {} // {id :  order number}

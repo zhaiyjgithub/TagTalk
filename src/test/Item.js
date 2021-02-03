@@ -18,12 +18,12 @@ import {PanGestureHandler, State} from 'react-native-gesture-handler'
 const Item = (props) => {
 	const {bgColor, orderId, positions} = props
 	const isActive = useSharedValue(false)
-	const dataSourceLength = Object.keys(positions).length
+	const dataSourceLength = Object.keys(positions.value).length
 
 	const calcNewPosition = (orderNumber) => {
 		"worklet";
 		return {
-			x: orderNumber % COL === 0 ? 0 : ItemSize.width,
+			x: (orderNumber % COL)*ItemSize.width,
 			y: Math.floor(orderNumber/COL)*ItemSize.height
 		}
 	}
@@ -43,6 +43,7 @@ const Item = (props) => {
 
 		const row = Math.round(offsetX/ItemSize.width) // over 0.5*ItemSize.height, so change to order
 		const column = Math.round(maxOffsetY/ItemSize.height)
+
 		return (column*COL + row)
 	}
 
@@ -51,7 +52,6 @@ const Item = (props) => {
 		return positions.value[orderId]
 	}, (orderNumber) => {
 		if (!isActive.value) {
-			console.log('reaction position: ', orderNumber)
 			const pos = calcNewPosition(orderNumber)
 			translation.x.value = withTiming(pos.x, animationConfig)
 			translation.y.value = withTiming(pos.y, animationConfig)
@@ -73,19 +73,14 @@ const Item = (props) => {
 			const oldOrder = positions.value[orderId]
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
 
-			console.log('new order:', newOrder)
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
 			let orderIdToSwap = Object.keys(newPositions).find((key) => {
 				return newPositions[key] === newOrder
 			})
 
-			console.log('orderIdToSwap: ', orderIdToSwap)
 			newPositions[orderId] = newOrder
 			newPositions[orderIdToSwap] = oldOrder
 			positions.value = newPositions
-
-			console.log('new positions: ', JSON.stringify(newPositions))
-
 		},
 		onEnd: (event, ctx) => {
 			let position = calcNewPosition(positions.value[orderId])
