@@ -58,6 +58,44 @@ const Item = (props) => {
 		}
 	})
 
+	const moveForward = (pos, fromNumber, toNumber, fromOrderId) => {
+		"worklet";
+
+		if (fromNumber === toNumber) {
+			return pos
+		}
+		const newPositions = JSON.parse(JSON.stringify(pos))
+		let keys = Object.keys(newPositions)
+		keys.map((key, index) => {
+			let curNumber = newPositions[key]
+			if (curNumber > fromNumber && curNumber <= toNumber) {
+				newPositions[key] = curNumber - 1
+			}
+		})
+
+		newPositions[fromOrderId] = toNumber
+		return newPositions
+	}
+
+	const moveBack = (pos, fromNumber, toNumber, fromOrderId) => {
+		"worklet";
+
+		if (fromNumber === toNumber) {
+			return pos
+		}
+
+		const newPositions = JSON.parse(JSON.stringify(pos))
+		let keys = Object.keys(newPositions)
+		keys.map((key, index) => {
+			let curNumber = newPositions[key]
+			if (curNumber >= toNumber && curNumber < fromNumber) {
+				newPositions[key] = curNumber + 1
+			}
+		})
+
+		newPositions[fromOrderId] = toNumber
+		return newPositions
+	}
 
 	const gestureHandler = useAnimatedGestureHandler({
 		onStart:(_, ctx) => {
@@ -74,13 +112,25 @@ const Item = (props) => {
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
 
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
-			let orderIdToSwap = Object.keys(newPositions).find((key) => {
-				return newPositions[key] === newOrder
-			})
 
-			newPositions[orderId] = newOrder
-			newPositions[orderIdToSwap] = oldOrder
-			positions.value = newPositions
+			// let orderIdToSwap = Object.keys(newPositions).find((key) => {
+			// 	return newPositions[key] === newOrder
+			// })
+			//
+			// newPositions[orderId] = newOrder
+			// newPositions[orderIdToSwap] = oldOrder
+			// if (oldOrder !== newOrder) {
+			// 	positions.value = oldOrder > newOrder ? moveForward(newPositions, oldOrder, newOrder, orderId) :
+			// }
+
+			// positions.value = moveForward(newPositions, oldOrder, newOrder, orderId)
+			if (oldOrder > newOrder) {
+				positions.value = moveBack(newPositions, oldOrder, newOrder, orderId)
+			}else if (oldOrder < newOrder) {
+				positions.value = moveForward(newPositions, oldOrder, newOrder, orderId)
+			}else {
+				positions.value = newPositions
+			}
 		},
 		onEnd: (event, ctx) => {
 			let position = calcNewPosition(positions.value[orderId])
@@ -110,9 +160,9 @@ const Item = (props) => {
 		<Animated.View style={style}>
 			<PanGestureHandler onGestureEvent={gestureHandler}>
 				<Animated.View get style={[{width: ItemSize.width, height: ItemSize.height, borderRadius: 10,
-					backgroundColor: bgColor
+					backgroundColor: bgColor, justifyContent: 'center', alignItems: 'center'
 				}]}>
-
+					{/*<Text style={{fontSize: 30, color: '#fff', fontWeight: 'bold'}}>{positions.value[orderId]}</Text>*/}
 				</Animated.View>
 			</PanGestureHandler>
 		</Animated.View>

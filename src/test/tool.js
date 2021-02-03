@@ -3,7 +3,7 @@ import {Easing, exp} from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('window')
 
-export const COL = 2
+export const COL = 3
 export const ItemSize = {
 	width: width/COL,
 	height: width/COL
