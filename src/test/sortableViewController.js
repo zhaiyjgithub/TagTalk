@@ -41,10 +41,6 @@ const sortableViewController = () => {
 	}
 	const positions = useSharedValue(dataSourceToShardedValue(list));
 
-	useEffect(() => {
-		console.log(positions)
-	})
-
 	return(
 		<View style={{flex: 1,}}>
 			<ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: 'wrap'}}>

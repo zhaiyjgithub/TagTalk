@@ -1,19 +1,13 @@
-import React, { useState, useEffect, } from "react"
-import {SafeAreaView, Button, View, Text, Dimensions} from 'react-native'
-import {Colors} from '../utils/styles';
+import React from 'react';
 import Animated, {
+	useAnimatedGestureHandler,
+	useAnimatedReaction,
+	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
-	useAnimatedStyle,
-	Easing,
-	useAnimatedGestureHandler,
-	withSpring,
-	interpolate,
-	concat,
-	withSequence, useAnimatedReaction,
 } from 'react-native-reanimated';
-import {animationConfig, COL, getPosition, ItemPosition, ItemSize} from './tool';
-import {PanGestureHandler, State} from 'react-native-gesture-handler'
+import {animationConfig, COL, ItemSize} from './tool';
+import {PanGestureHandler} from 'react-native-gesture-handler';
 
 const Item = (props) => {
 	const {bgColor, orderId, positions} = props
@@ -44,7 +38,7 @@ const Item = (props) => {
 		const row = Math.round(offsetX/ItemSize.width) // over 0.5*ItemSize.height, so change to order
 		const column = Math.round(maxOffsetY/ItemSize.height)
 
-		return (column*COL + row)
+		return Math.min((column*COL + row), (dataSourceLength - 1))
 	}
 
 	const moveForward = (newPositions, fromOrder, toOrder, fromId) => {
