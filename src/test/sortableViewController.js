@@ -13,7 +13,7 @@ const sortableViewController = () => {
 		{bgColor: 'green', id: 'green'}
 	]
 
-	const dataSourceToShardedValue = (dataSource) => {
+	const convertDataSourceToShardedValue = (dataSource) => {
 		let obj = {}
 		dataSource.forEach((_item, idx,) => {
 			const {id} = _item
@@ -22,7 +22,7 @@ const sortableViewController = () => {
 
 		return obj
 	}
-	const positions = useSharedValue(dataSourceToShardedValue(list));
+	const positions = useSharedValue(convertDataSourceToShardedValue(list));
 
 	const renderItem = (item) => {
 		const {id} = item
