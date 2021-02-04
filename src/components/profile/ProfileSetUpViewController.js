@@ -18,32 +18,43 @@ import BaseButton from '../commonComponents/BaseButton';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
 import NavigatorDismissButton from '../commonComponents/NavigatorDismissButton';
 import SeparateLine from '../commonComponents/SeparateLine';
-import {useSharedValue} from "react-native-reanimated";
+import {
+	runOnJS,
+	useAnimatedReaction,
+	useSharedValue,
+	withTiming,
+	useDerivedValue,
+	runOnUI,
+} from 'react-native-reanimated';
 import SortableItem from '../../test/SortableItem';
 import {ScreenDimensions} from '../../utils/Dimemsions';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {PLATFORM} from '../../utils/Enums';
+import {MessageMediaType, PLATFORM} from '../../utils/Enums';
 import moment from 'moment'
 import {Gender, TimeFormat} from '../../utils/utils';
+import ImagePicker from "react-native-image-crop-picker";
+import {CardSize} from '../match/view/AnimationCard';
 
 const ProfileSetUpViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
+	const [avatar, setAvatar] = useState('')
 	const [dob, setDob] = useState('MM/DD/YYYY')
 	const [bio, setBio] = useState('')
 	const [isShowDatePicker, setIsShowDatePicker] = useState(false)
 	const [selectedDate, setSelectedDate] = useState(new Date(2000, 0, 1))
 	const [gender, setGender] = useState(Gender.unknown)
+	// let newImageList = [
+	// 	{id: '0', uri: ''}
+	// ]
 
-	let list = [
-		{bgColor: 'red', id: 'red'},
-		{bgColor: 'blue', id: 'blue'},
-		{bgColor: 'yellow', id: 'yellow'},
-		{bgColor: 'black', id: 'black'},
-		{bgColor: 'gray', id: 'gray'},
-		{bgColor: 'green', id: 'green'}
+	let newImageList = [ { id: '0',
+		uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/7D9B4077-8E30-4269-865A-9494287C6FB0.jpg' },
+		{ id: '1',
+			uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/2F02B200-E91F-4986-B4B4-494A09A05A8F.jpg' },
+		{ id: '2',
+			uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/4AC5D20C-DDBE-4C4F-8520-14CEDA15A8A4.jpg' },
 	]
 
-	const [dataSource, setDataSource] = useState(list)
 
 	const convertDataSourceToShardedValue = (dataSource) => {
 		let obj = {}
@@ -54,22 +65,14 @@ const ProfileSetUpViewController = (props) => {
 
 		return obj
 	}
-	const positions = useSharedValue(convertDataSourceToShardedValue(list));
-
-	const renderItem = (item) => {
-		const {id} = item
-		return (
-			<TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-				<Text style={{fontSize: 30, color: '#fff'}}>{id}</Text>
-			</TouchableOpacity>
-		)
-	}
+	const positions = useSharedValue(convertDataSourceToShardedValue(newImageList));
+	const [dataSource, setDataSource] = useState(newImageList)
 
 	const renderGenderView = () => {
 		return (
 			<View style={{width: '100%', paddingHorizontal: 20,
 				flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around',
-				marginTop: 15, height: 50
+				height: 50
 			}}>
 				{[{type: Gender.male, title: 'Male'}, {type: Gender.female, title: 'Female'}].map((_item, idx,) => {
 					const {type, title} = _item
@@ -143,6 +146,90 @@ const ProfileSetUpViewController = (props) => {
 		)
 	}
 
+	const openSinglePhotoLibrary = () => {
+		ImagePicker.openPicker({
+			multiple: false
+		}).then(image => {
+			if (image && image.path) {
+				setAvatar(image.path)
+			}
+		});
+	}
+
+	useEffect(() => {
+		console.log('effect')
+	}, [])
+
+	const updateDataSource = (value) => {
+		if (dataSource.length !== newImageList.length) { // 这里要做深比较， 否则会一直死循环执行
+			console.log("updateDataSource: ", positions.value)
+			console.log('newImageList: ', newImageList)
+			setDataSource(newImageList)
+		}
+	}
+
+	// useAnimatedReaction(() => {
+	// 	console.log('first useAnimatedReaction')
+	// 	return positions.value
+	// }, (value) => {
+	// 	runOnJS(updateDataSource)(value)
+	// })
+
+	const openMultiPhotoLibrary = () => {
+		ImagePicker.openPicker({
+			multiple: true
+		}).then(images => {
+			if (images && images.length) {
+				newImageList = images.map((item, index) => {
+					return {
+						id: index.toString(),
+						uri: item.path
+					}
+				})
+
+				let newPositions = {}
+				newImageList.forEach((val, idx) => {
+					newPositions[val.id] = idx
+				})
+				console.log('new position: ', newPositions)
+				console.log('new newImageList: ', newImageList)
+				console.log('previous positions: ', positions.value)
+				// positions.value = newPositions
+				setDataSource(newImageList)
+			}
+		}).catch((error) => {
+			console.error(error)
+		});
+	}
+
+	const renderAvatar = () => {
+		return (
+			<View style={{width: '100%', marginTop: 15, alignItems: 'center'}}>
+				<TouchableOpacity onPress={() => {
+					openSinglePhotoLibrary()
+				}}>
+					<Image source={{uri: avatar}} style={{width: 96, height: 96, backgroundColor: Colors.systemGray, borderRadius: 48,
+						borderColor: Colors.blue, borderWidth: 2,
+					}}/>
+				</TouchableOpacity>
+
+				<Text numberOfLines={1} style={{fontSize: 16, color: Colors.black, marginTop: 10,}}>{'Cath'}</Text>
+			</View>
+		)
+	}
+
+	const renderItem = (item) => {
+		const {id, uri} = item
+		const size = (ScreenDimensions.width/4)
+		return (
+			<TouchableOpacity onPress={() => {
+				openMultiPhotoLibrary()
+			}} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+				<Image source={{uri: uri}} style={{width: size, height: size}}/>
+			</TouchableOpacity>
+		)
+	}
+
 	return (
 		<SafeAreaView style={{flex: 1,}}>
 			<ScrollView>
@@ -151,15 +238,7 @@ const ProfileSetUpViewController = (props) => {
 					fontWeight: 'bold'
 				}}>{'Set up your profile.'}</Text>
 
-				<View style={{width: '100%', marginTop: 15, alignItems: 'center'}}>
-					<TouchableOpacity>
-						<Image style={{width: 96, height: 96, backgroundColor: Colors.systemGray, borderRadius: 48,
-							borderColor: Colors.blue, borderWidth: 2,
-						}}/>
-					</TouchableOpacity>
-
-					<Text numberOfLines={1} style={{fontSize: 16, color: Colors.black, marginTop: 10,}}>{'Cath'}</Text>
-				</View>
+				{renderAvatar()}
 
 				{renderGenderView()}
 				{renderDOBView()}
@@ -176,12 +255,12 @@ const ProfileSetUpViewController = (props) => {
 				/>
 
 				<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5}}>
-					{list.map((_item, idx) => {
-						const {id, bgColor} = _item
+					{dataSource.map((_item, idx) => {
+						const {id, uri} = _item
 						return (
 							<SortableItem key={idx}
-										  bgColor={bgColor}
 										  orderId={id}
+										  uri={uri}
 										  positions={positions}
 										  numberOfColumn={4}
 										  renderItem={() => {

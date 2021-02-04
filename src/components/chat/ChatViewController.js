@@ -464,8 +464,6 @@ export default class ChatViewController extends Component {
 		ImagePicker.openPicker({
 			multiple: true
 		}).then(images => {
-			console.log(images);
-
 			if (images && images.length) {
 				images.map((item) => {
 					this.appendNewImageMessage(MessageMediaType.image, item.path)
@@ -480,7 +478,6 @@ export default class ChatViewController extends Component {
 			height: 400,
 			cropping: true,
 		}).then(image => {
-			console.log(image);
 			if (image) {
 				this.appendNewImageMessage(MessageMediaType.image, image.path)
 			}

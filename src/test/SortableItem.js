@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Animated, {
 	Easing,
 	useAnimatedGestureHandler,
@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {PanGestureHandler} from 'react-native-gesture-handler';
 import {ScreenDimensions} from '../utils/Dimemsions';
+import {Colors} from '../utils/styles';
 
 const animationConfig = {
 	easing: Easing.inOut(Easing.ease),
@@ -16,7 +17,7 @@ const animationConfig = {
 }
 
 const SortableItem = (props) => {
-	const {bgColor, orderId,
+	const {orderId,
 		positions, renderItem,
 		numberOfColumn
 	} = props
@@ -99,6 +100,8 @@ const SortableItem = (props) => {
 			const oldOrder = positions.value[orderId]
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
+
+			console.log('newPositions: ', newPositions)
 			if (oldOrder > newOrder) {
 				positions.value = moveBack(newPositions, oldOrder, newOrder, orderId)
 			}else if (oldOrder < newOrder) {
@@ -144,7 +147,7 @@ const SortableItem = (props) => {
 		<Animated.View style={style}>
 			<PanGestureHandler onGestureEvent={gestureHandler}>
 				<Animated.View get style={[{width: itemWidth, height: itemHeight,
-					backgroundColor: bgColor, justifyContent: 'center', alignItems: 'center'
+					backgroundColor: Colors.white, justifyContent: 'center', alignItems: 'center'
 				}]}>
 					{renderItem && renderItem()}
 				</Animated.View>

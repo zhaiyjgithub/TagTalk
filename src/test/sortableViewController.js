@@ -1,16 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {TouchableOpacity, SafeAreaView, View, Text} from 'react-native';
 import {useSharedValue} from 'react-native-reanimated';
 import SortableItem from './SortableItem';
 
 const sortableViewController = () => {
 	let list = [
-		{bgColor: 'red', id: 'red'},
-		{bgColor: 'blue', id: 'blue'},
-		{bgColor: 'yellow', id: 'yellow'},
-		{bgColor: 'black', id: 'black'},
-		{bgColor: 'gray', id: 'gray'},
-		{bgColor: 'green', id: 'green'}
+		{id: '0'},
 	]
 
 	const convertDataSourceToShardedValue = (dataSource) => {
@@ -35,22 +30,32 @@ const sortableViewController = () => {
 
 	return(
 		<SafeAreaView style={{flex: 1,}}>
-			<View contentContainerStyle={{flexDirection: 'row', flexWrap: 'wrap'}}>
-				{list.map((_item, idx) => {
-					const {id, bgColor} = _item
-					return (
-						<SortableItem key={idx}
-									  bgColor={bgColor}
-									  orderId={id}
-									  positions={positions}
-									  numberOfColumn={4}
-									  renderItem={() => {
-									  	return renderItem(_item)
-									  }}
-						/>
-					)
-				})}
-			</View>
+			<TouchableOpacity onPress={() => {
+				console.log('position: ', JSON.stringify(positions.value))
+				positions.value = {1: 1}
+
+				setTimeout(() => {
+					console.log('position: ', JSON.stringify(positions.value))
+				}, 1000)
+			}}>
+				<Text>{'Click'}</Text>
+			</TouchableOpacity>
+			{/*<View contentContainerStyle={{flexDirection: 'row', flexWrap: 'wrap'}}>*/}
+			{/*	{list.map((_item, idx) => {*/}
+			{/*		const {id, bgColor} = _item*/}
+			{/*		return (*/}
+			{/*			<SortableItem key={idx}*/}
+			{/*						  bgColor={bgColor}*/}
+			{/*						  orderId={id}*/}
+			{/*						  positions={positions}*/}
+			{/*						  numberOfColumn={4}*/}
+			{/*						  renderItem={() => {*/}
+			{/*						  	return renderItem(_item)*/}
+			{/*						  }}*/}
+			{/*			/>*/}
+			{/*		)*/}
+			{/*	})}*/}
+			{/*</View>*/}
 		</SafeAreaView>
 	)
 }
