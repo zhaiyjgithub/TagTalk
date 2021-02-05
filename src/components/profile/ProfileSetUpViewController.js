@@ -33,7 +33,13 @@ import {MessageMediaType, PLATFORM} from '../../utils/Enums';
 import moment from 'moment'
 import {Gender, TimeFormat} from '../../utils/utils';
 import ImagePicker from "react-native-image-crop-picker";
-import {CardSize} from '../match/view/AnimationCard';
+
+
+const ImageType = {
+	default: 0,
+	normal: 1
+}
+
 
 const ProfileSetUpViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
@@ -44,9 +50,11 @@ const ProfileSetUpViewController = (props) => {
 	const [selectedDate, setSelectedDate] = useState(new Date(2000, 0, 1))
 	const [gender, setGender] = useState(Gender.unknown)
 
-	let newImageList = [ { id: '0',
-		uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/7D9B4077-8E30-4269-865A-9494287C6FB0.jpg' }
-	]
+	let defaultImage = {
+		id: '0',
+		type: ImageType.default,
+		uri: require('../../source/image/match/add-four.png')
+	}
 
 	const convertDataSourceToShardedValue = () => {
 		let len = 8
@@ -58,7 +66,7 @@ const ProfileSetUpViewController = (props) => {
 		return value
 	}
 	const positions = useSharedValue(convertDataSourceToShardedValue());
-	const [dataSource, setDataSource] = useState(newImageList)
+	const [dataSource, setDataSource] = useState([defaultImage])
 
 	const renderGenderView = () => {
 		return (
@@ -148,19 +156,25 @@ const ProfileSetUpViewController = (props) => {
 		});
 	}
 
-
 	const openMultiPhotoLibrary = () => {
 		ImagePicker.openPicker({
 			multiple: true
 		}).then(images => {
 			if (images && images.length) {
-				newImageList = images.map((item, index) => {
+				let list = images.map((item, index) => {
 					return {
 						id: index.toString(),
-						uri: item.path
+						uri: item.path,
+						type: ImageType.normal
 					}
 				})
-				setDataSource(newImageList)
+
+				if (list.length < (8 - 1)) {
+					defaultImage.id = list.length
+					list.push(defaultImage)
+				}
+
+				setDataSource(list)
 			}
 		}).catch((error) => {
 			console.error(error)
@@ -184,13 +198,18 @@ const ProfileSetUpViewController = (props) => {
 	}
 
 	const renderItem = (item) => {
-		const {id, uri} = item
+		const {id, uri, type} = item
 		const size = (ScreenDimensions.width/4)
 		return (
 			<TouchableOpacity onPress={() => {
 				openMultiPhotoLibrary()
-			}} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-				<Image source={{uri: uri}} style={{width: size, height: size}}/>
+			}} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.systemGray,
+				width: size, height: size
+			}}>
+				{type === ImageType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
+					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
+
+
 			</TouchableOpacity>
 		)
 	}
@@ -219,7 +238,9 @@ const ProfileSetUpViewController = (props) => {
 					}}
 				/>
 
-				<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5}}>
+				<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5,
+
+				}}>
 					{dataSource.map((_item, idx) => {
 						const {id, uri} = _item
 						return (
