@@ -43,29 +43,21 @@ const ProfileSetUpViewController = (props) => {
 	const [isShowDatePicker, setIsShowDatePicker] = useState(false)
 	const [selectedDate, setSelectedDate] = useState(new Date(2000, 0, 1))
 	const [gender, setGender] = useState(Gender.unknown)
-	// let newImageList = [
-	// 	{id: '0', uri: ''}
-	// ]
 
 	let newImageList = [ { id: '0',
-		uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/7D9B4077-8E30-4269-865A-9494287C6FB0.jpg' },
-		{ id: '1',
-			uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/2F02B200-E91F-4986-B4B4-494A09A05A8F.jpg' },
-		{ id: '2',
-			uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/4AC5D20C-DDBE-4C4F-8520-14CEDA15A8A4.jpg' },
+		uri: '/Users/zack/Library/Developer/CoreSimulator/Devices/5FC52339-64CA-4CB4-9F07-5EE68BC5B0FC/data/Containers/Data/Application/1305B7FE-0FDB-4937-9941-9C86A1FDEA6B/tmp/react-native-image-crop-picker/7D9B4077-8E30-4269-865A-9494287C6FB0.jpg' }
 	]
 
+	const convertDataSourceToShardedValue = () => {
+		let len = 8
+		let value = []
+		for (let i = 0; i < len; i ++) {
+			value[i.toString()] = i
+		}
 
-	const convertDataSourceToShardedValue = (dataSource) => {
-		let obj = {}
-		dataSource.forEach((_item, idx,) => {
-			const {id} = _item
-			obj[id] = idx
-		})
-
-		return obj
+		return value
 	}
-	const positions = useSharedValue(convertDataSourceToShardedValue(newImageList));
+	const positions = useSharedValue(convertDataSourceToShardedValue());
 	const [dataSource, setDataSource] = useState(newImageList)
 
 	const renderGenderView = () => {
@@ -156,24 +148,6 @@ const ProfileSetUpViewController = (props) => {
 		});
 	}
 
-	useEffect(() => {
-		console.log('effect')
-	}, [])
-
-	const updateDataSource = (value) => {
-		if (dataSource.length !== newImageList.length) { // 这里要做深比较， 否则会一直死循环执行
-			console.log("updateDataSource: ", positions.value)
-			console.log('newImageList: ', newImageList)
-			setDataSource(newImageList)
-		}
-	}
-
-	// useAnimatedReaction(() => {
-	// 	console.log('first useAnimatedReaction')
-	// 	return positions.value
-	// }, (value) => {
-	// 	runOnJS(updateDataSource)(value)
-	// })
 
 	const openMultiPhotoLibrary = () => {
 		ImagePicker.openPicker({
@@ -186,15 +160,6 @@ const ProfileSetUpViewController = (props) => {
 						uri: item.path
 					}
 				})
-
-				let newPositions = {}
-				newImageList.forEach((val, idx) => {
-					newPositions[val.id] = idx
-				})
-				console.log('new position: ', newPositions)
-				console.log('new newImageList: ', newImageList)
-				console.log('previous positions: ', positions.value)
-				// positions.value = newPositions
 				setDataSource(newImageList)
 			}
 		}).catch((error) => {
@@ -261,6 +226,7 @@ const ProfileSetUpViewController = (props) => {
 							<SortableItem key={idx}
 										  orderId={id}
 										  uri={uri}
+										  maxLen={dataSource.length}
 										  positions={positions}
 										  numberOfColumn={4}
 										  renderItem={() => {

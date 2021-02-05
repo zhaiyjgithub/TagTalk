@@ -19,13 +19,14 @@ const animationConfig = {
 const SortableItem = (props) => {
 	const {orderId,
 		positions, renderItem,
-		numberOfColumn
+		numberOfColumn,
+		maxLen
 	} = props
 	const itemHeight = ScreenDimensions.width/numberOfColumn
 	const itemWidth = ScreenDimensions.width/numberOfColumn
 
 	const isActive = useSharedValue(false)
-	const dataSourceLength = Object.keys(positions.value).length
+
 
 	const calcNewPosition = (orderNumber) => {
 		"worklet";
@@ -43,7 +44,7 @@ const SortableItem = (props) => {
 
 	const calcOrder = (translationX, translationY) => {
 		"worklet";
-		const maxHeight = Math.floor((dataSourceLength - 1)/numberOfColumn)*itemHeight
+		const maxHeight = Math.floor((maxLen - 1)/numberOfColumn)*itemHeight
 		const offsetX = Math.max(translationX, 0)
 		const offsetY = Math.max(translationY, 0)
 		const maxOffsetY = Math.min(maxHeight, offsetY)
@@ -51,7 +52,7 @@ const SortableItem = (props) => {
 		const row = Math.round(offsetX/itemWidth) // over 0.5*ItemSize.height, so change to order
 		const column = Math.round(maxOffsetY/itemHeight)
 
-		return Math.min((column*numberOfColumn + row), (dataSourceLength - 1))
+		return Math.min((column*numberOfColumn + row), (maxLen - 1))
 	}
 
 	const moveForward = (newPositions, fromOrder, toOrder, fromId) => {
