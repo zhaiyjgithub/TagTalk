@@ -27,7 +27,6 @@ const SortableItem = (props) => {
 
 	const isActive = useSharedValue(false)
 
-
 	const calcNewPosition = (orderNumber) => {
 		"worklet";
 		return {

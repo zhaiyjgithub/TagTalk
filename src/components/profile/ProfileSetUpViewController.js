@@ -197,6 +197,40 @@ const ProfileSetUpViewController = (props) => {
 		)
 	}
 
+	const handleRemoveImage = (id) => {
+		const lastDataSourceLength = dataSource.length
+		let list = dataSource.filter((item) => {
+			return item.id !== id
+		})
+
+		if (lastDataSourceLength === 8) {
+			list.push(defaultImage)
+		}
+
+		list.forEach((item, idx) => {
+			item.id = idx.toString()
+		})
+
+		setDataSource(list)
+	}
+
+	const renderRemoveImageButton = (item) => {
+		return(
+			<TouchableOpacity onPress={() => {
+				handleRemoveImage(item.id)
+			}} style={{width: 30, height: 30, justifyContent: 'center',
+				alignItems: 'center',
+				position: 'absolute', right: 0, top: 0
+			}}>
+				<View style={{width: 20, height: 20, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 10, }}>
+					<Image style={{tintColor: Colors.white,
+						width: 20, height: 20,
+					}} source={require('../../source/image/match/reduce-one.png')}/>
+				</View>
+			</TouchableOpacity>
+		)
+	}
+
 	const renderItem = (item) => {
 		const {id, uri, type} = item
 		const size = (ScreenDimensions.width/4)
@@ -209,7 +243,7 @@ const ProfileSetUpViewController = (props) => {
 				{type === ImageType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
 					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
 
-
+				{type === ImageType.default ? null : renderRemoveImageButton(item)}
 			</TouchableOpacity>
 		)
 	}
@@ -247,7 +281,7 @@ const ProfileSetUpViewController = (props) => {
 							<SortableItem key={idx}
 										  orderId={id}
 										  uri={uri}
-										  maxLen={dataSource.length}
+										  maxLen={dataSource.length - 1}
 										  positions={positions}
 										  numberOfColumn={4}
 										  renderItem={() => {
