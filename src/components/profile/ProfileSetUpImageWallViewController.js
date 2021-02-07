@@ -138,6 +138,9 @@ const ProfileSetUpImageWallViewController = (props) => {
 				fontWeight: 'bold'
 			}}>{'Set up your image wall.'}</Text>
 
+			<Text style={{fontSize: 20, marginBottom: 5, marginTop: 0,
+				marginHorizontal: 20, color: Colors.black,
+			}}>{'Click add button to add images.'}</Text>
 			<Text style={{fontSize: 20, marginBottom: 10, marginTop: 0,
 				marginHorizontal: 20, color: Colors.black,
 			}}>{'Drag to resort the images.'}</Text>
