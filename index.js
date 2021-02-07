@@ -3,13 +3,23 @@
  */
 
 import {Navigation} from 'react-native-navigation';
-import {Colors, FontFamily} from './src/utils/styles';
-import Storage from 'react-native-storage'
+import {FontFamily} from './src/utils/styles';
+import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-community/async-storage';
 import {RouterMapper} from './src/route/mapper';
 import {Router} from './src/route/router';
 import {CacheKey} from './src/utils/Enums';
 import CacheTool from './src/utils/CacheTool';
+import {Text, TextInput, TouchableOpacity} from 'react-native';
+
+TouchableOpacity.defaultProps = TouchableOpacity.defaultProps || {};
+TouchableOpacity.defaultProps.activeOpacity = 0.6;
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.fontFamily = FontFamily.helvetica
+
+TextInput.defaultProps = Text.defaultProps || {};
+TextInput.defaultProps.fontFamily = FontFamily.helvetica
 
 RouterMapper.run()
 

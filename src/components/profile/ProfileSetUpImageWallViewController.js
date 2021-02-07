@@ -14,7 +14,7 @@ const ImageType = {
 	normal: 1
 }
 
-const ProfileSetUpPicWallViewController = (props) => {
+const ProfileSetUpImageWallViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
 
 	let defaultImage = {
@@ -37,7 +37,8 @@ const ProfileSetUpPicWallViewController = (props) => {
 
 	const openMultiPhotoLibrary = () => {
 		ImagePicker.openPicker({
-			multiple: true
+			multiple: true,
+			maxFiles: 8,
 		}).then(images => {
 			if (images && images.length) {
 				let list = images.map((item, index) => {
@@ -76,10 +77,11 @@ const ProfileSetUpPicWallViewController = (props) => {
 
 	const handleRemoveImage = (id) => {
 		let list = dataSource.filter((item) => {
-			return item.id !== id && item.type !== ImageType.default
+			return item.id !== id
 		})
 
-		if (dataSource.length === 8) {
+		let isHasDefaultItem = (dataSource[dataSource.length - 1].type === ImageType.default)
+		if (!isHasDefaultItem) {
 			list.push(defaultImage)
 		}
 
@@ -134,11 +136,11 @@ const ProfileSetUpPicWallViewController = (props) => {
 				marginBottom: 10,
 				marginHorizontal: 20, color: Colors.black,
 				fontWeight: 'bold'
-			}}>{'Set up your pix wall.'}</Text>
+			}}>{'Set up your image wall.'}</Text>
 
 			<Text style={{fontSize: 20, marginBottom: 10, marginTop: 0,
 				marginHorizontal: 20, color: Colors.black,
-			}}>{'Drag to resort the pix walls.'}</Text>
+			}}>{'Drag to resort the images.'}</Text>
 
 			<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5,
 
@@ -181,4 +183,4 @@ const ProfileSetUpPicWallViewController = (props) => {
 	)
 }
 
-export default ProfileSetUpPicWallViewController
+export default ProfileSetUpImageWallViewController
