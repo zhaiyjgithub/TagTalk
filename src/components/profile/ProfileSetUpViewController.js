@@ -1,72 +1,46 @@
-import React, {useEffect, useState} from 'react';
-import {
-	SafeAreaView,
-	StyleSheet,
-	FlatList,
-	View,
-	Text,
-	RefreshControl,
-	TouchableOpacity,
-	Image,
-	DeviceEventEmitter,
-	TextInput,
-	ScrollView
-} from 'react-native';
+import React, {useState} from 'react';
+import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../utils/styles';
-import BaseTextInput, {KeyboardType} from '../commonComponents/BaseTextInput';
+import BaseTextInput from '../commonComponents/BaseTextInput';
 import BaseButton from '../commonComponents/BaseButton';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
 import NavigatorDismissButton from '../commonComponents/NavigatorDismissButton';
 import SeparateLine from '../commonComponents/SeparateLine';
-import {
-	runOnJS,
-	useAnimatedReaction,
-	useSharedValue,
-	withTiming,
-	useDerivedValue,
-	runOnUI,
-} from 'react-native-reanimated';
-import SortableItem from '../../test/SortableItem';
 import {ScreenDimensions} from '../../utils/Dimemsions';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {MessageMediaType, PLATFORM} from '../../utils/Enums';
-import moment from 'moment'
+import {PLATFORM} from '../../utils/Enums';
+import moment from 'moment';
 import {Gender, TimeFormat} from '../../utils/utils';
-import ImagePicker from "react-native-image-crop-picker";
-
-
-const ImageType = {
-	default: 0,
-	normal: 1
-}
-
+import ImagePicker from 'react-native-image-crop-picker';
+import {Navigation} from 'react-native-navigation';
+import {BaseNavigatorOptions} from '../../utils/Navigator';
 
 const ProfileSetUpViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
 	const [avatar, setAvatar] = useState('')
-	const [dob, setDob] = useState('MM/DD/YYYY')
 	const [bio, setBio] = useState('')
 	const [isShowDatePicker, setIsShowDatePicker] = useState(false)
 	const [selectedDate, setSelectedDate] = useState(new Date(2000, 0, 1))
 	const [gender, setGender] = useState(Gender.unknown)
 
-	let defaultImage = {
-		id: '0',
-		type: ImageType.default,
-		uri: require('../../source/image/match/add-four.png')
+	const pushToPicWall = () => {
+		Navigation.push(props.componentId, {
+			component: {
+				name: 'ProfileSetUpPicWallViewController',
+				passProps: {
+					avatarBase64: avatar,
+					dob: selectedDate,
+					bio: bio,
+				},
+				options: {
+					modalPresentationStyle: 'fullScreen',
+					topBar: {
+						visible: false,
+					},
+				}
+			}
+		});
 	}
-
-	const convertDataSourceToShardedValue = () => {
-		let len = 8
-		let value = []
-		for (let i = 0; i < len; i ++) {
-			value[i.toString()] = i
-		}
-
-		return value
-	}
-	const positions = useSharedValue(convertDataSourceToShardedValue());
-	const [dataSource, setDataSource] = useState([defaultImage])
 
 	const renderGenderView = () => {
 		return (
@@ -156,31 +130,6 @@ const ProfileSetUpViewController = (props) => {
 		});
 	}
 
-	const openMultiPhotoLibrary = () => {
-		ImagePicker.openPicker({
-			multiple: true
-		}).then(images => {
-			if (images && images.length) {
-				let list = images.map((item, index) => {
-					return {
-						id: index.toString(),
-						uri: item.path,
-						type: ImageType.normal
-					}
-				})
-
-				if (list.length < (8 - 1)) {
-					defaultImage.id = list.length
-					list.push(defaultImage)
-				}
-
-				setDataSource(list)
-			}
-		}).catch((error) => {
-			console.error(error)
-		});
-	}
-
 	const renderAvatar = () => {
 		return (
 			<View style={{width: '100%', marginTop: 15, alignItems: 'center'}}>
@@ -194,57 +143,6 @@ const ProfileSetUpViewController = (props) => {
 
 				<Text numberOfLines={1} style={{fontSize: 16, color: Colors.black, marginTop: 10,}}>{'Cath'}</Text>
 			</View>
-		)
-	}
-
-	const handleRemoveImage = (id) => {
-		const lastDataSourceLength = dataSource.length
-		let list = dataSource.filter((item) => {
-			return item.id !== id
-		})
-
-		if (lastDataSourceLength === 8) {
-			list.push(defaultImage)
-		}
-
-		list.forEach((item, idx) => {
-			item.id = idx.toString()
-		})
-
-		setDataSource(list)
-	}
-
-	const renderRemoveImageButton = (item) => {
-		return(
-			<TouchableOpacity onPress={() => {
-				handleRemoveImage(item.id)
-			}} style={{width: 30, height: 30, justifyContent: 'center',
-				alignItems: 'center',
-				position: 'absolute', right: 0, top: 0
-			}}>
-				<View style={{width: 20, height: 20, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 10, }}>
-					<Image style={{tintColor: Colors.white,
-						width: 20, height: 20,
-					}} source={require('../../source/image/match/reduce-one.png')}/>
-				</View>
-			</TouchableOpacity>
-		)
-	}
-
-	const renderItem = (item) => {
-		const {id, uri, type} = item
-		const size = (ScreenDimensions.width/4)
-		return (
-			<TouchableOpacity onPress={() => {
-				openMultiPhotoLibrary()
-			}} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.systemGray,
-				width: size, height: size
-			}}>
-				{type === ImageType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
-					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
-
-				{type === ImageType.default ? null : renderRemoveImageButton(item)}
-			</TouchableOpacity>
 		)
 	}
 
@@ -268,29 +166,9 @@ const ProfileSetUpViewController = (props) => {
 					multiline={true}
 					maxLength={160}
 					onChangeText={(text) => {
-
+						setBio(text + '')
 					}}
 				/>
-
-				<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5,
-
-				}}>
-					{dataSource.map((_item, idx) => {
-						const {id, uri} = _item
-						return (
-							<SortableItem key={idx}
-										  orderId={id}
-										  uri={uri}
-										  maxLen={dataSource.length - 1}
-										  positions={positions}
-										  numberOfColumn={4}
-										  renderItem={() => {
-											  return renderItem(_item)
-										  }}
-							/>
-						)
-					})}
-				</View>
 
 				<BaseButton
 					title={'Save'}
@@ -300,10 +178,7 @@ const ProfileSetUpViewController = (props) => {
 					containerStyle={{
 						marginTop: 20,
 					}}
-					didClick={() => {
-
-					}
-					}
+					didClick={pushToPicWall}
 				/>
 			</ScrollView>
 

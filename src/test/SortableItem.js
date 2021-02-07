@@ -17,7 +17,7 @@ const animationConfig = {
 }
 
 const SortableItem = (props) => {
-	const {orderId,
+	const {orderId, isEnablePanGesture,
 		positions, renderItem,
 		numberOfColumn,
 		maxLen
@@ -101,7 +101,6 @@ const SortableItem = (props) => {
 			const newOrder = calcOrder(translation.x.value, translation.y.value)
 			let newPositions = JSON.parse(JSON.stringify(positions.value))
 
-			console.log('newPositions: ', newPositions)
 			if (oldOrder > newOrder) {
 				positions.value = moveBack(newPositions, oldOrder, newOrder, orderId)
 			}else if (oldOrder < newOrder) {
@@ -145,7 +144,7 @@ const SortableItem = (props) => {
 
 	return (
 		<Animated.View style={style}>
-			<PanGestureHandler onGestureEvent={gestureHandler}>
+			<PanGestureHandler enabled={isEnablePanGesture} onGestureEvent={gestureHandler}>
 				<Animated.View get style={[{width: itemWidth, height: itemHeight,
 					backgroundColor: Colors.white, justifyContent: 'center', alignItems: 'center'
 				}]}>

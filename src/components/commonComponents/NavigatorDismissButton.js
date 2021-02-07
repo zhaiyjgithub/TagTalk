@@ -7,11 +7,11 @@ const NavigatorDismissButton = (props) => {
 	const {componentId} = props
 	return (
 		<TouchableOpacity onPress={() => {
-			if (PLATFORM.isIOS) {
-				Navigation.dismissModal(componentId)
-			}else {
+			// if (PLATFORM.isIOS) {
+			// 	Navigation.dismissModal(componentId)
+			// }else {
 				Navigation.pop(componentId)
-			}
+			// }
 		}} style={{
 			position: 'absolute',
 			left: 20, bottom: 50,
