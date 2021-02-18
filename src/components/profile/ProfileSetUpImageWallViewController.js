@@ -3,7 +3,7 @@ import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'rea
 import {Colors} from '../../utils/styles';
 import BaseButton from '../commonComponents/BaseButton';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
-import NavigatorDismissButton from '../commonComponents/NavigatorDismissButton';
+import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
 import {useSharedValue} from 'react-native-reanimated';
 import SortableItem from '../../test/SortableItem';
 import {ScreenDimensions} from '../../utils/Dimemsions';
@@ -198,7 +198,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 				}
 			/>
 
-			<NavigatorDismissButton componentId={props.componentId}/>
+			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.push}/>
 			<LoadingSpinner visible={isShowSpinner}/>
 		</SafeAreaView>
 	)

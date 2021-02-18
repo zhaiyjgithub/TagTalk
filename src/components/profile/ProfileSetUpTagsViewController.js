@@ -4,6 +4,7 @@ import {Colors} from '../../utils/styles';
 import BaseTextInput from '../commonComponents/BaseTextInput';
 import ToastMsg from '../../utils/ToastMsg';
 import SeparateLine from '../commonComponents/SeparateLine';
+import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
 
 const ProfileSetUpTagsViewController = (props) => {
 	const [defaultTags, setDefaultTags] = useState([
@@ -120,24 +121,26 @@ const ProfileSetUpTagsViewController = (props) => {
 			}}>{'My tags.'}</Text>
 
 			<View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
-				<BaseTextInput
-					textInputStyle={{textAlignVertical: 'top', height: 40, flex: 1}}
-					value={customTag}
-					blurOnSubmit={true}
-					title = {'Add Tags#'}
-					placeholder={'Enter your custom tag...'}
-					placeholderTextColor={Colors.lightGray}
-					multiline={true}
-					maxLength={160}
-					onChangeText={(text) => {
-						setCustomTag((text + '').toString().trim())
-					}}
-				/>
+				<View style={{flex: 1}}>
+					<BaseTextInput
+						textInputStyle={{textAlignVertical: 'top', height: 40, flex: 1}}
+						value={customTag}
+						blurOnSubmit={true}
+						title = {'Add Tags#'}
+						placeholder={'Enter your custom tag...'}
+						placeholderTextColor={Colors.lightGray}
+						multiline={true}
+						maxLength={160}
+						onChangeText={(text) => {
+							setCustomTag((text + '').toString().trim())
+						}}
+					/>
+				</View>
 
-				<TouchableOpacity onPress={addCustomTag} style={{width: 50, height: 50, borderRadius: 25, backgroundColor: Colors.blue,
+				<TouchableOpacity onPress={addCustomTag} style={{width: 50, height: 50, borderRadius: 25,
 					marginRight: 20
 				}}>
-
+					<Image style={{width: 50, height: 50,}} source={require('../../source/image/match/add-one.png')}/>
 				</TouchableOpacity>
 			</View>
 
@@ -151,6 +154,8 @@ const ProfileSetUpTagsViewController = (props) => {
 					return renderItem(item, index, TagType.default)
 				})}
 			</ScrollView>
+
+			<NavigatorDismissButton componentId={props.componentId}  type={NavigationType.push}/>
 		</SafeAreaView>
 	)
 }

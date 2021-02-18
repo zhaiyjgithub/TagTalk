@@ -4,7 +4,7 @@ import {Colors} from '../../utils/styles';
 import BaseTextInput from '../commonComponents/BaseTextInput';
 import BaseButton from '../commonComponents/BaseButton';
 import LoadingSpinner from '../commonComponents/LoadingSpinner';
-import NavigatorDismissButton from '../commonComponents/NavigatorDismissButton';
+import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
 import SeparateLine from '../commonComponents/SeparateLine';
 import {ScreenDimensions} from '../../utils/Dimemsions';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
@@ -216,7 +216,7 @@ const ProfileSetUpViewController = (props) => {
 				}}
 				didClick={pushToPicWall}
 			/>
-			<NavigatorDismissButton componentId={props.componentId}/>
+			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.modal}/>
 			<LoadingSpinner visible={isShowSpinner}/>
 		</SafeAreaView>
 	)

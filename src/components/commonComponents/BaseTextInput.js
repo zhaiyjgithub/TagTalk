@@ -19,7 +19,7 @@ export default class BaseTextInput extends Component{
         } = this.props
 
         return(
-            <View style={[{flex: 1, paddingHorizontal: 20,
+            <View style={[{with: '100%', paddingHorizontal: 20,
                 minHeight: 62, marginTop: 20
             }, containerStyle]}>
                 <Text style={{fontSize: 14, color: Colors.blue,
