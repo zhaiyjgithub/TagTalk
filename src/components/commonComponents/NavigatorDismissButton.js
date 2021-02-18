@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, TouchableOpacity} from 'react-native';
 import {PLATFORM} from '../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
+import {Colors} from '../../utils/styles';
 
 const NavigatorDismissButton = (props) => {
 	const {componentId, type = NavigationType.modal} = props
@@ -18,6 +19,8 @@ const NavigatorDismissButton = (props) => {
 			height: 44, width: 44,
 			justifyContent: 'center',
 			alignItems: 'center',
+			backgroundColor: Colors.white,
+			borderRadius: 22
 		}}>
 			<Image style={{width: 40, height: 40, transform: [
 					{rotateZ: type === NavigationType.modal ? '-90deg' : '0deg'}

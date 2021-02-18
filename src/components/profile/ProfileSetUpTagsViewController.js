@@ -5,6 +5,8 @@ import BaseTextInput from '../commonComponents/BaseTextInput';
 import ToastMsg from '../../utils/ToastMsg';
 import SeparateLine from '../commonComponents/SeparateLine';
 import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
+import {PLATFORM} from '../../utils/Enums';
+import {Navigation} from 'react-native-navigation';
 
 const ProfileSetUpTagsViewController = (props) => {
 	const [defaultTags, setDefaultTags] = useState([
@@ -112,6 +114,24 @@ const ProfileSetUpTagsViewController = (props) => {
 		clickItem(customTag, TagType.custom)
 	}
 
+	const renderDoneButton = () => {
+		return (
+			<TouchableOpacity onPress={() => {
+
+			}} style={{
+				position: 'absolute',
+				right: 20, bottom: 50,
+				height: 44, width: 44,
+				justifyContent: 'center',
+				alignItems: 'center',
+				backgroundColor: Colors.white,
+				borderRadius: 22
+			}}>
+				<Image style={{width: 40, height: 40}} source={require('../../source/image/base/check-one.png')} />
+			</TouchableOpacity>
+		)
+	}
+
 	return (
 		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
 			<Text style={{fontSize: 32, marginTop: 20,
@@ -156,6 +176,7 @@ const ProfileSetUpTagsViewController = (props) => {
 			</ScrollView>
 
 			<NavigatorDismissButton componentId={props.componentId}  type={NavigationType.push}/>
+			{renderDoneButton()}
 		</SafeAreaView>
 	)
 }
