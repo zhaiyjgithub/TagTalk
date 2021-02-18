@@ -8,6 +8,7 @@ import {useSharedValue} from 'react-native-reanimated';
 import SortableItem from '../../test/SortableItem';
 import {ScreenDimensions} from '../../utils/Dimemsions';
 import ImagePicker from 'react-native-image-crop-picker';
+import {Navigation} from 'react-native-navigation';
 
 const ImageType = {
 	default: 0,
@@ -130,6 +131,23 @@ const ProfileSetUpImageWallViewController = (props) => {
 		)
 	}
 
+	const pushToSetUpTags = () => {
+		Navigation.push(props.componentId, {
+			component: {
+				name: 'ProfileSetUpTagsViewController',
+				passProps: {
+
+				},
+				options: {
+					modalPresentationStyle: 'fullScreen',
+					topBar: {
+						visible: false,
+					},
+				}
+			}
+		});
+	}
+
 	return (
 		<SafeAreaView style={{flex: 1,}}>
 			<Text style={{fontSize: 32, marginTop: 20,
@@ -175,7 +193,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 					marginTop: 20,
 				}}
 				didClick={() => {
-
+					pushToSetUpTags()
 				}
 				}
 			/>

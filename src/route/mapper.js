@@ -16,6 +16,7 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import ProfileSetUpViewController from '../components/profile/ProfileSetUpViewController';
 import sortableViewController from '../test/sortableViewController';
 import ProfileSetUpImageWallViewController from '../components/profile/ProfileSetUpImageWallViewController';
+import ProfileSetUpTagsViewController from '../components/profile/ProfileSetUpTagsViewController';
 
 
 const RouterMapper = {
@@ -36,6 +37,7 @@ const RouterMapper = {
 
 		Navigation.registerComponent('sortableViewController', () => sortableViewController);
 		Navigation.registerComponent('ProfileSetUpImageWallViewController', () => ProfileSetUpImageWallViewController);
+		Navigation.registerComponent('ProfileSetUpTagsViewController', () => ProfileSetUpTagsViewController);
 		//
 	},
 }
