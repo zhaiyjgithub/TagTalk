@@ -1,56 +1,45 @@
 import React, {useState} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Keyboard} from 'react-native';
-import {Colors} from '../../utils/styles';
-import BaseTextInput from '../commonComponents/BaseTextInput';
-import BaseButton from '../commonComponents/BaseButton';
-import LoadingSpinner from '../commonComponents/LoadingSpinner';
-import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
-import SeparateLine from '../commonComponents/SeparateLine';
-import {ScreenDimensions} from '../../utils/Dimemsions';
+import {Colors} from '../../../utils/styles';
+import BaseTextInput from '../../commonComponents/BaseTextInput';
+import BaseButton from '../../commonComponents/BaseButton';
+import LoadingSpinner from '../../commonComponents/LoadingSpinner';
+import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
+import SeparateLine from '../../commonComponents/SeparateLine';
+import {ScreenDimensions} from '../../../utils/Dimemsions';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {PLATFORM} from '../../utils/Enums';
+import {PLATFORM} from '../../../utils/Enums';
 import moment from 'moment';
-import {Gender, TimeFormat} from '../../utils/utils';
+import {Gender, TimeFormat} from '../../../utils/utils';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
-import ToastMsg from '../../utils/ToastMsg';
+import ToastMsg from '../../../utils/ToastMsg';
+import ProfileImage from '../model/ProfileImage';
+import {UploadProfile} from '../service/ProfileSetUpService';
+import {API_User, BaseUrl} from '../../../utils/API';
 
 const ProfileSetUpViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
 	const [avatar, setAvatar] = useState('')
+	const [avatarImage, setAvatarImage] = useState(ProfileImage('', ''))
 	const [bio, setBio] = useState('')
 	const [isShowDatePicker, setIsShowDatePicker] = useState(false)
 	const [selectedDate, setSelectedDate] = useState(TimeFormat.MMDDYYYY)
 	const [gender, setGender] = useState(Gender.unknown)
 
-	const defaultImageSource = require('../../source/image/match/avatar.png')
-	const femaleImageSource = require('../../source/image/match/female.png')
-	const maleImageSource = require('../../source/image/match/male.png')
+	const defaultImageSource = require('../../../source/image/match/avatar.png')
+	const femaleImageSource = require('../../../source/image/match/female.png')
+	const maleImageSource = require('../../../source/image/match/male.png')
 
-	const checkParam = () => {
-		if (!avatar.length) {
-			ToastMsg.show('Avatar is required.')
-			return false
-		}
 
-		if (gender === Gender.unknown) {
-			ToastMsg.show('Gender is required.')
-			return false
-		}
+	const uploadProfile = () => {
+		const {ChatID} = global.UserInfo
+		UploadProfile(ChatID, gender, bio, avatarImage, () => {}, () => {
 
-		if (!bio.length) {
-			ToastMsg.show('About you is required.')
-			return false
-		}
-
-		return true
+		})
 	}
 
 	const pushToPicWall = () => {
-		// if (!checkParam()) {
-		// 	return false
-		// }
-
 		Navigation.push(props.componentId, {
 			component: {
 				name: 'ProfileSetUpImageWallViewController',
@@ -83,7 +72,7 @@ const ProfileSetUpViewController = (props) => {
 			}}>
 				{[{type: Gender.male, title: 'Male'}, {type: Gender.female, title: 'Female'}].map((_item, idx,) => {
 					const {type, title} = _item
-					let imageSource = (type === gender ? require('../../source/image/match/checked.png') : require('../../source/image/match/round.png'))
+					let imageSource = (type === gender ? require('../../../source/image/match/checked.png') : require('../../../source/image/match/round.png'))
 					// let tintColor = (type === gender ? Colors.blue : Colors.placeholder)
 					return (
 						<TouchableOpacity onPress={() => {
@@ -160,7 +149,10 @@ const ProfileSetUpViewController = (props) => {
 		ImagePicker.openPicker({
 			multiple: false
 		}).then(image => {
+			console.log('image info: ', JSON.stringify(image))
 			if (image && image.path) {
+				const pImage = ProfileImage(image.filename, image.path)
+				setAvatarImage(pImage)
 				setAvatar(image.path)
 			}
 		});
@@ -168,17 +160,20 @@ const ProfileSetUpViewController = (props) => {
 
 	const renderAvatar = () => {
 		const image = avatar.length ? {uri: avatar} : defaultImageSource
+		const {Name, Avatar} = global.UserInfo
+		const avatarUri = BaseUrl + API_User.Avatar + '?name=' + Avatar //http://localhost:8090/User/Avatar?name=4560ee23e5fb7f2b81d5ed7970dec913.JPG
+		console.log('user avatarUri ', avatarUri)
 		return (
 			<View style={{width: '100%', marginTop: 15, alignItems: 'center'}}>
 				<TouchableOpacity onPress={() => {
 					openSinglePhotoLibrary()
 				}}>
 					<Image source={image} style={{width: 96, height: 96, borderRadius: 48,
-						borderColor: '#9B9B9B', borderWidth: 2,
+						borderColor: Colors.blue, borderWidth: 2,
 					}}/>
 				</TouchableOpacity>
 
-				<Text numberOfLines={1} style={{fontSize: 16, color: Colors.black, marginTop: 10,}}>{'Cath'}</Text>
+				<Text numberOfLines={1} style={{fontSize: 16, color: Colors.black, marginTop: 10, fontWeight: '500'}}>{Name}</Text>
 			</View>
 		)
 	}
@@ -214,7 +209,7 @@ const ProfileSetUpViewController = (props) => {
 				containerStyle={{
 					marginTop: 20,
 				}}
-				didClick={pushToPicWall}
+				didClick={uploadProfile}
 			/>
 			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.modal}/>
 			<LoadingSpinner visible={isShowSpinner}/>

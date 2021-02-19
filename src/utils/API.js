@@ -5,7 +5,9 @@ const WebsocketBaseUrl = "ws://localhost:8090/"
 const API_User = {
 	SendSignUpPin: 'User/SendSignUpPin',
 	RegisterNewDoctor: 'User/RegisterNewDoctor',
-	Login: 'User/Login'
+	Login: 'User/Login',
+	UploadProfile: 'User/UploadProfile',
+	Avatar: 'User/Avatar'
 }
 
 const API_Contacts = {

@@ -11,9 +11,9 @@ import {
     DeviceEventEmitter,
     TextInput
 } from 'react-native';
-import CacheTool from '../../utils/CacheTool';
-import {CacheKey} from '../../utils/Enums';
-import {Router} from '../../route/router';
+import CacheTool from '../../../utils/CacheTool';
+import {CacheKey} from '../../../utils/Enums';
+import {Router} from '../../../route/router';
 
 export default class ProfileViewController extends Component{
     render() {

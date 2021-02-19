@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from '../../utils/styles';
-import BaseTextInput from '../commonComponents/BaseTextInput';
-import ToastMsg from '../../utils/ToastMsg';
-import SeparateLine from '../commonComponents/SeparateLine';
-import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
-import {PLATFORM} from '../../utils/Enums';
+import {Colors} from '../../../utils/styles';
+import BaseTextInput from '../../commonComponents/BaseTextInput';
+import ToastMsg from '../../../utils/ToastMsg';
+import SeparateLine from '../../commonComponents/SeparateLine';
+import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
+import {PLATFORM} from '../../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 
 const ProfileSetUpTagsViewController = (props) => {
@@ -127,7 +127,7 @@ const ProfileSetUpTagsViewController = (props) => {
 				backgroundColor: Colors.white,
 				borderRadius: 22
 			}}>
-				<Image style={{width: 40, height: 40}} source={require('../../source/image/base/check-one.png')} />
+				<Image style={{width: 40, height: 40}} source={require('../../../source/image/base/check-one.png')} />
 			</TouchableOpacity>
 		)
 	}
@@ -160,7 +160,7 @@ const ProfileSetUpTagsViewController = (props) => {
 				<TouchableOpacity onPress={addCustomTag} style={{width: 50, height: 50, borderRadius: 25,
 					marginRight: 20
 				}}>
-					<Image style={{width: 50, height: 50,}} source={require('../../source/image/match/add-one.png')}/>
+					<Image style={{width: 50, height: 50,}} source={require('../../../source/image/match/add-one.png')}/>
 				</TouchableOpacity>
 			</View>
 

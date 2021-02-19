@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from '../../utils/styles';
-import BaseButton from '../commonComponents/BaseButton';
-import LoadingSpinner from '../commonComponents/LoadingSpinner';
-import NavigatorDismissButton, {NavigationType} from '../commonComponents/NavigatorDismissButton';
+import {Colors} from '../../../utils/styles';
+import BaseButton from '../../commonComponents/BaseButton';
+import LoadingSpinner from '../../commonComponents/LoadingSpinner';
+import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
 import {useSharedValue} from 'react-native-reanimated';
-import SortableItem from '../../test/SortableItem';
-import {ScreenDimensions} from '../../utils/Dimemsions';
+import SortableItem from '../../../test/SortableItem';
+import {ScreenDimensions} from '../../../utils/Dimemsions';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 
@@ -21,7 +21,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 	let defaultImage = {
 		id: '0',
 		type: ImageType.default,
-		uri: require('../../source/image/match/add-four.png')
+		uri: require('../../../source/image/match/add-four.png')
 	}
 
 	const convertDataSourceToShardedValue = () => {
@@ -104,7 +104,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 				<View style={{width: 20, height: 20, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 10, }}>
 					<Image style={{tintColor: Colors.white,
 						width: 20, height: 20,
-					}} source={require('../../source/image/match/reduce-one.png')}/>
+					}} source={require('../../../source/image/match/reduce-one.png')}/>
 				</View>
 			</TouchableOpacity>
 		)

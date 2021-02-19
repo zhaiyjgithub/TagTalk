@@ -2,7 +2,7 @@ import {Navigation} from 'react-native-navigation';
 import MessageViewController from '../components/chat/MessageViewController';
 import ChatViewController from '../components/chat/ChatViewController';
 import ContactsViewController from '../components/contacts/ContactsViewController';
-import ProfileViewController from '../components/profile/ProfileViewController';
+import ProfileViewController from '../components/profile/controller/ProfileViewController';
 import MatchViewController from '../components/match/MatchViewController';
 import UniversalViewController from '../components/universal/UniversalViewController';
 import VideoPreview from '../components/chat/VideoPreview';
@@ -13,10 +13,10 @@ import {Colors, FontFamily} from '../utils/styles';
 import DBTestController from '../test/DBTestController';
 import AnimationViewController from '../test/animationViewController';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import ProfileSetUpViewController from '../components/profile/ProfileSetUpViewController';
+import ProfileSetUpViewController from '../components/profile/controller/ProfileSetUpViewController';
 import sortableViewController from '../test/sortableViewController';
-import ProfileSetUpImageWallViewController from '../components/profile/ProfileSetUpImageWallViewController';
-import ProfileSetUpTagsViewController from '../components/profile/ProfileSetUpTagsViewController';
+import ProfileSetUpImageWallViewController from '../components/profile/controller/ProfileSetUpImageWallViewController';
+import ProfileSetUpTagsViewController from '../components/profile/controller/ProfileSetUpTagsViewController';
 
 
 const RouterMapper = {
