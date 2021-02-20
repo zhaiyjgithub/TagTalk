@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../../utils/styles';
 import BaseButton from '../../commonComponents/BaseButton';
@@ -9,18 +9,20 @@ import SortableItem from '../../../test/SortableItem';
 import {ScreenDimensions} from '../../../utils/Dimemsions';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
+import {GetImageWalls, UpdateImageWalls} from '../service/ProfileImageWallService';
 
-const ImageType = {
+export const ImageActionType = {
 	default: 0,
 	normal: 1
 }
 
 const ProfileSetUpImageWallViewController = (props) => {
 	const [isShowSpinner, setIsShowSpinner] = useState(false)
+	const [deletedImageUriSet, setDeletedImageUriSet] = useState(new Set())
 
 	let defaultImage = {
 		id: '0',
-		type: ImageType.default,
+		type: ImageActionType.default,
 		uri: require('../../../source/image/match/add-four.png')
 	}
 
@@ -36,6 +38,16 @@ const ProfileSetUpImageWallViewController = (props) => {
 	const positions = useSharedValue(convertDataSourceToShardedValue());
 	const [dataSource, setDataSource] = useState([defaultImage])
 
+	useEffect(() => {
+		requestImageWalls()
+	}, [])
+
+	const requestImageWalls = () => {
+		const {ChatID} = global.UserInfo
+		GetImageWalls(ChatID, (data: Array) => {
+			setDataSource(data)
+		}, () => {})
+	}
 	const openMultiPhotoLibrary = () => {
 		ImagePicker.openPicker({
 			multiple: true,
@@ -45,15 +57,16 @@ const ProfileSetUpImageWallViewController = (props) => {
 				let list = images.map((item, index) => {
 					return {
 						id: index.toString(),
+						name: item.filename,
 						uri: item.path,
-						type: ImageType.normal
+						type: ImageActionType.normal
 					}
 				})
 
 				let ds = []
 				ds = ds.concat(dataSource)
 				ds = ds.filter((_item) => {
-					return _item.type !== ImageType.default
+					return _item.type !== ImageActionType.default
 				})
 
 				ds = ds.concat(list)
@@ -76,12 +89,16 @@ const ProfileSetUpImageWallViewController = (props) => {
 		});
 	}
 
-	const handleRemoveImage = (id) => {
+	const handleRemoveImage = ({id, uri, type, name}) => {
+		console.log('handleRemoveImage: ', name, uri)
+		if (type === ImageActionType.normal && uri.startsWith('http')) {
+			deletedImageUriSet.add(name)
+		}
 		let list = dataSource.filter((item) => {
 			return item.id !== id
 		})
 
-		let isHasDefaultItem = (dataSource[dataSource.length - 1].type === ImageType.default)
+		let isHasDefaultItem = (dataSource[dataSource.length - 1].type === ImageActionType.default)
 		if (!isHasDefaultItem) {
 			list.push(defaultImage)
 		}
@@ -93,10 +110,23 @@ const ProfileSetUpImageWallViewController = (props) => {
 		setDataSource(list)
 	}
 
+	const handleUploadImageWall = () => {
+		const {ChatID} = global.UserInfo
+
+		let deleteImages = []
+		deletedImageUriSet.forEach((name) => {
+			deleteImages.push(name)
+		})
+
+		UpdateImageWalls(ChatID, dataSource, deleteImages, () => {
+			requestImageWalls()
+		}, () => {})
+	}
+
 	const renderRemoveImageButton = (item) => {
 		return(
 			<TouchableOpacity onPress={() => {
-				handleRemoveImage(item.id)
+				handleRemoveImage(item)
 			}} style={{width: 30, height: 30, justifyContent: 'center',
 				alignItems: 'center',
 				position: 'absolute', right: 0, top: 0
@@ -115,7 +145,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 		const size = (ScreenDimensions.width/4)
 		return (
 			<TouchableOpacity onPress={() => {
-				if (type === ImageType.default) {
+				if (type === ImageActionType.default) {
 					openMultiPhotoLibrary()
 				}else {
 					//
@@ -123,10 +153,10 @@ const ProfileSetUpImageWallViewController = (props) => {
 			}} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.systemGray,
 				width: size, height: size
 			}}>
-				{type === ImageType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
+				{type === ImageActionType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
 					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
 
-				{type === ImageType.default ? null : renderRemoveImageButton(item)}
+				{type === ImageActionType.default ? null : renderRemoveImageButton(item)}
 			</TouchableOpacity>
 		)
 	}
@@ -171,7 +201,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 					return (
 						<SortableItem key={idx}
 									  orderId={id}
-									  isEnablePanGesture={type !== ImageType.default}
+									  isEnablePanGesture={type !== ImageActionType.default}
 									  uri={uri}
 									  maxLen={dataSource.length - 1}
 									  positions={positions}
@@ -192,10 +222,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 				containerStyle={{
 					marginTop: 20,
 				}}
-				didClick={() => {
-					pushToSetUpTags()
-				}
-				}
+				didClick={handleUploadImageWall}
 			/>
 
 			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.push}/>

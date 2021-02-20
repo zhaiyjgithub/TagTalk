@@ -7,7 +7,9 @@ const API_User = {
 	RegisterNewDoctor: 'User/RegisterNewDoctor',
 	Login: 'User/Login',
 	UploadProfile: 'User/UploadProfile',
-	Avatar: 'User/Avatar'
+	Avatar: 'User/Avatar',
+	ImageWalls: 'User/ImageWalls',
+	GetImageWall: "User/GetImageWall"
 }
 
 const API_Contacts = {

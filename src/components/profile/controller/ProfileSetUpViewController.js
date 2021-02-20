@@ -33,10 +33,11 @@ const ProfileSetUpViewController = (props) => {
 
 
 	const uploadProfile = () => {
-		const {ChatID} = global.UserInfo
-		UploadProfile(ChatID, gender, bio, avatarImage, () => {}, () => {
-
-		})
+		// const {ChatID} = global.UserInfo
+		// UploadProfile(ChatID, gender, bio, avatarImage, () => {}, () => {
+		//
+		// })
+		pushToPicWall()
 	}
 
 	const pushToPicWall = () => {
