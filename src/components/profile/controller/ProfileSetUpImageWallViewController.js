@@ -4,12 +4,10 @@ import {Colors} from '../../../utils/styles';
 import BaseButton from '../../commonComponents/BaseButton';
 import LoadingSpinner from '../../commonComponents/LoadingSpinner';
 import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
-import {useSharedValue} from 'react-native-reanimated';
-import SortableItem from '../../../test/SortableItem';
-import {ScreenDimensions} from '../../../utils/Dimemsions';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import {GetImageWalls, UpdateImageWalls} from '../service/ProfileImageWallService';
+import SortItemContainerView from '../view/SortItemContainerView';
 
 export const ImageActionType = {
 	default: 0,
@@ -26,16 +24,6 @@ const ProfileSetUpImageWallViewController = (props) => {
 		uri: require('../../../source/image/match/add-four.png')
 	}
 
-	const convertDataSourceToShardedValue = () => {
-		let len = 8
-		let value = []
-		for (let i = 0; i < len; i ++) {
-			value[i.toString()] = i
-		}
-
-		return value
-	}
-	const positions = useSharedValue(convertDataSourceToShardedValue());
 	const [dataSource, setDataSource] = useState([defaultImage])
 
 	useEffect(() => {
@@ -140,27 +128,6 @@ const ProfileSetUpImageWallViewController = (props) => {
 		)
 	}
 
-	const renderItem = (item) => {
-		const {id, uri, type} = item
-		const size = (ScreenDimensions.width/4)
-		return (
-			<TouchableOpacity onPress={() => {
-				if (type === ImageActionType.default) {
-					openMultiPhotoLibrary()
-				}else {
-					//
-				}
-			}} style={{justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.systemGray,
-				width: size, height: size
-			}}>
-				{type === ImageActionType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
-					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
-
-				{type === ImageActionType.default ? null : renderRemoveImageButton(item)}
-			</TouchableOpacity>
-		)
-	}
-
 	const pushToSetUpTags = () => {
 		Navigation.push(props.componentId, {
 			component: {
@@ -193,26 +160,11 @@ const ProfileSetUpImageWallViewController = (props) => {
 				marginHorizontal: 20, color: Colors.black,
 			}}>{'Drag to resort the images.'}</Text>
 
-			<View style={{flexDirection: 'row', flexWrap: 'wrap', height: (ScreenDimensions.width/4)*2, marginTop: 5,
-
-			}}>
-				{dataSource.map((_item, idx) => {
-					const {id, uri, type} = _item
-					return (
-						<SortableItem key={idx}
-									  orderId={id}
-									  isEnablePanGesture={type !== ImageActionType.default}
-									  uri={uri}
-									  maxLen={dataSource.length - 1}
-									  positions={positions}
-									  numberOfColumn={4}
-									  renderItem={() => {
-										  return renderItem(_item)
-									  }}
-						/>
-					)
-				})}
-			</View>
+			<SortItemContainerView
+				dataSource={dataSource}
+				openMultiPhotoLibrary={openMultiPhotoLibrary}
+				handleRemoveImage={handleRemoveImage}
+			/>
 
 			<BaseButton
 				title={'Save'}
