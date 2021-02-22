@@ -15,7 +15,11 @@ import Animated, {
 import {Colors} from '../../../utils/styles';
 import {ScreenDimensions} from '../../../utils/Dimemsions';
 import SortableItem from '../../../test/SortableItem';
-import {ImageActionType} from '../controller/ProfileSetUpImageWallViewController';
+
+export const ImageActionType = {
+	default: 0,
+	normal: 1
+}
 
 const SortItemContainerView = (props) => {
 	const convertDataSourceToShardedValue = () => {

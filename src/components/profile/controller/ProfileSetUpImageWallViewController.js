@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, Component} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../../utils/styles';
 import BaseButton from '../../commonComponents/BaseButton';
@@ -7,41 +7,43 @@ import NavigatorDismissButton, {NavigationType} from '../../commonComponents/Nav
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import {GetImageWalls, UpdateImageWalls} from '../service/ProfileImageWallService';
-import SortItemContainerView from '../view/SortItemContainerView';
+import SortItemContainerView, {ImageActionType} from '../view/SortItemContainerView';
 
-export const ImageActionType = {
-	default: 0,
-	normal: 1
+let defaultImage = {
+	id: '0',
+	type: ImageActionType.default,
+	uri: require('../../../source/image/match/add-four.png')
 }
 
-const ProfileSetUpImageWallViewController = (props) => {
-	const [isShowSpinner, setIsShowSpinner] = useState(false)
-	const [deletedImageUriSet, setDeletedImageUriSet] = useState(new Set())
+export default class ProfileSetUpImageWallViewController extends Component{
+	constructor(props) {
+		super(props);
+		this.state = {
+			isShowSpinner: false,
+			dataSource: [defaultImage]
+		}
 
-	let defaultImage = {
-		id: '0',
-		type: ImageActionType.default,
-		uri: require('../../../source/image/match/add-four.png')
+		this.deletedImageUriSet = new Set()
 	}
 
-	const [dataSource, setDataSource] = useState([defaultImage])
+	componentDidMount(): void {
+		this.requestImageWalls()
+	}
 
-	useEffect(() => {
-		requestImageWalls()
-	}, [])
-
-	const requestImageWalls = () => {
+	requestImageWalls = () => {
 		const {ChatID} = global.UserInfo
 		GetImageWalls(ChatID, (data: Array) => {
-			setDataSource(data)
+			this.setState({dataSource: data})
 		}, () => {})
 	}
-	const openMultiPhotoLibrary = () => {
+
+	openMultiPhotoLibrary = () => {
 		ImagePicker.openPicker({
 			multiple: true,
 			maxFiles: 8,
 		}).then(images => {
 			if (images && images.length) {
+
 				let list = images.map((item, index) => {
 					return {
 						id: index.toString(),
@@ -51,6 +53,7 @@ const ProfileSetUpImageWallViewController = (props) => {
 					}
 				})
 
+				const {dataSource} = this.state
 				let ds = []
 				ds = ds.concat(dataSource)
 				ds = ds.filter((_item) => {
@@ -70,17 +73,19 @@ const ProfileSetUpImageWallViewController = (props) => {
 					_item.id = idx + ''
 				})
 
-				setDataSource(ds)
+				this.setState({dataSource: ds})
 			}
 		}).catch((error) => {
 			console.log(error)
 		});
 	}
 
-	const handleRemoveImage = ({id, uri, type, name}) => {
+	handleRemoveImage = ({id, uri, type, name}) => {
 		console.log('handleRemoveImage: ', name, uri)
+
+		const {dataSource} = this.state
 		if (type === ImageActionType.normal && uri.startsWith('http')) {
-			deletedImageUriSet.add(name)
+			this.deletedImageUriSet.add(name)
 		}
 		let list = dataSource.filter((item) => {
 			return item.id !== id
@@ -95,40 +100,24 @@ const ProfileSetUpImageWallViewController = (props) => {
 			item.id = idx.toString()
 		})
 
-		setDataSource(list)
+		this.setState({dataSource: list})
 	}
 
-	const handleUploadImageWall = () => {
+	handleUploadImageWall = () => {
 		const {ChatID} = global.UserInfo
+		const {dataSource} = this.state
 
 		let deleteImages = []
-		deletedImageUriSet.forEach((name) => {
+		this.deletedImageUriSet.forEach((name) => {
 			deleteImages.push(name)
 		})
 
 		UpdateImageWalls(ChatID, dataSource, deleteImages, () => {
-			requestImageWalls()
+			this.requestImageWalls()
 		}, () => {})
 	}
 
-	const renderRemoveImageButton = (item) => {
-		return(
-			<TouchableOpacity onPress={() => {
-				handleRemoveImage(item)
-			}} style={{width: 30, height: 30, justifyContent: 'center',
-				alignItems: 'center',
-				position: 'absolute', right: 0, top: 0
-			}}>
-				<View style={{width: 20, height: 20, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 10, }}>
-					<Image style={{tintColor: Colors.white,
-						width: 20, height: 20,
-					}} source={require('../../../source/image/match/reduce-one.png')}/>
-				</View>
-			</TouchableOpacity>
-		)
-	}
-
-	const pushToSetUpTags = () => {
+	pushToSetUpTags = () => {
 		Navigation.push(props.componentId, {
 			component: {
 				name: 'ProfileSetUpTagsViewController',
@@ -145,42 +134,45 @@ const ProfileSetUpImageWallViewController = (props) => {
 		});
 	}
 
-	return (
-		<SafeAreaView style={{flex: 1,}}>
-			<Text style={{fontSize: 32, marginTop: 20,
-				marginBottom: 10,
-				marginHorizontal: 20, color: Colors.black,
-				fontWeight: 'bold'
-			}}>{'Set up your image wall.'}</Text>
+	render() {
+		const {isShowSpinner, dataSource} = this.state
+		return (
+			<SafeAreaView style={{flex: 1,}}>
+				<Text style={{fontSize: 32, marginTop: 20,
+					marginBottom: 10,
+					marginHorizontal: 20, color: Colors.black,
+					fontWeight: 'bold'
+				}}>{'Set up your image wall.'}</Text>
 
-			<Text style={{fontSize: 20, marginBottom: 5, marginTop: 0,
-				marginHorizontal: 20, color: Colors.black,
-			}}>{'Click add button to add images.'}</Text>
-			<Text style={{fontSize: 20, marginBottom: 10, marginTop: 0,
-				marginHorizontal: 20, color: Colors.black,
-			}}>{'Drag to resort the images.'}</Text>
+				<Text style={{fontSize: 20, marginBottom: 5, marginTop: 0,
+					marginHorizontal: 20, color: Colors.black,
+				}}>{'Click add button to add images.'}</Text>
+				<Text style={{fontSize: 20, marginBottom: 10, marginTop: 0,
+					marginHorizontal: 20, color: Colors.black,
+				}}>{'Drag to resort the images.'}</Text>
 
-			<SortItemContainerView
-				dataSource={dataSource}
-				openMultiPhotoLibrary={openMultiPhotoLibrary}
-				handleRemoveImage={handleRemoveImage}
-			/>
+				<SortItemContainerView
+					dataSource={dataSource}
+					openMultiPhotoLibrary={this.openMultiPhotoLibrary}
+					handleRemoveImage={this.handleRemoveImage}
+				/>
 
-			<BaseButton
-				title={'Save'}
-				style={{
-					backgroundColor: Colors.blue,
-				}}
-				containerStyle={{
-					marginTop: 20,
-				}}
-				didClick={handleUploadImageWall}
-			/>
+				<BaseButton
+					title={'Save'}
+					style={{
+						backgroundColor: Colors.blue,
+					}}
+					containerStyle={{
+						marginTop: 20,
+					}}
+					didClick={this.handleUploadImageWall}
+				/>
 
-			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.push}/>
-			<LoadingSpinner visible={isShowSpinner}/>
-		</SafeAreaView>
-	)
+				<NavigatorDismissButton componentId={props.componentId} type={NavigationType.push}/>
+				<LoadingSpinner visible={isShowSpinner}/>
+			</SafeAreaView>
+		)
+	}
 }
 
 export default ProfileSetUpImageWallViewController
