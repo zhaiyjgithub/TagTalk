@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Keyboard} from 'react-native';
 import {Colors} from '../../../utils/styles';
 import BaseTextInput from '../../commonComponents/BaseTextInput';
@@ -18,36 +18,40 @@ import ProfileImage from '../model/ProfileImage';
 import {UploadProfile} from '../service/ProfileSetUpService';
 import {API_User, BaseUrl} from '../../../utils/API';
 
-const ProfileSetUpViewController = (props) => {
-	const [isShowSpinner, setIsShowSpinner] = useState(false)
-	const [avatar, setAvatar] = useState('')
-	const [avatarImage, setAvatarImage] = useState(ProfileImage('', ''))
-	const [bio, setBio] = useState('')
-	const [isShowDatePicker, setIsShowDatePicker] = useState(false)
-	const [selectedDate, setSelectedDate] = useState(TimeFormat.MMDDYYYY)
-	const [gender, setGender] = useState(Gender.unknown)
+const defaultImageSource = require('../../../source/image/match/avatar.png')
+const femaleImageSource = require('../../../source/image/match/female.png')
+const maleImageSource = require('../../../source/image/match/male.png')
 
-	const defaultImageSource = require('../../../source/image/match/avatar.png')
-	const femaleImageSource = require('../../../source/image/match/female.png')
-	const maleImageSource = require('../../../source/image/match/male.png')
+export default class ProfileSetUpViewController extends Component {
+	constructor(props) {
+		super(props);
 
+		const {Avatar} = global.UserInfo
+		this.state = {
+			isShowSpinner: false,
+			avatar: Avatar,
+			avatarImage: ProfileImage("", ""),
+			bio: '',
+			isShowDatePicker: false,
+			selectedDate: TimeFormat.MMDDYYYY,
+			gender: Gender.unknown
+		}
+	}
 
-	const uploadProfile = () => {
+	uploadProfile = () => {
 		// const {ChatID} = global.UserInfo
 		// UploadProfile(ChatID, gender, bio, avatarImage, () => {}, () => {
 		//
 		// })
-		pushToPicWall()
+		this.pushToPicWall()
 	}
 
-	const pushToPicWall = () => {
+	pushToPicWall = () => {
 		Navigation.push(props.componentId, {
 			component: {
 				name: 'ProfileSetUpImageWallViewController',
 				passProps: {
-					avatarBase64: avatar,
-					dob: selectedDate,
-					bio: bio,
+
 				},
 				options: {
 					modalPresentationStyle: 'fullScreen',
@@ -59,13 +63,14 @@ const ProfileSetUpViewController = (props) => {
 		});
 	}
 
-	const renderGenderImage = (type) => {
+	renderGenderImage = (type) => {
 		const source = type === Gender.female ? femaleImageSource : maleImageSource
 		const tintColor = type === Gender.female ? Colors.female : Colors.male
 		return <Image source={source} style={{width: 20, height: 20, marginRight: 5, tintColor: tintColor}}/>
 	}
 
-	const renderGenderView = () => {
+	renderGenderView = () => {
+		const {gender} = this.state
 		return (
 			<View style={{width: '100%', paddingHorizontal: 20,
 				flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around',
@@ -77,10 +82,10 @@ const ProfileSetUpViewController = (props) => {
 					// let tintColor = (type === gender ? Colors.blue : Colors.placeholder)
 					return (
 						<TouchableOpacity onPress={() => {
-							setGender(type)
+							this.setState({gender: type})
 						}} key={idx} style={{flexDirection: 'row', alignItems: 'center'}}>
 							<Image source={imageSource} style={{width: 20, height: 20, marginRight: 5,}}/>
-							{renderGenderImage(type)}
+							{this.renderGenderImage(type)}
 						</TouchableOpacity>
 					)
 				})}
@@ -88,17 +93,18 @@ const ProfileSetUpViewController = (props) => {
 		)
 	}
 
-	const formatDate = (selectedDate) => {
+	formatDate = (selectedDate) => {
 		return moment(selectedDate).format(TimeFormat.MMDDYYYY)
 	}
 
-	const renderDOBView = () => {
-		const dateStr = (selectedDate !== TimeFormat.MMDDYYYY ? formatDate(selectedDate) : TimeFormat.MMDDYYYY)
+	renderDOBView = () => {
+		const {isShowDatePicker, selectedDate}  = this.state
+		const dateStr = (selectedDate !== TimeFormat.MMDDYYYY ? this.formatDate(selectedDate) : TimeFormat.MMDDYYYY)
 		const textColor = (selectedDate !== TimeFormat.MMDDYYYY ? Colors.black : Colors.lightGray)
 		return(
 			<TouchableOpacity onPress={() => {
 				Keyboard.dismiss()
-				setIsShowDatePicker(!isShowDatePicker)
+				this.setState({isShowDatePicker: !isShowDatePicker})
 			}} style={[{width: '100%', paddingHorizontal: 20,
 				minHeight: 62,marginTop: 10,
 			}, {}]}>
@@ -112,13 +118,14 @@ const ProfileSetUpViewController = (props) => {
 						color: textColor, paddingVertical: 0}}>{dateStr}</Text>
 				</View>
 
-				{renderRNDatePicker()}
+				{this.renderRNDatePicker()}
 				<SeparateLine />
 			</TouchableOpacity>
 		)
 	}
 
-	const renderRNDatePicker = () => {
+	renderRNDatePicker = () => {
+		const {isShowDatePicker, selectedDate}  = this.state
 		if (!isShowDatePicker) {
 			return null
 		}
@@ -133,42 +140,45 @@ const ProfileSetUpViewController = (props) => {
 				maximumDate={new Date()}
 				onChange={(event, date) => {
 					if (PLATFORM.isAndroid) {
-						setIsShowDatePicker(false)
+						this.setState({isShowDatePicker: false})
 						const {type} = event
 						if (type === 'set') {
-							setSelectedDate(date)
+							this.setState({selectedDate: date})
 						}
 					}else {
-						setSelectedDate(date)
+						this.setState({selectedDate: date})
 					}
 				}}
 			/>
 		)
 	}
 
-	const openSinglePhotoLibrary = () => {
+	openSinglePhotoLibrary = () => {
 		ImagePicker.openPicker({
 			multiple: false
 		}).then(image => {
 			console.log('image info: ', JSON.stringify(image))
 			if (image && image.path) {
-				const pImage = ProfileImage(image.filename, image.path)
-				setAvatarImage(pImage)
-				setAvatar(image.path)
+				this.setState({
+					avatar: image.path,
+					avatarImage: ProfileImage(image.filename, image.path)
+				})
 			}
 		});
 	}
 
-	const renderAvatar = () => {
-		const image = avatar.length ? {uri: avatar} : defaultImageSource
-		const {Name, Avatar} = global.UserInfo
-		const avatarUri = BaseUrl + API_User.Avatar + '?name=' + Avatar //http://localhost:8090/User/Avatar?name=4560ee23e5fb7f2b81d5ed7970dec913.JPG
-		console.log('user avatarUri ', avatarUri)
+	renderAvatar = () => {
+		const {avatar} = this.state
+		let image = defaultImageSource
+		if (avatar.length) {
+			const avatarUri = BaseUrl + API_User.Avatar + '?name=' + avatar //http://localhost:8090/User/Avatar?name=4560ee23e5fb7f2b81d5ed7970dec913.JPG
+			image = {uri: avatarUri}
+		}
+
+		const {Name} = global.UserInfo
 		return (
 			<View style={{width: '100%', marginTop: 15, alignItems: 'center'}}>
-				<TouchableOpacity onPress={() => {
-					openSinglePhotoLibrary()
-				}}>
+				<TouchableOpacity onPress={this.openSinglePhotoLibrary}>
 					<Image source={image} style={{width: 96, height: 96, borderRadius: 48,
 						borderColor: Colors.blue, borderWidth: 2,
 					}}/>
@@ -179,43 +189,45 @@ const ProfileSetUpViewController = (props) => {
 		)
 	}
 
-	return (
-		<SafeAreaView style={{flex: 1,}}>
-			<Text style={{fontSize: 32, marginVertical: 20,
-				marginHorizontal: 20, color: Colors.black,
-				fontWeight: 'bold'
-			}}>{'Set up your profile.'}</Text>
+	render() {
+		const {isShowSpinner} = this.state
+		return (
+			<SafeAreaView style={{flex: 1,}}>
+				<Text style={{fontSize: 32, marginVertical: 20,
+					marginHorizontal: 20, color: Colors.black,
+					fontWeight: 'bold'
+				}}>{'Set up your profile.'}</Text>
 
-			{renderAvatar()}
-			{renderGenderView()}
-			{renderDOBView()}
-			<BaseTextInput
-				textInputStyle={{textAlignVertical: 'top', height: 40}}
-				blurOnSubmit={true}
-				title = {'About me#'}
-				placeholder={'Enter your brief introduction '}
-				placeholderTextColor={Colors.lightGray}
-				multiline={true}
-				maxLength={160}
-				onChangeText={(text) => {
-					setBio(text + '')
-				}}
-			/>
+				{this.renderAvatar()}
+				{this.renderGenderView()}
+				{this.renderDOBView()}
+				<BaseTextInput
+					textInputStyle={{textAlignVertical: 'top', height: 40}}
+					blurOnSubmit={true}
+					title = {'About me#'}
+					placeholder={'Enter your brief introduction '}
+					placeholderTextColor={Colors.lightGray}
+					multiline={true}
+					maxLength={160}
+					onChangeText={(text) => {
+						this.setState({bio: text + ''})
+					}}
+				/>
 
-			<BaseButton
-				title={'Save'}
-				style={{
-					backgroundColor: Colors.blue,
-				}}
-				containerStyle={{
-					marginTop: 20,
-				}}
-				didClick={uploadProfile}
-			/>
-			<NavigatorDismissButton componentId={props.componentId} type={NavigationType.modal}/>
-			<LoadingSpinner visible={isShowSpinner}/>
-		</SafeAreaView>
-	)
+				<BaseButton
+					title={'Save'}
+					style={{
+						backgroundColor: Colors.blue,
+					}}
+					containerStyle={{
+						marginTop: 20,
+					}}
+					didClick={this.uploadProfile}
+				/>
+				<NavigatorDismissButton componentId={props.componentId} type={NavigationType.modal}/>
+				<LoadingSpinner visible={isShowSpinner}/>
+			</SafeAreaView>
+		)
+	}
 }
 
-export default ProfileSetUpViewController
