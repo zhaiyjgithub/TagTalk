@@ -15,7 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import ToastMsg from '../../../utils/ToastMsg';
 import ProfileImage from '../model/ProfileImage';
-import {UploadProfile} from '../service/ProfileSetUpService';
+import ProfileSetUpService from '../service/ProfileSetUpService';
 import {API_User, BaseUrl} from '../../../utils/API';
 
 const defaultImageSource = require('../../../source/image/match/avatar.png')
@@ -30,12 +30,14 @@ export default class ProfileSetUpViewController extends Component {
 		this.state = {
 			isShowSpinner: false,
 			avatar: Avatar,
-			avatarImage: ProfileImage("", ""),
+			avatarImage: new ProfileImage("", ""),
 			bio: '',
 			isShowDatePicker: false,
 			selectedDate: TimeFormat.MMDDYYYY,
 			gender: Gender.unknown
 		}
+
+		this.setupService = new ProfileSetUpService()
 	}
 
 	uploadProfile = () => {
@@ -161,7 +163,7 @@ export default class ProfileSetUpViewController extends Component {
 			if (image && image.path) {
 				this.setState({
 					avatar: image.path,
-					avatarImage: ProfileImage(image.filename, image.path)
+					avatarImage: new ProfileImage(image.filename, image.path)
 				})
 			}
 		});

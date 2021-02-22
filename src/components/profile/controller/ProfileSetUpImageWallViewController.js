@@ -6,7 +6,7 @@ import LoadingSpinner from '../../commonComponents/LoadingSpinner';
 import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
-import {GetImageWalls, UpdateImageWalls} from '../service/ProfileImageWallService';
+import ProfileImageWallService from '../service/ProfileImageWallService';
 import SortItemContainerView, {ImageActionType} from '../view/SortItemContainerView';
 
 let defaultImage = {
@@ -23,7 +23,9 @@ export default class ProfileSetUpImageWallViewController extends Component{
 			dataSource: [defaultImage]
 		}
 
+		this.imageService = new ProfileImageWallService()
 		this.deletedImageUriSet = new Set()
+
 	}
 
 	componentDidMount(): void {
@@ -32,7 +34,7 @@ export default class ProfileSetUpImageWallViewController extends Component{
 
 	requestImageWalls = () => {
 		const {ChatID} = global.UserInfo
-		GetImageWalls(ChatID, (data: Array) => {
+		this.imageService.GetImageWalls(ChatID, (data: Array) => {
 			this.setState({dataSource: data})
 		}, () => {})
 	}
@@ -112,7 +114,7 @@ export default class ProfileSetUpImageWallViewController extends Component{
 			deleteImages.push(name)
 		})
 
-		UpdateImageWalls(ChatID, dataSource, deleteImages, () => {
+		this.imageService.UpdateImageWalls(ChatID, dataSource, deleteImages, () => {
 			this.requestImageWalls()
 		}, () => {})
 	}

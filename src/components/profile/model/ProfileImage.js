@@ -1,9 +1,7 @@
 
-const ProfileImage = (name, path) => {
-	return {
-		Name: name,
-		Path: path
+export default class ProfileImage {
+	constructor(name, path) {
+		this.Name = name
+		this.Path = path
 	}
 }
-
-export default ProfileImage
