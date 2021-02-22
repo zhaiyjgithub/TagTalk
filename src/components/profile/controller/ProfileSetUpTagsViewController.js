@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../../../utils/styles';
 import BaseTextInput from '../../commonComponents/BaseTextInput';
@@ -8,59 +8,66 @@ import NavigatorDismissButton, {NavigationType} from '../../commonComponents/Nav
 import {PLATFORM} from '../../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
 
-const ProfileSetUpTagsViewController = (props) => {
-	const [defaultTags, setDefaultTags] = useState([
-		'Adventure', 'Animal', 'Dancing',
-		'Foreign culture', 'Hitchiking', 'Local food',
-		'Making new friends', 'Outdoor activities', 'Plants-based food',
-		'Sightseeing', 'Spirituality', 'Science', 'Sports', 'Yoga'
-	])
-	const [selectedSet, setSelectedSet] = useState(new Set())
-	const [customSet, setCustomSet] = useState(new Set())
-	const [customTag, setCustomTag] = useState('')
-	const MaxSetSize = 20
+const MaxSetSize = 20
 
-	const addToSet = (item) => {
-		selectedSet.add(item)
+export default class ProfileSetUpTagsViewController extends Component{
+	constructor(props) {
+		super(props);
+		this.state = {
+			defaultTags: [
+				'Adventure', 'Animal', 'Dancing',
+				'Foreign culture', 'Hitchiking', 'Local food',
+				'Making new friends', 'Outdoor activities', 'Plants-based food',
+				'Sightseeing', 'Spirituality', 'Science', 'Sports', 'Yoga'
+			],
+			customTag: '',
+		}
+
+		this.selectedSet = new Set()
+		this.customSet = new Set()
 	}
 
-	const removeFromSet = (item) => {
-		selectedSet.delete(item)
+	addToSet = (item) => {
+		this.selectedSet.add(item)
 	}
 
-	const addToCustomSet = (item) => {
-		customSet.add(item)
+	removeFromSet = (item) => {
+		this.selectedSet.delete(item)
 	}
 
-	const removeFromCustomSet = (item) => {
-		customSet.delete(item)
+	addToCustomSet = (item) => {
+		this.customSet.add(item)
 	}
 
-	const clickItem = (item, type) => {
-		if (selectedSet.has(item)) {
-			removeFromSet(item)
+	removeFromCustomSet = (item) => {
+		this.customSet.delete(item)
+	}
+
+	clickItem = (item, type) => {
+		if (this.selectedSet.has(item)) {
+			this.removeFromSet(item)
 			if (type === TagType.custom) {
-				removeFromCustomSet(item)
+				this.removeFromCustomSet(item)
 			}
 		}else {
-			if (selectedSet.size < MaxSetSize) {
-				addToSet(item)
+			if (this.selectedSet.size < MaxSetSize) {
+				this.addToSet(item)
 				if (type === TagType.custom ) {
-					addToCustomSet(item)
+					this.addToCustomSet(item)
 				}
 			}else {
 				ToastMsg.show('Max 20 tags limited.')
 				return
 			}
 		}
-		updateDataSource()
+		this.updateDataSource()
 	}
 
-	const renderItem = (item, idx, type) => {
-		const isSelected = selectedSet.has(item)
+	renderItem = (item, idx, type) => {
+		const isSelected = this.selectedSet.has(item)
 		return (
 			<TouchableOpacity onPress={() => {
-				clickItem(item, type)
+				this.clickItem(item, type)
 			}} key={idx} style={{height: 50, borderRadius: 25, backgroundColor: isSelected ? Colors.blue : Colors.systemGray, justifyContent: 'center',
 				marginTop: 10, marginRight: 10, paddingHorizontal: 16,
 			}}>
@@ -69,21 +76,22 @@ const ProfileSetUpTagsViewController = (props) => {
 		)
 	}
 
-	const updateDataSource = () => {
-		setDefaultTags([].concat(defaultTags))
+	updateDataSource = () => {
+		const {defaultTags} = this.state
+		this.setState({defaultTags: [].concat(defaultTags)})
 	}
 
-	const getCustomSetList = () => {
+	getCustomSetList = () => {
 		let list = []
-		customSet.forEach((_item,) => {
+		this.customSet.forEach((_item,) => {
 			list.push(_item)
 		})
 
 		return list
 	}
 
-	const renderCustomListView = () => {
-		const list = getCustomSetList()
+	renderCustomListView = () => {
+		const list = this.getCustomSetList()
 		if (!list.length) {
 			return null
 		}
@@ -97,7 +105,7 @@ const ProfileSetUpTagsViewController = (props) => {
 				paddingBottom: 10
 			}}>
 				{list.map((item, index) => {
-					return renderItem(item, index, TagType.custom)
+					return this.renderItem(item, index, TagType.custom)
 				})}
 
 				<SeparateLine style={{left: 0, right: 0,}}/>
@@ -105,16 +113,19 @@ const ProfileSetUpTagsViewController = (props) => {
 		)
 	}
 
-	const addCustomTag = () => {
+	addCustomTag = () => {
+		const { customTag } = this.state
 		if (!customTag.length) {
 			ToastMsg.show('Enter your custom tag.')
 			return
 		}
-		setCustomTag('')
-		clickItem(customTag, TagType.custom)
+
+		this.setState({customTag: ''}, () => {
+			this.clickItem(customTag, TagType.custom)
+		})
 	}
 
-	const renderDoneButton = () => {
+	renderDoneButton = () => {
 		return (
 			<TouchableOpacity onPress={() => {
 
@@ -132,56 +143,57 @@ const ProfileSetUpTagsViewController = (props) => {
 		)
 	}
 
-	return (
-		<SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
-			<Text style={{fontSize: 32, marginTop: 20,
-				marginBottom: 10,
-				marginHorizontal: 20, color: Colors.black,
-				fontWeight: 'bold'
-			}}>{'My tags.'}</Text>
+	render() {
+		const {defaultTags, customTag} = this.state
+		return (
+			<SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
+				<Text style={{fontSize: 32, marginTop: 20,
+					marginBottom: 10,
+					marginHorizontal: 20, color: Colors.black,
+					fontWeight: 'bold'
+				}}>{'My tags.'}</Text>
 
-			<View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
-				<View style={{flex: 1}}>
-					<BaseTextInput
-						textInputStyle={{textAlignVertical: 'top', height: 40, flex: 1}}
-						value={customTag}
-						blurOnSubmit={true}
-						title = {'Add Tags#'}
-						placeholder={'Enter your custom tag...'}
-						placeholderTextColor={Colors.lightGray}
-						multiline={true}
-						maxLength={160}
-						onChangeText={(text) => {
-							setCustomTag((text + '').toString().trim())
-						}}
-					/>
+				<View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
+					<View style={{flex: 1}}>
+						<BaseTextInput
+							textInputStyle={{textAlignVertical: 'top', height: 40, flex: 1}}
+							value={customTag}
+							blurOnSubmit={true}
+							title = {'Add Tags#'}
+							placeholder={'Enter your custom tag...'}
+							placeholderTextColor={Colors.lightGray}
+							multiline={true}
+							maxLength={160}
+							onChangeText={(text) => {
+								this.setState({customTag: (text + '').toString().trim()})
+							}}
+						/>
+					</View>
+
+					<TouchableOpacity onPress={this.addCustomTag} style={{width: 50, height: 50, borderRadius: 25,
+						marginRight: 20
+					}}>
+						<Image style={{width: 50, height: 50,}} source={require('../../../source/image/match/add-one.png')}/>
+					</TouchableOpacity>
 				</View>
 
-				<TouchableOpacity onPress={addCustomTag} style={{width: 50, height: 50, borderRadius: 25,
-					marginRight: 20
+				{this.renderCustomListView()}
+
+				<ScrollView style={{flex: 1, marginTop: 20}} contentContainerStyle={{
+					paddingHorizontal: 20, paddingBottom: 34, flexDirection: 'row',
+					flexWrap: 'wrap'
 				}}>
-					<Image style={{width: 50, height: 50,}} source={require('../../../source/image/match/add-one.png')}/>
-				</TouchableOpacity>
-			</View>
+					{defaultTags.map((item, index) => {
+						return this.renderItem(item, index, TagType.default)
+					})}
+				</ScrollView>
 
-			{renderCustomListView()}
-
-			<ScrollView style={{flex: 1, marginTop: 20}} contentContainerStyle={{
-				paddingHorizontal: 20, paddingBottom: 34, flexDirection: 'row',
-				flexWrap: 'wrap'
-			}}>
-				{defaultTags.map((item, index) => {
-					return renderItem(item, index, TagType.default)
-				})}
-			</ScrollView>
-
-			<NavigatorDismissButton componentId={props.componentId}  type={NavigationType.push}/>
-			{renderDoneButton()}
-		</SafeAreaView>
-	)
+				<NavigatorDismissButton componentId={props.componentId}  type={NavigationType.push}/>
+				{this.renderDoneButton()}
+			</SafeAreaView>
+		)
+	}
 }
-
-export default ProfileSetUpTagsViewController
 
 const TagType = {
 	default: 0,
