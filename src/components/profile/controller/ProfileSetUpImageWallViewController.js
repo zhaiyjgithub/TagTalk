@@ -25,7 +25,6 @@ export default class ProfileSetUpImageWallViewController extends Component{
 
 		this.imageService = new ProfileImageWallService()
 		this.deletedImageUriSet = new Set()
-
 	}
 
 	componentDidMount(): void {
@@ -106,6 +105,9 @@ export default class ProfileSetUpImageWallViewController extends Component{
 	}
 
 	handleUploadImageWall = () => {
+		this.pushToSetUpTags()
+		return;
+
 		const {ChatID} = global.UserInfo
 		const {dataSource} = this.state
 
@@ -114,13 +116,19 @@ export default class ProfileSetUpImageWallViewController extends Component{
 			deleteImages.push(name)
 		})
 
+		if (!deleteImages.length) {
+			this.pushToSetUpTags()
+			return
+		}
+
 		this.imageService.UpdateImageWalls(ChatID, dataSource, deleteImages, () => {
 			this.requestImageWalls()
+			this.pushToSetUpTags()
 		}, () => {})
 	}
 
 	pushToSetUpTags = () => {
-		Navigation.push(props.componentId, {
+		Navigation.push(this.props.componentId, {
 			component: {
 				name: 'ProfileSetUpTagsViewController',
 				passProps: {
@@ -170,11 +178,10 @@ export default class ProfileSetUpImageWallViewController extends Component{
 					didClick={this.handleUploadImageWall}
 				/>
 
-				<NavigatorDismissButton componentId={props.componentId} type={NavigationType.push}/>
+				<NavigatorDismissButton componentId={this.props.componentId} type={NavigationType.push}/>
 				<LoadingSpinner visible={isShowSpinner}/>
 			</SafeAreaView>
 		)
 	}
 }
 
-export default ProfileSetUpImageWallViewController

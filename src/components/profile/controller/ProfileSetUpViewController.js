@@ -42,14 +42,17 @@ export default class ProfileSetUpViewController extends Component {
 
 	uploadProfile = () => {
 		// const {ChatID} = global.UserInfo
-		// UploadProfile(ChatID, gender, bio, avatarImage, () => {}, () => {
-		//
+		// const {gender, bio, avatarImage} = this.state
+		// this.setupService.UploadProfile(ChatID, gender, bio, avatarImage, () => {
+		// 	this.pushToPicWall()
+		// }, () => {
 		// })
+
 		this.pushToPicWall()
 	}
 
 	pushToPicWall = () => {
-		Navigation.push(props.componentId, {
+		Navigation.push(this.props.componentId, {
 			component: {
 				name: 'ProfileSetUpImageWallViewController',
 				passProps: {
@@ -172,9 +175,8 @@ export default class ProfileSetUpViewController extends Component {
 	renderAvatar = () => {
 		const {avatar} = this.state
 		let image = defaultImageSource
-		if (avatar.length) {
-			const avatarUri = BaseUrl + API_User.Avatar + '?name=' + avatar //http://localhost:8090/User/Avatar?name=4560ee23e5fb7f2b81d5ed7970dec913.JPG
-			image = {uri: avatarUri}
+		if (avatar && avatar.length) {
+			image = {uri: avatar}
 		}
 
 		const {Name} = global.UserInfo
@@ -226,7 +228,7 @@ export default class ProfileSetUpViewController extends Component {
 					}}
 					didClick={this.uploadProfile}
 				/>
-				<NavigatorDismissButton componentId={props.componentId} type={NavigationType.modal}/>
+				<NavigatorDismissButton componentId={this.props.componentId} type={NavigationType.modal}/>
 				<LoadingSpinner visible={isShowSpinner}/>
 			</SafeAreaView>
 		)

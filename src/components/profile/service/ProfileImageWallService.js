@@ -1,10 +1,9 @@
 import RNFS from 'react-native-fs';
 import {Utils} from '../../../utils/utils';
-import {ImageActionType} from '../controller/ProfileSetUpImageWallViewController';
-import {HTTP} from '../../../utils/HttpTools';
 import {API_User, BaseUrl} from '../../../utils/API';
 import {ResponseCode} from '../../../utils/Enums';
 import BaseService from '../../commonComponents/BaseService';
+import {ImageActionType} from '../view/SortItemContainerView';
 
 export default class ProfileImageWallService {
 	constructor() {
@@ -16,7 +15,7 @@ export default class ProfileImageWallService {
 			ChatID: chatId
 		}
 
-		this.baseService.sendRequest(API_User.GetImageWall, param, () => {
+		this.baseService.sendRequest(API_User.GetImageWall, param, (response) => {
 			if (response && response.code === ResponseCode.ok) {
 				let data = []
 				response.data.forEach((item, idx) => {

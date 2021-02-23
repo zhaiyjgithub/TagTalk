@@ -114,14 +114,19 @@ export default class ProfileSetUpTagsViewController extends Component{
 	}
 
 	addCustomTag = () => {
-		const { customTag } = this.state
+		const { customTag, defaultTags } = this.state
 		if (!customTag.length) {
 			ToastMsg.show('Enter your custom tag.')
 			return
 		}
 
 		this.setState({customTag: ''}, () => {
-			this.clickItem(customTag, TagType.custom)
+			let index = defaultTags.findIndex((_tag) => {
+				return _tag === customTag
+			})
+
+			const type = index === -1 ? TagType.custom : TagType.default
+			this.clickItem(customTag, type)
 		})
 	}
 
@@ -188,7 +193,7 @@ export default class ProfileSetUpTagsViewController extends Component{
 					})}
 				</ScrollView>
 
-				<NavigatorDismissButton componentId={props.componentId}  type={NavigationType.push}/>
+				<NavigatorDismissButton componentId={this.props.componentId}  type={NavigationType.push}/>
 				{this.renderDoneButton()}
 			</SafeAreaView>
 		)

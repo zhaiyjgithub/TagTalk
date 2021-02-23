@@ -15,6 +15,7 @@ import Animated, {
 import {Colors} from '../../../utils/styles';
 import {ScreenDimensions} from '../../../utils/Dimemsions';
 import SortableItem from '../../../test/SortableItem';
+import FastImage from 'react-native-fast-image';
 
 export const ImageActionType = {
 	default: 0,
@@ -51,6 +52,24 @@ const SortItemContainerView = (props) => {
 		)
 	}
 
+
+	const renderImage = (uri) => {
+		const size = (ScreenDimensions.width/4)
+		if (uri && uri.startsWith("http")) {
+			return (
+				<FastImage
+					style={{ width: size, height: size, }}
+					source={{
+						uri:  uri,
+						priority: FastImage.priority.normal,
+					}}
+					resizeMode={FastImage.resizeMode.cover}
+				/>
+			)
+		}else {
+			return <Image source={{uri: uri}} style={{width: size, height: size}}/>}
+	}
+
 	const renderItem = (item) => {
 		const {id, uri, type} = item
 		const size = (ScreenDimensions.width/4)
@@ -65,7 +84,7 @@ const SortItemContainerView = (props) => {
 				width: size, height: size
 			}}>
 				{type === ImageActionType.default ? <Image source={uri} style={{width: 50, height: 50, tintColor: Colors.black}}/> :
-					<Image source={{uri: uri}} style={{width: size, height: size}}/>}
+					renderImage(uri)}
 
 				{type === ImageActionType.default ? null : renderRemoveImageButton(item)}
 			</TouchableOpacity>

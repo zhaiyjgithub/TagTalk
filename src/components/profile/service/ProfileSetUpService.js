@@ -27,7 +27,7 @@ export default class ProfileSetUpService {
 		return true
 	}
 
-	UploadProfile = (chatId, gender, bio, pImage, beginCB, progressCB) => {
+	UploadProfile = (chatId, gender, bio, pImage, success, fail) => {
 		if (!this.CheckParam(pImage.Path, gender, bio)) {
 			return
 		}
@@ -46,13 +46,11 @@ export default class ProfileSetUpService {
 		let uploadBegin = (response) => {
 			let jobId = response.jobId;
 			console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
-			beginCB && beginCB(jobId)
 		};
 
 		let uploadProgress = (response) => {
 			let percentage = Math.floor((response.totalBytesSent/response.totalBytesExpectedToSend) * 100);
 			console.log('UPLOAD IS ' + percentage + '% DONE!');
-			progressCB && progressCB(percentage)
 		};
 
 		RNFS.uploadFiles({
@@ -72,14 +70,18 @@ export default class ProfileSetUpService {
 		}).promise.then((response) => {
 			if (response.statusCode === 200) {
 				console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
+				success && success()
 			} else {
 				console.log('SERVER ERROR');
+				fail && fail
 			}
 		}).catch((err) => {
 			if(err.description === "cancelled") {
 				// cancelled by user
 			}
 			console.log(err);
+
+			fail && fail()
 		});
 	}
 }

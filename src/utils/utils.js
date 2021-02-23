@@ -35,6 +35,9 @@ const Utils = {
     },
     GetDateTimeISO() {
         return (new Date()).toISOString()
+    },
+    GenerateFileName(chatId, fileName) {
+        return chatId+ (new Date).getSeconds() + fileName
     }
 
 }
