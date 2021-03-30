@@ -41,21 +41,22 @@ global.storage = storage
 global.UserInfo = {}
 
 Navigation.events().registerAppLaunchedListener(() => {
-    CacheTool.load(CacheKey.userInfo, (response) => {
-      const userInfo = JSON.parse(response)
-        console.log('user info: ', userInfo)
-      if (response && userInfo) {
-          const {Bio, Avatar} = userInfo
-          global.UserInfo = userInfo
-          if (Avatar && Avatar.length) {
-              Router.showHomePage()
-          }else {
-              Router.showTestPage()
-          }
-      }else {
-        Router.showGuide()
-      }
-    }, () => {
-      Router.showGuide()
-    })
+    Router.showTestPage()
+    // CacheTool.load(CacheKey.userInfo, (response) => {
+    //   const userInfo = JSON.parse(response)
+    //     console.log('user info: ', userInfo)
+    //   if (response && userInfo) {
+    //       const {Bio, Avatar} = userInfo
+    //       global.UserInfo = userInfo
+    //       if (Avatar && Avatar.length) {
+    //           Router.showHomePage()
+    //       }else {
+    //           Router.showTestPage()
+    //       }
+    //   }else {
+    //     Router.showGuide()
+    //   }
+    // }, () => {
+    //   Router.showGuide()
+    // })
 });
