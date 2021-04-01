@@ -1,18 +1,14 @@
-import React, { useState, useEffect, } from "react"
-import {SafeAreaView, StyleSheet, View, Text, Dimensions} from 'react-native'
-import {Colors} from '../utils/styles';
-import Animated,  {
-	useSharedValue,
-	withTiming,
-	useAnimatedStyle,
-	Easing,
+import React from 'react';
+import {Dimensions, StyleSheet, View} from 'react-native';
+import Animated, {
 	useAnimatedGestureHandler,
+	useAnimatedStyle,
+	useSharedValue,
 	withSpring,
-	interpolate,
-	concat,
-	withSequence
 } from 'react-native-reanimated';
-import {PanGestureHandler, State} from 'react-native-gesture-handler'
+import {PanGestureHandler} from 'react-native-gesture-handler';
+import {Colors} from '../../utils/styles';
+
 const {width, height} = Dimensions.get('window')
 
 const styles = StyleSheet.create({
@@ -32,7 +28,7 @@ const styles = StyleSheet.create({
 	}
 })
 
-const PanelViewController = (props) => {
+const PanelView = (props) => {
 	const {bottomSnapPointY, topSnapPointY} = props
 	const translation = {
 		y: useSharedValue(bottomSnapPointY)
@@ -79,7 +75,7 @@ const PanelViewController = (props) => {
 	)
 }
 
-PanelViewController.defaultProps = {
+PanelView.defaultProps = {
 	bottomSnapPointY: (height - 88)*0.7,
 	topSnapPointY: ((height - 88))*0.25,
 	panelViewStyle: {},
@@ -87,4 +83,4 @@ PanelViewController.defaultProps = {
 	children: null
 }
 
-export default PanelViewController
+export default PanelView
