@@ -40,18 +40,31 @@ const storage = new Storage({
 global.storage = storage
 global.UserInfo = {}
 
+ACCOUNT = {
+    Name: "",
+    Email: "",
+    Phone: "",
+    Bio: "",
+    Avatar: "",
+    Level: 0,
+    Password: "",
+    Gender: 1,
+    ChatID: "",
+    Token: ""
+}
+
 Navigation.events().registerAppLaunchedListener(() => {
     Router.showTestPage()
     // CacheTool.load(CacheKey.userInfo, (response) => {
     //   const userInfo = JSON.parse(response)
-    //     console.log('user info: ', userInfo)
+    //     ACCOUNT = userInfo
     //   if (response && userInfo) {
     //       const {Bio, Avatar} = userInfo
     //       global.UserInfo = userInfo
     //       if (Avatar && Avatar.length) {
     //           Router.showHomePage()
     //       }else {
-    //           Router.showTestPage()
+    //           Router.showGuide()
     //       }
     //   }else {
     //     Router.showGuide()
