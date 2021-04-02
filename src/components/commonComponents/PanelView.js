@@ -15,16 +15,19 @@ const styles = StyleSheet.create({
 	containerView: {
 		flex: 1,
 		backgroundColor: Colors.white,
-		justifyContent: 'flex-end'
+		justifyContent: 'flex-end',
+
 	},
 	panelView: {
 		flex: 1,
 		backgroundColor: Colors.white,
-		shadowRadius: 8,
+		shadowRadius: 4,
 		shadowColor: Colors.lightGray,
 		shadowOpacity: 0.2,
 		shadowOffset: {width: 0, height: 0},
 		elevation: 2,
+		borderTopLeftRadius: 40,
+		borderTopRightRadius: 40,
 	}
 })
 

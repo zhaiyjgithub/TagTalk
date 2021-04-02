@@ -34,6 +34,14 @@ export default class ProfileSetUpImageWallViewController extends Component{
 	requestImageWalls = () => {
 		const {ChatID} = global.UserInfo
 		this.imageService.GetImageWalls(ChatID, (data: Array) => {
+			if (data.length < 8) {
+				let defaultImage = {
+					id: data.length.toString(),
+					type: ImageActionType.default,
+					uri: require('../../../source/image/match/add-four.png')
+				}
+				data.push(defaultImage)
+			}
 			this.setState({dataSource: data})
 		}, () => {})
 	}
