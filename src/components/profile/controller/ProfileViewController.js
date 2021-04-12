@@ -133,7 +133,7 @@ export default class ProfileViewController extends Component{
         )
     }
 
-    renderUserInfoView = () => {
+    renderInfoContainerView = () => {
         return (
             <View style={{width: '100%', alignItems: 'center', paddingHorizontal: 16,}}>
                 {this.renderPanBar()}
@@ -148,7 +148,7 @@ export default class ProfileViewController extends Component{
         return(
             <ContainerView>
                 <PanelView style={{width: '100%', alignItems: 'center', paddingHorizontal: 16,}}>
-                    {this.renderUserInfoView()}
+                    {this.renderInfoContainerView()}
                 </PanelView>
             </ContainerView>
         )
