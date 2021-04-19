@@ -1,27 +1,12 @@
-import React, {Component, Fragment} from 'react';
-import {
-    SafeAreaView,
-    StyleSheet,
-    FlatList,
-    View,
-    Text,
-    RefreshControl,
-    TouchableOpacity,
-    Image,
-    DeviceEventEmitter,
-    TextInput, Dimensions,
-    ScrollView,
-} from 'react-native';
+import React, {Component} from 'react';
+import {Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import CacheTool from '../../../utils/CacheTool';
 import {CacheKey} from '../../../utils/Enums';
 import {Router} from '../../../route/router';
 import {Colors} from '../../../utils/styles';
 import ContainerView from '../../../baseComponents/ContainerView';
-import PanelView from '../../commonComponents/PanelView';
 import {API_User, BaseUrl} from '../../../utils/API';
 import FastImage from 'react-native-fast-image';
-import SegmentedControlTab from "react-native-segmented-control-tab";
-import SeparateLine from '../../commonComponents/SeparateLine';
 import ProfileImageWallService from '../service/ProfileImageWallService';
 
 let data = []
@@ -33,7 +18,8 @@ export default class ProfileViewController extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            imageWalls: []
+            imageWalls: [],
+            pageIndex: PageType.pix
         }
 
         this.imageService = new ProfileImageWallService()
@@ -42,13 +28,10 @@ export default class ProfileViewController extends Component{
         CacheTool.load(CacheKey.userInfo, (response) => {
             const userInfo = JSON.parse(response)
             ACCOUNT = userInfo
-
             this.getImageWalls()
         }, () => {
 
         })
-
-
     }
 
     getImageWalls = () => {
@@ -93,29 +76,6 @@ export default class ProfileViewController extends Component{
         )
     }
 
-    renderUserInfo = () => {
-        const {Name, Avatar, Bio} = ACCOUNT
-        const uri = BaseUrl + API_User.Avatar + '?name=' + 'ride.png'
-        return (
-            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 16, paddingVertical: 8}}>
-                <FastImage
-                    style={{width: 64, height: 64, borderRadius: 32, backgroundColor: 'red', borderWidth: 2,
-                        borderColor: Colors.blue
-                    }}
-                    source={{
-                        uri:  uri,
-                        priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.contain}
-                />
-                <View style={{marginLeft: 16, justifyContent: 'space-between', flex: 1}}>
-                    <Text numberOfLines={1} style={{fontSize: 24, color: Colors.black, fontWeight: 'bold'}}>{Name}</Text>
-                    <Text style={{fontSize: 16, color: Colors.lightGray, marginTop: 8}}>{Bio}</Text>
-                </View>
-            </View>
-        )
-    }
-
     renderPostImage = (data) => {
         const {width, height} = Dimensions.get('window')
         const size = (width - 32)/4.0
@@ -134,17 +94,6 @@ export default class ProfileViewController extends Component{
         return (
             <View style={{width: '100%', flexDirection: 'row', flexWrap: 'wrap', marginTop: 16,}}>
                 {this.renderPostImage(imageWalls)}
-            </View>
-        )
-    }
-
-    renderInfoContainerView = () => {
-        return (
-            <View style={{width: '100%', alignItems: 'center', paddingHorizontal: 16,}}>
-                {this.renderPanBar()}
-                {this.renderUserInfo()}
-                {this.renderTagList()}
-                {this.renderPostImages()}
             </View>
         )
     }
@@ -184,7 +133,7 @@ export default class ProfileViewController extends Component{
     }
 
     renderPageContainerHeader = () => {
-        const data = ['Pix', 'Tags', 'Timeline']
+        const data = [PageType.pix, PageType.tags, PageType.timeline]
         return (
             <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white,
                 height: 30, marginTop: 16, justifyContent: 'space-between'
@@ -210,9 +159,7 @@ export default class ProfileViewController extends Component{
         const {width, height} = Dimensions.get('window')
         return (
             <View style={{flex: 1, backgroundColor: 'blue', height: 500, width: width}}>
-                {data.map((val, idx) => {
-                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
-                })}
+
             </View>
         )
     }
@@ -221,19 +168,36 @@ export default class ProfileViewController extends Component{
         const {width, height} = Dimensions.get('window')
         return (
             <View style={{flex: 1, backgroundColor: 'yellow',height: 500, width: width}}>
-                {data.map((val, idx) => {
-                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
-                })}
+                {this.renderTagList()}
             </View>
+        )
+    }
+
+    renderTimelineImage = (idx) => {
+        const {width, height} = Dimensions.get('window')
+        const size = (width - 40 - 4*4)/5.0
+
+        return (
+            <FastImage
+                style={{width: size, height: size, borderRadius: size/2.0, backgroundColor: 'red', borderWidth: 6,
+                    borderColor: Colors.white, position: 'absolute', top: -(size/2.0)
+                }}
+                source={{
+                    uri: `https://picsum.photos/id/${idx + 10}/400/400`,
+                    priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+            />
         )
     }
 
     renderTimelinePage = () => {
         const {width, height} = Dimensions.get('window')
+
         return (
             <View style={{flex: 1, backgroundColor: 'red',height: 500, width: width}}>
                 {data.map((val, idx) => {
-                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
+                    return this.renderTimelineImage(idx)
                 })}
             </View>
         )
@@ -255,6 +219,11 @@ export default class ProfileViewController extends Component{
     }
 }
 
+const PageType = {
+    pix: 'pix',
+    tags: 'tags',
+    timeline: 'timeline'
+}
 
 // 'user info: ', { Name: 'West',
 //     Email: '380842455@qq.com',
