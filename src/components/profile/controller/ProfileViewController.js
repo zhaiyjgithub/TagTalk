@@ -10,6 +10,7 @@ import {
     Image,
     DeviceEventEmitter,
     TextInput, Dimensions,
+    ScrollView,
 } from 'react-native';
 import CacheTool from '../../../utils/CacheTool';
 import {CacheKey} from '../../../utils/Enums';
@@ -23,6 +24,10 @@ import SegmentedControlTab from "react-native-segmented-control-tab";
 import SeparateLine from '../../commonComponents/SeparateLine';
 import ProfileImageWallService from '../service/ProfileImageWallService';
 
+let data = []
+for (let i = 0; i < 50; i ++) {
+    data.push(i)
+}
 
 export default class ProfileViewController extends Component{
     constructor(props) {
@@ -144,12 +149,107 @@ export default class ProfileViewController extends Component{
         )
     }
 
+    renderUserInfoHeader = () => {
+        const {Name, Avatar, Bio} = ACCOUNT
+        const uri = BaseUrl + API_User.Avatar + '?name=' + 'ride.png'
+        const size = 96
+        return (
+            <View style={{alignItems: 'center', backgroundColor: Colors.white, marginTop: 100,
+                paddingBottom: 16
+            }}>
+                    <FastImage
+                        style={{width: size, height: size, borderRadius: size/2.0, backgroundColor: 'red', borderWidth: 6,
+                            borderColor: Colors.white, position: 'absolute', top: -(size/2.0)
+                        }}
+                        source={{
+                            uri:  uri,
+                            priority: FastImage.priority.normal,
+                        }}
+                        resizeMode={FastImage.resizeMode.contain}
+                    />
+                <Text numberOfLines={1} style={{width: '100%', fontSize: 24, color: Colors.black, textAlign: 'center',
+                    fontWeight: 'bold', marginTop: size/2.0
+                }}>{'Time cole'}</Text>
+                <Text style={{width: '100%',fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'center'}}>{'To be or to be, this is a question.'}</Text>
+            </View>
+        )
+    }
+
+    renderPageContainerHeaderIcon = (title, idx) => {
+        return (
+            <TouchableOpacity key={idx}>
+                <Text style={{fontSize: 14, color: Colors.black}}>{title}</Text>
+            </TouchableOpacity>
+        )
+    }
+
+    renderPageContainerHeader = () => {
+        const data = ['Pix', 'Tags', 'Timeline']
+        return (
+            <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white,
+                height: 30, marginTop: 16, justifyContent: 'space-between'
+            }}>
+                {data.map((val, idx) => {
+                    return this.renderPageContainerHeaderIcon(val, idx)
+                })}
+            </View>
+        )
+}
+
+    renderPageContainer = () => {
+        return (
+            <ScrollView pagingEnabled={true} horizontal={true}>
+                {this.renderPixPage()}
+                {this.renderTagsPage()}
+                {this.renderTimelinePage()}
+            </ScrollView>
+        )
+    }
+
+    renderPixPage = () => {
+        const {width, height} = Dimensions.get('window')
+        return (
+            <View style={{flex: 1, backgroundColor: 'blue', height: 500, width: width}}>
+                {data.map((val, idx) => {
+                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
+                })}
+            </View>
+        )
+    }
+
+    renderTagsPage = () => {
+        const {width, height} = Dimensions.get('window')
+        return (
+            <View style={{flex: 1, backgroundColor: 'yellow',height: 500, width: width}}>
+                {data.map((val, idx) => {
+                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
+                })}
+            </View>
+        )
+    }
+
+    renderTimelinePage = () => {
+        const {width, height} = Dimensions.get('window')
+        return (
+            <View style={{flex: 1, backgroundColor: 'red',height: 500, width: width}}>
+                {data.map((val, idx) => {
+                    return <Text style={{width: '100%', height: 44}}>{val}</Text>
+                })}
+            </View>
+        )
+    }
+
     render() {
         return(
             <ContainerView>
-                <PanelView style={{width: '100%', alignItems: 'center', paddingHorizontal: 16,}}>
-                    {this.renderInfoContainerView()}
-                </PanelView>
+                <View style={{width: '100%', paddingHorizontal: 20, backgroundColor: Colors.systemGray}}>
+                    {this.renderUserInfoHeader()}
+                    {this.renderPageContainerHeader()}
+                </View>
+                <ScrollView style={{flex: 1, backgroundColor: Colors.systemGray,}} contentContainerStyle={{
+                }}>
+                    {this.renderPageContainer()}
+                </ScrollView>
             </ContainerView>
         )
     }
