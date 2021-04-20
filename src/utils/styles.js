@@ -20,7 +20,9 @@ const Colors = {
 	nopeRed: '#FE5068',
 	starLikeBlue: '#3CA4FF',
 	female: '#FE5068',
-	male: '#2F88FF'
+	male: '#2F88FF',
+	clear: 'rgba(255, 255, 255, 0)',
+	lightWhite: '#EEF3F9'
 }
 
 const FontFamily = {

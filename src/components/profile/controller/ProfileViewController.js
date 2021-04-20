@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import CacheTool from '../../../utils/CacheTool';
 import {CacheKey} from '../../../utils/Enums';
 import {Router} from '../../../route/router';
@@ -44,12 +44,6 @@ export default class ProfileViewController extends Component{
     signOut = () => {
         CacheTool.remove(CacheKey.userInfo)
         Router.showGuide()
-    }
-
-    renderPanBar = () => {
-        return (
-            <View style={{width: 80, height: 4, borderRadius: 2, backgroundColor: Colors.lightGray, marginVertical: 8}}/>
-        )
     }
 
     renderTagList = () => {
@@ -135,7 +129,7 @@ export default class ProfileViewController extends Component{
     renderPageContainerHeader = () => {
         const data = [PageType.pix, PageType.tags, PageType.timeline]
         return (
-            <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white,
+            <View style={{paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white,
                 height: 30, marginTop: 16, justifyContent: 'space-between'
             }}>
                 {data.map((val, idx) => {
@@ -147,19 +141,40 @@ export default class ProfileViewController extends Component{
 
     renderPageContainer = () => {
         return (
-            <ScrollView pagingEnabled={true} horizontal={true}>
-                {this.renderPixPage()}
+            <ScrollView pagingEnabled={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                {this.renderImageWallPage()}
                 {this.renderTagsPage()}
                 {this.renderTimelinePage()}
             </ScrollView>
         )
     }
 
-    renderPixPage = () => {
+    renderImageWallItem = (idx) => {
+        const {width, height} = Dimensions.get('window')
+        const number = 4
+        const size = (width - 32 - 4*(number - 1))/number
+
+        return (
+            <FastImage
+                style={{width: size, height: size, marginBottom: 4}}
+                source={{
+                    uri: `https://picsum.photos/id/${idx + 10}/400/400`,
+                    priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+            />
+        )
+    }
+
+    renderImageWallPage = () => {
         const {width, height} = Dimensions.get('window')
         return (
-            <View style={{flex: 1, backgroundColor: 'blue', height: 500, width: width}}>
-
+            <View style={{backgroundColor: Colors.white, width: width, flexDirection: 'row',
+                flexWrap: 'wrap', paddingHorizontal: 16, justifyContent: 'space-between'
+            }}>
+                {data.map((val, idx) => {
+                    return this.renderImageWallItem(idx)
+                })}
             </View>
         )
     }
@@ -167,21 +182,19 @@ export default class ProfileViewController extends Component{
     renderTagsPage = () => {
         const {width, height} = Dimensions.get('window')
         return (
-            <View style={{flex: 1, backgroundColor: 'yellow',height: 500, width: width}}>
+            <View style={{width: width, flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16}}>
                 {this.renderTagList()}
             </View>
         )
     }
 
-    renderTimelineImage = (idx) => {
+    renderTimelineImageItem = (idx) => {
         const {width, height} = Dimensions.get('window')
-        const size = (width - 40 - 4*4)/5.0
-
+        const number = 5
+        const size = (width - 40 - 4*(number - 1))/number
         return (
             <FastImage
-                style={{width: size, height: size, borderRadius: size/2.0, backgroundColor: 'red', borderWidth: 6,
-                    borderColor: Colors.white, position: 'absolute', top: -(size/2.0)
-                }}
+                style={{width: size, height: size, marginBottom: 4}}
                 source={{
                     uri: `https://picsum.photos/id/${idx + 10}/400/400`,
                     priority: FastImage.priority.normal,
@@ -193,36 +206,58 @@ export default class ProfileViewController extends Component{
 
     renderTimelinePage = () => {
         const {width, height} = Dimensions.get('window')
-
         return (
-            <View style={{flex: 1, backgroundColor: 'red',height: 500, width: width}}>
+            <View style={{backgroundColor: Colors.white, width: width, flexDirection: 'row',
+                flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: 16
+            }}>
                 {data.map((val, idx) => {
-                    return this.renderTimelineImage(idx)
+                    return this.renderTimelineImageItem(idx)
                 })}
             </View>
         )
     }
 
+    renderHeader = () => {
+        return (
+            <View style={{width: '100%', height: 100, backgroundColor: Colors.black}}/>
+        )
+    }
+
+    renderItem = ({type}) => {
+
+    }
+
     render() {
         return(
             <ContainerView>
-                <View style={{width: '100%', paddingHorizontal: 20, backgroundColor: Colors.systemGray}}>
-                    {this.renderUserInfoHeader()}
-                    {this.renderPageContainerHeader()}
-                </View>
-                <ScrollView style={{flex: 1, backgroundColor: Colors.systemGray,}} contentContainerStyle={{
-                }}>
-                    {this.renderPageContainer()}
-                </ScrollView>
+                <FlatList
+                    style={{flex: 1}}
+                    data={[DateType.user, DateType.post]}
+                    renderItem={this.renderItem}
+                    keyExtractor={(item, index) => {
+                        return 'key' + item.key + index
+                    }}
+                    ListHeaderComponent={this.renderHeader}
+                />
+                {/*<ScrollView style={{flex: 1, backgroundColor: Colors.systemGray,}}>*/}
+                {/*    {this.renderUserInfoHeader()}*/}
+                {/*    {this.renderPageContainerHeader()}*/}
+                {/*    {this.renderPageContainer()}*/}
+                {/*</ScrollView>*/}
             </ContainerView>
         )
     }
 }
 
+const DateType = {
+    user: 0,
+    post: 1
+}
+
 const PageType = {
-    pix: 'pix',
-    tags: 'tags',
-    timeline: 'timeline'
+    pix: 'Image Wall',
+    tags: 'My Tags',
+    timeline: 'Time Line'
 }
 
 // 'user info: ', { Name: 'West',
