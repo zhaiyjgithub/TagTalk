@@ -80,13 +80,12 @@ export default class ProfileViewController extends Component{
         const uri = BaseUrl + API_User.Avatar + '?name=' + 'ride.png'
         const size = 80
         return (
-            <View style={{ borderRadius: 8, marginHorizontal: 20, paddingVertical: 16,
+            <View style={{ borderRadius: 4, marginHorizontal: 20, paddingVertical: 16,
                 paddingHorizontal: 16,
                 backgroundColor: Colors.white, marginTop: -24}}>
                 <View style={{alignItems: 'center', flexDirection: 'row'}}>
                     <FastImage
-                        style={{width: size, height: size, borderRadius: size/2.0, backgroundColor: 'red', borderWidth: 4,
-                            borderColor: Colors.blue,
+                        style={{width: size, height: size, borderRadius: 8,
                         }}
                         source={{
                             uri:  uri,
@@ -97,8 +96,8 @@ export default class ProfileViewController extends Component{
                     <View style={{marginLeft: 16}}>
                         <Text numberOfLines={1} style={{fontSize: 24, color: Colors.black, textAlign: 'left',
                             fontWeight: 'bold'
-                        }}>{'Time cole'}</Text>
-                        <Text style={{fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'left'}}>{'To be or to be, this is a question.'}</Text>
+                        }}>{Name}</Text>
+                        <Text style={{fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'left'}}>{Bio}</Text>
                     </View>
                 </View>
                 {this.renderTagList()}
@@ -197,7 +196,7 @@ export default class ProfileViewController extends Component{
     render() {
         return(
             <ContainerView>
-                <ScrollView style={{flex: 1, backgroundColor: Colors.systemGray,}}>
+                <ScrollView style={{flex: 1, backgroundColor: Colors.lightWhite,}}>
                     {this.renderImageWall()}
                     {this.renderUserInfoHeader()}
                     {this.renderTimelinePage()}
