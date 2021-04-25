@@ -22,7 +22,6 @@ export default class ProfileViewController extends Component{
         this.state = {
             imageWalls: [],
             imageIndex: 0,
-            pageIndex: PageType.pix
         }
 
         this.imageService = new ProfileImageWallService()
@@ -77,7 +76,7 @@ export default class ProfileViewController extends Component{
 
     renderUserInfoHeader = () => {
         const {Name, Avatar, Bio} = ACCOUNT
-        const uri = BaseUrl + API_User.Avatar + '?name=' + 'ride.png'
+        const uri = BaseUrl + API_User.Avatar + '?name=' + Avatar
         const size = 80
         return (
             <View style={{ borderRadius: 4, marginHorizontal: 20, paddingVertical: 16,
@@ -204,17 +203,6 @@ export default class ProfileViewController extends Component{
             </ContainerView>
         )
     }
-}
-
-const DateType = {
-    user: 0,
-    post: 1
-}
-
-const PageType = {
-    pix: 'Image Wall',
-    tags: 'My Tags',
-    timeline: 'Time Line'
 }
 
 // 'user info: ', { Name: 'West',
