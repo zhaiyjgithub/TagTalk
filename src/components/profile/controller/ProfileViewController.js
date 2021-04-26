@@ -8,6 +8,9 @@ import ContainerView from '../../../baseComponents/ContainerView';
 import {API_User, BaseUrl} from '../../../utils/API';
 import FastImage from 'react-native-fast-image';
 import ProfileImageWallService from '../service/ProfileImageWallService';
+import ActionSheet from 'react-native-actionsheet'
+import ImagePicker from 'react-native-image-crop-picker';
+import ProfileImage from '../model/ProfileImage';
 
 let data = []
 for (let i = 0; i < 56; i ++) {
@@ -22,6 +25,7 @@ export default class ProfileViewController extends Component{
         this.state = {
             imageWalls: [],
             imageIndex: 0,
+            avatarUri: ''
         }
 
         this.imageService = new ProfileImageWallService()
@@ -74,30 +78,37 @@ export default class ProfileViewController extends Component{
         )
     }
 
+    onClickUserName = () => {
+
+    }
+
     renderUserInfoHeader = () => {
         const {Name, Avatar, Bio} = ACCOUNT
-        const uri = BaseUrl + API_User.Avatar + '?name=' + Avatar
+        const {avatarUri} = this.state
+        const uri = avatarUri.length ? avatarUri : (BaseUrl + API_User.Avatar + '?name=' + Avatar)
         const size = 80
         return (
             <View style={{ borderRadius: 4, marginHorizontal: 20, paddingVertical: 16,
                 paddingHorizontal: 16,
                 backgroundColor: Colors.white, marginTop: -24}}>
                 <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                    <FastImage
-                        style={{width: size, height: size, borderRadius: 8,
-                        }}
-                        source={{
-                            uri:  uri,
-                            priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.contain}
-                    />
-                    <View style={{marginLeft: 16}}>
+                    <TouchableOpacity onPress={this.showActionSheet}>
+                        <FastImage
+                            style={{width: size, height: size, borderRadius: 8,
+                            }}
+                            source={{
+                                uri:  uri,
+                                priority: FastImage.priority.normal,
+                            }}
+                            resizeMode={FastImage.resizeMode.cover}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.onClickUserName} style={{marginLeft: 16}}>
                         <Text numberOfLines={1} style={{fontSize: 24, color: Colors.black, textAlign: 'left',
                             fontWeight: 'bold'
                         }}>{Name}</Text>
                         <Text style={{fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'left'}}>{Bio}</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 {this.renderTagList()}
             </View>
@@ -192,6 +203,53 @@ export default class ProfileViewController extends Component{
         )
     }
 
+    showActionSheet = () => {
+        this.ActionSheet.show()
+    }
+
+    onClickActionSheet = (index) => {
+        if (index === 0) {
+            this.openPhotoLibrary()
+        }else if (index === 1) {
+            this.openCamera()
+        }
+    }
+
+    updateAvatarUri = (uri) => {
+        this.setState({avatarUri: uri})
+    }
+
+    openPhotoLibrary = () => {
+        ImagePicker.openPicker({
+            multiple: false,
+            width: 400,
+            height: 400,
+            cropping: false,
+            mediaType: "photo",
+        }).then(image => {
+            if (image && image.path) {
+                this.setState({
+                    avatarUri: image.path,
+                })
+            }
+        });
+    }
+
+    openCamera = () => {
+        ImagePicker.openCamera({
+            width: 400,
+            height: 400,
+            cropping: false,
+        }).then(image => {
+            if (image && image.path) {
+                this.setState({
+                    avatarUri: image.path,
+                })
+            }
+        });
+    }
+
+
     render() {
         return(
             <ContainerView>
@@ -200,6 +258,14 @@ export default class ProfileViewController extends Component{
                     {this.renderUserInfoHeader()}
                     {this.renderTimelinePage()}
                 </ScrollView>
+
+                <ActionSheet
+                    ref={o => this.ActionSheet = o}
+                    title={'Which one do you like ?'}
+                    options={['Photo Library', 'Take Photo', 'cancel']}
+                    cancelButtonIndex={2}
+                    onPress={this.onClickActionSheet}
+                />
             </ContainerView>
         )
     }
