@@ -2,7 +2,7 @@ import RNFS from 'react-native-fs';
 import {Utils} from '../../../utils/utils';
 import {API_User, BaseUrl} from '../../../utils/API';
 import {ResponseCode} from '../../../utils/Enums';
-import BaseService from '../../commonComponents/BaseService';
+import {BaseService} from '../../../services/BaseService';
 import {ImageActionType} from '../view/SortItemContainerView';
 
 export default class ProfileImageWallService {

@@ -10,7 +10,7 @@ import FastImage from 'react-native-fast-image';
 import ProfileImageWallService from '../service/ProfileImageWallService';
 import ActionSheet from 'react-native-actionsheet'
 import ImagePicker from 'react-native-image-crop-picker';
-import ProfileImage from '../model/ProfileImage';
+import ProfileService from '../service/ProfileService';
 
 let data = []
 for (let i = 0; i < 56; i ++) {
@@ -29,12 +29,13 @@ export default class ProfileViewController extends Component{
         }
 
         this.imageService = new ProfileImageWallService()
+        this.profileService = new ProfileService()
     }
     componentDidMount() {
         CacheTool.load(CacheKey.userInfo, (response) => {
             const userInfo = JSON.parse(response)
             ACCOUNT = userInfo
-            this.getImageWalls()
+            console.log('local user info: ', ACCOUNT)
         }, () => {
 
         })
@@ -86,6 +87,7 @@ export default class ProfileViewController extends Component{
         const {Name, Avatar, Bio} = ACCOUNT
         const {avatarUri} = this.state
         const uri = avatarUri.length ? avatarUri : (BaseUrl + API_User.Avatar + '?name=' + Avatar)
+        console.log('avatar uri: ', uri)
         const size = 80
         return (
             <View style={{ borderRadius: 4, marginHorizontal: 20, paddingVertical: 16,
@@ -215,8 +217,24 @@ export default class ProfileViewController extends Component{
         }
     }
 
-    updateAvatarUri = (uri) => {
+    updateAvatar = (name, uri) => {
         this.setState({avatarUri: uri})
+        const {ChatID} = ACCOUNT
+        this.profileService.updateAvatar(ChatID, name, uri, () => {
+            this.profileService.getUserInfo(ChatID, (account) => {
+                const newAccount = Object.assign({}, ACCOUNT, account)
+                ACCOUNT = newAccount
+
+                console.log('new account: ', newAccount)
+                this.saveUserAccountToLocal(newAccount)
+                this.forceUpdate()
+            })
+        }, () => {
+        })
+    }
+
+    saveUserAccountToLocal = (userInfo) => {
+        CacheTool.save(CacheKey.userInfo, JSON.stringify(userInfo))
     }
 
     openPhotoLibrary = () => {
@@ -228,9 +246,8 @@ export default class ProfileViewController extends Component{
             mediaType: "photo",
         }).then(image => {
             if (image && image.path) {
-                this.setState({
-                    avatarUri: image.path,
-                })
+                const {filename, path} = image
+                this.updateAvatar(filename, path)
             }
         });
     }
@@ -242,13 +259,11 @@ export default class ProfileViewController extends Component{
             cropping: false,
         }).then(image => {
             if (image && image.path) {
-                this.setState({
-                    avatarUri: image.path,
-                })
+                const {filename, path} = image
+                this.updateAvatar(filename, path)
             }
         });
     }
-
 
     render() {
         return(

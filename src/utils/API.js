@@ -9,7 +9,8 @@ const API_User = {
 	UploadProfile: 'User/UploadProfile',
 	Avatar: 'User/Avatar',
 	ImageWalls: 'User/ImageWalls',
-	GetImageWall: "User/GetImageWall"
+	GetImageWall: "User/GetImageWall",
+	getUserInfo: 'User/GetUserInfo'
 }
 
 const API_Contacts = {

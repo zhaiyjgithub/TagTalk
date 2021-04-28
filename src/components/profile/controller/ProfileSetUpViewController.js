@@ -15,7 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {Navigation} from 'react-native-navigation';
 import ToastMsg from '../../../utils/ToastMsg';
 import ProfileImage from '../model/ProfileImage';
-import ProfileSetUpService from '../service/ProfileSetUpService';
+import ProfileService from '../service/ProfileService';
 import {API_User, BaseUrl} from '../../../utils/API';
 
 const defaultImageSource = require('../../../source/image/match/avatar.png')
@@ -37,7 +37,7 @@ export default class ProfileSetUpViewController extends Component {
 			gender: Gender.unknown
 		}
 
-		this.setupService = new ProfileSetUpService()
+		this.setupService = new ProfileService()
 	}
 
 	uploadProfile = () => {

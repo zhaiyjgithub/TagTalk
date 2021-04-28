@@ -1,9 +1,10 @@
 import RNFS from 'react-native-fs';
 import ToastMsg from '../../../utils/ToastMsg';
 import {Gender} from '../../../utils/utils';
-import BaseService from '../../commonComponents/BaseService';
+import {BaseService, UploadFileModel} from '../../../services/BaseService';
+import {API_User} from '../../../utils/API';
 
-export default class ProfileSetUpService {
+export default class ProfileService {
 	constructor() {
 		this.baseService = new BaseService()
 	}
@@ -73,7 +74,7 @@ export default class ProfileSetUpService {
 				success && success()
 			} else {
 				console.log('SERVER ERROR');
-				fail && fail
+				fail && fail()
 			}
 		}).catch((err) => {
 			if(err.description === "cancelled") {
@@ -83,5 +84,26 @@ export default class ProfileSetUpService {
 
 			fail && fail()
 		});
+	}
+
+	updateAvatar =  (chatId, name, path, success, fail) => {
+		const param = {ChatID: chatId}
+		const files = [(new UploadFileModel(name, name, path, 'image/jpeg'))]
+		this.baseService.uploadFiles(param, files, () => {
+			success && success()
+		}, (error) => {
+			fail && fail()
+		})
+	}
+
+	getUserInfo = (chatId, success, fail) => {
+		const param = {
+			ChatID: chatId
+		}
+		this.baseService.sendRequest(API_User.getUserInfo, param, (response) => {
+			success && success(response.data)
+		}, () => {
+
+		})
 	}
 }

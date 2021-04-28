@@ -1,4 +1,4 @@
-import BaseService from '../commonComponents/BaseService';
+import {BaseService} from '../../services/BaseService';
 import {API_Contacts, API_Match} from '../../utils/API';
 import {ResponseCode} from '../../utils/Enums';
 import {IM} from '../../utils/IM';
