@@ -18,6 +18,7 @@ import sortableViewController from '../test/sortableViewController';
 import ProfileSetUpImageWallViewController from '../components/profile/controller/ProfileSetUpImageWallViewController';
 import ProfileSetUpTagsViewController from '../components/profile/controller/ProfileSetUpTagsViewController';
 import PanelViewController from '../test/PanelViewController';
+import SettingsViewController from '../components/settings/SettingsViewController';
 
 
 const RouterMapper = {
@@ -40,6 +41,7 @@ const RouterMapper = {
 		Navigation.registerComponent('ProfileSetUpImageWallViewController', () => ProfileSetUpImageWallViewController);
 		Navigation.registerComponent('ProfileSetUpTagsViewController', () => ProfileSetUpTagsViewController);
 		Navigation.registerComponent('PanelViewController', () => PanelViewController);
+		Navigation.registerComponent('SettingsViewController', () => SettingsViewController);
 		//
 	},
 }

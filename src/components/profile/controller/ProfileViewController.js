@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Dimensions, FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import CacheTool from '../../../utils/CacheTool';
-import {CacheKey} from '../../../utils/Enums';
+import {CacheKey, PLATFORM} from '../../../utils/Enums';
 import {Router} from '../../../route/router';
 import {Colors} from '../../../utils/styles';
 import ContainerView from '../../../baseComponents/ContainerView';
@@ -11,6 +11,8 @@ import ProfileImageWallService from '../service/ProfileImageWallService';
 import ActionSheet from 'react-native-actionsheet'
 import ImagePicker from 'react-native-image-crop-picker';
 import ProfileService from '../service/ProfileService';
+import {Navigation} from 'react-native-navigation';
+import {BaseNavigatorOptions} from '../../../utils/Navigator';
 
 let data = []
 for (let i = 0; i < 56; i ++) {
@@ -20,6 +22,25 @@ for (let i = 0; i < 56; i ++) {
 const ImageWalls = [1, 2, 3, 4]
 
 export default class ProfileViewController extends Component{
+    static options(passProps) {
+        return {
+            topBar: {
+                title: {
+                    text: 'Profile'
+                },
+                rightButtons: [
+                    {
+                        id: 'settings',
+                        enabled: true,
+                        disableIconTint: false,
+                        color: Colors.black,
+                        icon: require('../../../source/image/profile/setting-two.png'),
+                    },
+                ]
+            },
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -30,15 +51,35 @@ export default class ProfileViewController extends Component{
 
         this.imageService = new ProfileImageWallService()
         this.profileService = new ProfileService()
+        this.navigationEventListener = Navigation.events().bindComponent(this)
     }
-    componentDidMount() {
-        CacheTool.load(CacheKey.userInfo, (response) => {
-            const userInfo = JSON.parse(response)
-            ACCOUNT = userInfo
-            console.log('local user info: ', ACCOUNT)
-        }, () => {
 
-        })
+    componentDidMount() {
+
+    }
+
+    componentWillUnmount() {
+        this.navigationEventListener && this.navigationEventListener.remove();
+    }
+
+    navigationButtonPressed({ buttonId }) {
+        if (buttonId === 'settings') {
+            this.openSettings()
+        }else if (buttonId === 'star') {
+
+        }
+    }
+
+    openSettings = () => {
+        const layout = {
+            component: {
+                name: 'SettingsViewController',
+                passProps: {
+                },
+                options: BaseNavigatorOptions('Settings')
+            }
+        }
+        Navigation.push(this.props.componentId, layout);
     }
 
     getImageWalls = () => {

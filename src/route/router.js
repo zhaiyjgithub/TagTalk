@@ -98,13 +98,13 @@ const Router = {
 			}
 		}
 
-		ProfileViewController.options = {
-			topBar: {
-				title: {
-					text: 'Profile'
-				}
-			}
-		}
+		// ProfileViewController.options = {
+		// 	topBar: {
+		// 		title: {
+		// 			text: 'Profile'
+		// 		}
+		// 	}
+		// }
 
 		Navigation.setRoot({
 			root: {
