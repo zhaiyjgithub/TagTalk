@@ -138,7 +138,7 @@ export default class ProfileSetUpImageWallViewController extends Component{
 	pushToSetUpTags = () => {
 		Navigation.push(this.props.componentId, {
 			component: {
-				name: 'ProfileSetUpTagsViewController',
+				name: 'AddTagsViewController',
 				passProps: {
 
 				},

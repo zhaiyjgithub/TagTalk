@@ -7,10 +7,15 @@ import SeparateLine from '../../commonComponents/SeparateLine';
 import NavigatorDismissButton, {NavigationType} from '../../commonComponents/NavigatorDismissButton';
 import {PLATFORM} from '../../../utils/Enums';
 import {Navigation} from 'react-native-navigation';
+import ProfileService from '../service/ProfileService';
 
 const MaxSetSize = 20
 
-export default class ProfileSetUpTagsViewController extends Component{
+export default class AddTagsViewController extends Component{
+	static defaultProps = {
+		tags: [],
+		isShowLargeTitle: true,
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,8 +28,22 @@ export default class ProfileSetUpTagsViewController extends Component{
 			customTag: '',
 		}
 
-		this.selectedSet = new Set()
-		this.customSet = new Set()
+		const customList = this.filterPropsTags(props.tags, this.state.defaultTags)
+		this.selectedSet = new Set(props.tags)
+		this.customSet = new Set(customList)
+
+		this.profileService = new ProfileService()
+	}
+
+	filterPropsTags = (tags, defaultTags) => {
+		let customList = []
+		let dSet = new Set(defaultTags)
+		tags.forEach((_tag,) => {
+			if (!dSet.has(_tag)) {
+				customList.push(_tag)
+			}
+		})
+		return customList
 	}
 
 	addToSet = (item) => {
@@ -68,10 +87,10 @@ export default class ProfileSetUpTagsViewController extends Component{
 		return (
 			<TouchableOpacity onPress={() => {
 				this.clickItem(item, type)
-			}} key={idx} style={{height: 50, borderRadius: 25, backgroundColor: isSelected ? Colors.blue : Colors.systemGray, justifyContent: 'center',
-				marginTop: 10, marginRight: 10, paddingHorizontal: 16,
+			}} key={idx} style={{height: 40, borderRadius: 20, backgroundColor: isSelected ? Colors.blue : Colors.systemGray, justifyContent: 'center',
+				marginTop: 8, marginRight: 8, paddingHorizontal: 16,
 			}}>
-				<Text style={{color: isSelected ? Colors.white : Colors.black, fontSize: 18, }}>{item}</Text>
+				<Text style={{color: isSelected ? Colors.white : Colors.black, fontSize: 18, fontWeight: '500'}}>{item}</Text>
 			</TouchableOpacity>
 		)
 	}
@@ -100,9 +119,9 @@ export default class ProfileSetUpTagsViewController extends Component{
 			<View style={{
 				flexDirection: 'row',
 				flexWrap: 'wrap',
-				marginHorizontal: 20,
-				marginTop: 20,
-				paddingBottom: 10
+				marginHorizontal: 24,
+				marginTop: 8,
+				paddingBottom: 16
 			}}>
 				{list.map((item, index) => {
 					return this.renderItem(item, index, TagType.custom)
@@ -130,11 +149,23 @@ export default class ProfileSetUpTagsViewController extends Component{
 		})
 	}
 
+	updateTags = () => {
+		let list = []
+		this.selectedSet.forEach((_item,) => {
+			list.push(_item)
+		})
+
+		const {ChatID} = ACCOUNT
+		this.profileService.updateTags(ChatID, list, () => {
+			const {onSuccess} = this.props
+			onSuccess && onSuccess()
+			Navigation.pop(this.props.componentId)
+		}, () => {})
+	}
+
 	renderDoneButton = () => {
 		return (
-			<TouchableOpacity onPress={() => {
-
-			}} style={{
+			<TouchableOpacity onPress={this.updateTags} style={{
 				position: 'absolute',
 				right: 20, bottom: 50,
 				height: 44, width: 44,
@@ -150,14 +181,14 @@ export default class ProfileSetUpTagsViewController extends Component{
 
 	render() {
 		const {defaultTags, customTag} = this.state
+		const {isShowLargeTitle} = this.props
 		return (
 			<SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
-				<Text style={{fontSize: 32, marginTop: 20,
+				{isShowLargeTitle ? (<Text style={{fontSize: 32, marginTop: 16,
 					marginBottom: 10,
 					marginHorizontal: 20, color: Colors.black,
 					fontWeight: 'bold'
-				}}>{'My tags.'}</Text>
-
+				}}>{'My tags.'}</Text>) : null}
 				<View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
 					<View style={{flex: 1}}>
 						<BaseTextInput
@@ -167,10 +198,9 @@ export default class ProfileSetUpTagsViewController extends Component{
 							title = {'Add Tags#'}
 							placeholder={'Enter your custom tag...'}
 							placeholderTextColor={Colors.lightGray}
-							multiline={true}
-							maxLength={160}
+							numberOfLines={1}
 							onChangeText={(text) => {
-								this.setState({customTag: (text + '').toString().trim()})
+								this.setState({customTag: (text + '').toString()})
 							}}
 						/>
 					</View>
@@ -178,7 +208,7 @@ export default class ProfileSetUpTagsViewController extends Component{
 					<TouchableOpacity onPress={this.addCustomTag} style={{width: 50, height: 50, borderRadius: 25,
 						marginRight: 20
 					}}>
-						<Image style={{width: 50, height: 50,}} source={require('../../../source/image/match/add-one.png')}/>
+						<Image style={{width: 40, height: 40,}} source={require('../../../source/image/base/add-one.png')}/>
 					</TouchableOpacity>
 				</View>
 

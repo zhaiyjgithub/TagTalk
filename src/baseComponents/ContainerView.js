@@ -11,7 +11,7 @@ export default class ContainerView extends Component{
 	render() {
 		const {children, style} = this.props
 		return(
-			<SafeAreaView style={[{flex: 1, backgroundColor: Colors.lightWhite}, style]}>
+			<SafeAreaView style={[{flex: 1, backgroundColor: Colors.white}, style]}>
 				{children}
 			</SafeAreaView>
 		)

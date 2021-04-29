@@ -1,5 +1,6 @@
 import {HTTP} from '../utils/HttpTools';
 import RNFS from 'react-native-fs';
+import {ResponseCode} from '../utils/Enums';
 class BaseService {
 	constructor() {
 	}
@@ -16,7 +17,11 @@ class BaseService {
 		console.log(api, JSON.stringify(param))
 		HTTP.post(api, param).then((response) => {
 			console.log(JSON.stringify(response))
-			success && success(response)
+			if (response && response.code === ResponseCode.ok) {
+				success && success(response.data)
+			}else {
+				fail && fail(response.msg)
+			}
 		}).catch((error) => {
 			fail && fail(error)
 		})

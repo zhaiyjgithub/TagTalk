@@ -10,7 +10,11 @@ const API_User = {
 	Avatar: 'User/Avatar',
 	ImageWalls: 'User/ImageWalls',
 	GetImageWall: "User/GetImageWall",
-	getUserInfo: 'User/GetUserInfo'
+	getUserInfo: 'User/GetUserInfo',
+	UpdateBasicProfile: 'User/UpdateBasicProfile',
+	UpdateTags: 'User/UpdateTags',
+	GetTags: 'User/GetTags'
+
 }
 
 const API_Contacts = {

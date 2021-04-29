@@ -44,6 +44,7 @@ export default class ProfileViewController extends Component{
     constructor(props) {
         super(props);
         this.state = {
+            tags: [],
             imageWalls: [],
             imageIndex: 0,
             avatarUri: ''
@@ -55,7 +56,7 @@ export default class ProfileViewController extends Component{
     }
 
     componentDidMount() {
-
+        this.getTags()
     }
 
     componentWillUnmount() {
@@ -70,6 +71,13 @@ export default class ProfileViewController extends Component{
         }
     }
 
+    getTags = () => {
+        const {ChatID} = ACCOUNT
+        this.profileService.getTags(ChatID, (data) => {
+            this.setState({tags: data})
+        })
+    }
+
     openSettings = () => {
         const layout = {
             component: {
@@ -77,6 +85,26 @@ export default class ProfileViewController extends Component{
                 passProps: {
                 },
                 options: BaseNavigatorOptions('Settings')
+            }
+        }
+        Navigation.push(this.props.componentId, layout);
+    }
+
+    openUpdateBasicProfile = () => {
+        const {Name, Bio, Gender} = ACCOUNT
+        const layout = {
+            component: {
+                name: 'UpdateBasicProfileViewController',
+                passProps: {
+                    name: Name,
+                    bio: Bio,
+                    gender: Gender,
+                    onSuccess: () => {
+                        const {ChatID} = ACCOUNT
+                        this.getUserInfo(ChatID)
+                    }
+                },
+                options: BaseNavigatorOptions('My Profile')
             }
         }
         Navigation.push(this.props.componentId, layout);
@@ -95,19 +123,33 @@ export default class ProfileViewController extends Component{
     }
 
     renderTagList = () => {
-        const defaultTags= [
-            'Adventure', 'Animal', 'Dancing',
-            'Foreign culture', 'Hitchiking', 'Local food', 'More'
-        ]
+        const {tags} = this.state
         return (
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', backgroundColor: Colors.white,
+            <TouchableOpacity onPress={this.openTags} style={{flexDirection: 'row', flexWrap: 'wrap', backgroundColor: Colors.white,
                 marginTop: 8
             }}>
-                {defaultTags.map((item, idx) => {
+                {tags.map((item, idx) => {
                     return this.renderTag(item, idx)
                 })}
-            </View>
+            </TouchableOpacity>
         )
+    }
+
+    openTags = () => {
+        const {tags} = this.state
+        Navigation.push(this.props.componentId, {
+            component: {
+                name: 'AddTagsViewController',
+                passProps: {
+                    tags: tags,
+                    isShowLargeTitle: false,
+                    onSuccess: () => {
+                        this.getTags()
+                    }
+                },
+                options: BaseNavigatorOptions('Tags')
+            }
+        });
     }
 
     renderTag = (item, idx) => {
@@ -121,14 +163,13 @@ export default class ProfileViewController extends Component{
     }
 
     onClickUserName = () => {
-
+        this.openUpdateBasicProfile()
     }
 
     renderUserInfoHeader = () => {
         const {Name, Avatar, Bio} = ACCOUNT
         const {avatarUri} = this.state
         const uri = avatarUri.length ? avatarUri : (BaseUrl + API_User.Avatar + '?name=' + Avatar)
-        console.log('avatar uri: ', uri)
         const size = 80
         return (
             <View style={{ borderRadius: 4, marginHorizontal: 20, paddingVertical: 16,
@@ -146,11 +187,13 @@ export default class ProfileViewController extends Component{
                             resizeMode={FastImage.resizeMode.cover}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.onClickUserName} style={{marginLeft: 16}}>
+                    <TouchableOpacity onPress={this.onClickUserName} style={{marginLeft: 16, flex: 1}}>
                         <Text numberOfLines={1} style={{fontSize: 24, color: Colors.black, textAlign: 'left',
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
                         }}>{Name}</Text>
-                        <Text style={{fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'left'}}>{Bio}</Text>
+                        <Text numberOfLines={2} style={{fontSize: 14, color: Colors.lightGray, marginTop: 8, textAlign: 'left',
+                           width: '100%'
+                        }}>{Bio}</Text>
                     </TouchableOpacity>
                 </View>
                 {this.renderTagList()}
@@ -186,7 +229,7 @@ export default class ProfileViewController extends Component{
     renderImageWallItem = (idx) => {
         const {width, height} = Dimensions.get('window')
         return (
-            <View style={{width: width}}>
+            <View key={idx} style={{width: width}}>
                 <FastImage
                     style={{width: '100%', height: 196, marginBottom: 4}}
                     source={{
@@ -207,7 +250,7 @@ export default class ProfileViewController extends Component{
             }}>
                 {ImageWalls.map((item, idx) => {
                     return (
-                        <View style={{width: 8, height: 8, borderRadius: 4,
+                        <View key={idx} style={{width: 8, height: 8, borderRadius: 4,
                             backgroundColor: (idx === imageIndex) ? Colors.blue : Colors.systemGray,
                             marginRight: 4
                         }}/>
@@ -262,15 +305,18 @@ export default class ProfileViewController extends Component{
         this.setState({avatarUri: uri})
         const {ChatID} = ACCOUNT
         this.profileService.updateAvatar(ChatID, name, uri, () => {
-            this.profileService.getUserInfo(ChatID, (account) => {
-                const newAccount = Object.assign({}, ACCOUNT, account)
-                ACCOUNT = newAccount
-
-                console.log('new account: ', newAccount)
-                this.saveUserAccountToLocal(newAccount)
-                this.forceUpdate()
-            })
+            this.getUserInfo(ChatID)
         }, () => {
+        })
+    }
+
+    getUserInfo = (ChatID) => {
+        this.profileService.getUserInfo(ChatID, (account) => {
+            const newAccount = Object.assign({}, ACCOUNT, account)
+            ACCOUNT = newAccount
+            console.log('new account: ', newAccount)
+            this.saveUserAccountToLocal(newAccount)
+            this.forceUpdate()
         })
     }
 
@@ -314,7 +360,6 @@ export default class ProfileViewController extends Component{
                     {this.renderUserInfoHeader()}
                     {this.renderTimelinePage()}
                 </ScrollView>
-
                 <ActionSheet
                     ref={o => this.ActionSheet = o}
                     title={'Which one do you like ?'}

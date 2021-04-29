@@ -25,7 +25,6 @@ const maleImageSource = require('../../../source/image/match/male.png')
 export default class ProfileSetUpViewController extends Component {
 	constructor(props) {
 		super(props);
-
 		const {Avatar} = global.UserInfo
 		this.state = {
 			isShowSpinner: false,

@@ -100,10 +100,62 @@ export default class ProfileService {
 		const param = {
 			ChatID: chatId
 		}
-		this.baseService.sendRequest(API_User.getUserInfo, param, (response) => {
-			success && success(response.data)
+		this.baseService.sendRequest(API_User.getUserInfo, param, (data) => {
+			success && success(data)
 		}, () => {
 
 		})
 	}
+
+	updateBasicProfile = (chatId, name, bio, genderIndex, success, fail) => {
+		if (!name || !name.length) {
+			ToastMsg.show('Name is required')
+			return
+		}
+		if (!bio || !bio.length) {
+			ToastMsg.show('Bio is required')
+			return
+		}
+		const genders = [Gender.male, Gender.female]
+		const param = {
+			ChatID: chatId,
+			Name: name,
+			Bio: bio,
+			Gender: genders[genderIndex]
+		}
+		this.baseService.sendRequest(API_User.UpdateBasicProfile, param, (data) => {
+			success && success()
+		}, () => {
+			fail && fail()
+		})
+	}
+
+	updateTags = (chatId, tags, success, fail) => {
+		if (!tags || !tags.length) {
+			ToastMsg.show('Tags is required!')
+			return
+		}
+		const param = {
+			ChatID: chatId,
+			Names: tags.join('|')
+		}
+		this.baseService.sendRequest(API_User.UpdateTags, param, () => {
+			success && success()
+		}, () => {
+			fail && fail()
+		})
+	}
+
+	getTags = (chatId, success, fail) => {
+		const param = {
+			ChatID: chatId
+		}
+		this.baseService.sendRequest(API_User.GetTags, param, (data) => {
+			const dataSource = (data && data.length ? data.split('|') : [])
+			success && success(dataSource)
+		}, () => {
+
+		})
+	}
+
 }
