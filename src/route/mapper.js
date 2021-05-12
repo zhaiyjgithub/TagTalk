@@ -20,7 +20,7 @@ import AddTagsViewController from '../components/profile/controller/AddTagsViewC
 import PanelViewController from '../test/PanelViewController';
 import SettingsViewController from '../components/settings/SettingsViewController';
 import UpdateBasicProfileViewController from '../components/profile/controller/UpdateBasicProfileViewController';
-
+import ZoomViewer from '../test/zoomViewer'
 
 const RouterMapper = {
 	run() {
@@ -44,6 +44,7 @@ const RouterMapper = {
 		Navigation.registerComponent('PanelViewController', () => PanelViewController);
 		Navigation.registerComponent('SettingsViewController', () => SettingsViewController);
 		Navigation.registerComponent('UpdateBasicProfileViewController', () => UpdateBasicProfileViewController);
+		Navigation.registerComponent('ZoomViewer', () => ZoomViewer);
 		//
 	},
 }
