@@ -37,7 +37,7 @@ export default class AnimationOverlay extends Component {
 		]).start();
 	}
 
-	_dismissOverlay = () => {
+	dismissOverlay = () => {
 		Animated.timing(this.state.opacityBgAnim, {
 			toValue: 0,
 			duration: ANIM_DURATION,
@@ -49,7 +49,7 @@ export default class AnimationOverlay extends Component {
 
 	render() {
 		return (
-			<TouchableWithoutFeedback onPress={this._dismissOverlay} style={{ flex: 1 }}>
+			<TouchableWithoutFeedback onPress={this.dismissOverlay} style={{ flex: 1 }}>
 				<Animated.View
 					style={{
 						flex: 1,

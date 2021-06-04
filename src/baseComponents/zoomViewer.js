@@ -1,18 +1,21 @@
-import React from 'react';
-import {Dimensions} from 'react-native';
+import React, {useEffect} from 'react';
+import {Dimensions, View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import Animated, {
 	useAnimatedGestureHandler,
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 	withTiming,
+	Easing
 } from 'react-native-reanimated';
 import {PanGestureHandler, PinchGestureHandler} from 'react-native-gesture-handler';
-import ContainerView from '../baseComponents/ContainerView';
+import {Colors} from '../utils/styles';
+import {Navigation} from 'react-native-navigation';
+import FastImage from 'react-native-fast-image';
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 const ZoomViewer = (props) => {
 	const {width, height} = Dimensions.get('window')
-
 	const imageScale = useSharedValue(1)
 	const translation = {
 		x: useSharedValue(0),
@@ -88,16 +91,33 @@ const ZoomViewer = (props) => {
 	})
 
 	const size = width
+	const onClickContainer = () => {
+		Navigation.dismissOverlay(props.componentId);
+	}
+
 	return (
-		<ContainerView style={{justifyContent: 'center', alignItems: 'center'}}>
+		<TouchableOpacity onPress={onClickContainer} activeOpacity={1.0} style={[{
+			flex: 1,
+			justifyContent: 'center', alignItems: 'center',
+			backgroundColor: Colors.black,
+		}]}>
 			<PanGestureHandler onGestureEvent={onPanGestureEvent}>
 				<Animated.View style={{width: size, height: size}}>
 					<PinchGestureHandler onGestureEvent={onPinchGestureEvent}>
-						<Animated.Image style={[{width: size, height: size, }, imageStyle]} source={{uri: `https://picsum.photos/id/${10 + 10}/400/400`}}/>
+						<Animated.View style={[{width: size, height: size, }, imageStyle]} source={{uri: `https://picsum.photos/id/${10 + 10}/400/400`}}>
+							<FastImage
+								style={[{width: size, height: size, }, imageStyle]}
+								source={{
+									uri: `https://picsum.photos/id/${20 + 10}/400/400`,
+									priority: FastImage.priority.normal,
+								}}
+								resizeMode={FastImage.resizeMode.cover}
+							/>
+						</Animated.View>
 					</PinchGestureHandler>
 				</Animated.View>
 			</PanGestureHandler>
-		</ContainerView>
+		</TouchableOpacity>
 	)
 }
 

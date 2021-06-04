@@ -226,10 +226,26 @@ export default class ProfileViewController extends Component{
         )
     }
 
+    onClickImageWallItem = () => {
+        Navigation.showOverlay({
+            component: {
+                name: 'ZoomViewer',
+                options: {
+                    layout: {
+                        componentBackgroundColor: 'transparent',
+                    },
+                    overlay: {
+                        interceptTouchOutside: true
+                    }
+                }
+            }
+        });
+    }
+
     renderImageWallItem = (idx) => {
         const {width, height} = Dimensions.get('window')
         return (
-            <View key={idx} style={{width: width}}>
+            <TouchableOpacity onPress={this.onClickImageWallItem} activeOpacity={1.0} key={idx} style={{width: width}}>
                 <FastImage
                     style={{width: '100%', height: 196, marginBottom: 4}}
                     source={{
@@ -238,7 +254,7 @@ export default class ProfileViewController extends Component{
                     }}
                     resizeMode={FastImage.resizeMode.cover}
                 />
-            </View>
+            </TouchableOpacity>
         )
     }
 

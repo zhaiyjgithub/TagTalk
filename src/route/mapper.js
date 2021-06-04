@@ -20,7 +20,7 @@ import AddTagsViewController from '../components/profile/controller/AddTagsViewC
 import PanelViewController from '../test/PanelViewController';
 import SettingsViewController from '../components/settings/SettingsViewController';
 import UpdateBasicProfileViewController from '../components/profile/controller/UpdateBasicProfileViewController';
-import ZoomViewer from '../test/zoomViewer'
+import ZoomViewer from '../baseComponents/zoomViewer'
 
 const RouterMapper = {
 	run() {
