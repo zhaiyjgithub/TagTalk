@@ -226,7 +226,7 @@ export default class ProfileViewController extends Component{
         )
     }
 
-    onClickImageWallItem = () => {
+    onClickImageWallItem = (uri) => {
         Navigation.showOverlay({
             component: {
                 name: 'ZoomViewer',
@@ -237,6 +237,9 @@ export default class ProfileViewController extends Component{
                     overlay: {
                         interceptTouchOutside: true
                     }
+                },
+                passProps: {
+                    uri: uri
                 }
             }
         });
@@ -244,12 +247,15 @@ export default class ProfileViewController extends Component{
 
     renderImageWallItem = (idx) => {
         const {width, height} = Dimensions.get('window')
+        const uri = `https://picsum.photos/id/${idx + 10}/400/400`
         return (
-            <TouchableOpacity onPress={this.onClickImageWallItem} activeOpacity={1.0} key={idx} style={{width: width}}>
+            <TouchableOpacity onPress={() => {
+                this.onClickImageWallItem(uri)
+            }} activeOpacity={1.0} key={idx} style={{width: width}}>
                 <FastImage
                     style={{width: '100%', height: 196, marginBottom: 4}}
                     source={{
-                        uri: `https://picsum.photos/id/${idx + 10}/400/400`,
+                        uri: uri,
                         priority: FastImage.priority.normal,
                     }}
                     resizeMode={FastImage.resizeMode.cover}

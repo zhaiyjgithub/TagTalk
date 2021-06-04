@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Dimensions, View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import {Dimensions, View, TouchableOpacity} from 'react-native';
 import Animated, {
 	useAnimatedGestureHandler,
 	useAnimatedStyle,
@@ -12,7 +12,6 @@ import {PanGestureHandler, PinchGestureHandler} from 'react-native-gesture-handl
 import {Colors} from '../utils/styles';
 import {Navigation} from 'react-native-navigation';
 import FastImage from 'react-native-fast-image';
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 const ZoomViewer = (props) => {
 	const {width, height} = Dimensions.get('window')
@@ -95,6 +94,7 @@ const ZoomViewer = (props) => {
 		Navigation.dismissOverlay(props.componentId);
 	}
 
+	const {uri} = props
 	return (
 		<TouchableOpacity onPress={onClickContainer} activeOpacity={1.0} style={[{
 			flex: 1,
@@ -108,7 +108,7 @@ const ZoomViewer = (props) => {
 							<FastImage
 								style={[{width: size, height: size, }, imageStyle]}
 								source={{
-									uri: `https://picsum.photos/id/${20 + 10}/400/400`,
+									uri: uri,
 									priority: FastImage.priority.normal,
 								}}
 								resizeMode={FastImage.resizeMode.cover}
@@ -119,6 +119,10 @@ const ZoomViewer = (props) => {
 			</PanGestureHandler>
 		</TouchableOpacity>
 	)
+}
+
+ZoomViewer.defaultProps = {
+	uri: ''
 }
 
 export default ZoomViewer
