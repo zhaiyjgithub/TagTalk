@@ -21,6 +21,8 @@ import PanelViewController from '../test/PanelViewController';
 import SettingsViewController from '../components/settings/SettingsViewController';
 import UpdateBasicProfileViewController from '../components/profile/controller/UpdateBasicProfileViewController';
 import ZoomViewer from '../baseComponents/zoomViewer'
+import CocktailsListScreen from '../test/shareAnimation/CocktailsListScreen';
+import CocktailDetailsScreen from '../test/shareAnimation/CocktailDetailsScreen';
 
 const RouterMapper = {
 	run() {
@@ -45,6 +47,9 @@ const RouterMapper = {
 		Navigation.registerComponent('SettingsViewController', () => SettingsViewController);
 		Navigation.registerComponent('UpdateBasicProfileViewController', () => UpdateBasicProfileViewController);
 		Navigation.registerComponent('ZoomViewer', () => ZoomViewer);
+		Navigation.registerComponent('CocktailsListScreen', () => CocktailsListScreen);
+		Navigation.registerComponent('CocktailDetailsScreen', () => CocktailDetailsScreen);
+		//
 		//
 	},
 }

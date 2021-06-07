@@ -54,22 +54,22 @@ ACCOUNT = {
 }
 
 Navigation.events().registerAppLaunchedListener(() => {
-    // Router.showTestPage()
-    CacheTool.load(CacheKey.userInfo, (response) => {
-      const userInfo = JSON.parse(response)
-        ACCOUNT = userInfo
-      if (response && userInfo) {
-          const {Bio, Avatar} = userInfo
-          global.UserInfo = userInfo
-          if (Avatar && Avatar.length) {
-              Router.showHomePage()
-          }else {
-              Router.showGuide()
-          }
-      }else {
-        Router.showGuide()
-      }
-    }, () => {
-      Router.showGuide()
-    })
+    Router.showTestPage()
+    // CacheTool.load(CacheKey.userInfo, (response) => {
+    //   const userInfo = JSON.parse(response)
+    //     ACCOUNT = userInfo
+    //   if (response && userInfo) {
+    //       const {Bio, Avatar} = userInfo
+    //       global.UserInfo = userInfo
+    //       if (Avatar && Avatar.length) {
+    //           Router.showHomePage()
+    //       }else {
+    //           Router.showGuide()
+    //       }
+    //   }else {
+    //     Router.showGuide()
+    //   }
+    // }, () => {
+    //   Router.showGuide()
+    // })
 });
