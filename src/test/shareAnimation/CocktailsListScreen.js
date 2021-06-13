@@ -55,7 +55,7 @@ export default class CocktailsListScreen extends NavigationComponent {
 				],
 				description: `The gimlet (pronounced with a hard 'g') is a cocktail typically made of 2 parts gin and 1 part lime juice. A 1928 description of the drink was: \"gin, a spot of lime, and soda.\" The description in the 1953 Raymond Chandler novel The Long Goodbye stated that \"a real gimlet is half gin and half Rose's lime juice and nothing else.\" This is in line with the proportions suggested by The Savoy Cocktail Book (1930), which specifies one half Plymouth Gin and one half Rose\'s Lime Juice Cordial. However, modern tastes are less sweet, and generally provide for at least two parts gin to one part of the lime and other non-alcoholic elements (see recipes below).`,
 			}
-		return <View style={{flex: 1}}>
+		return <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
 			<FastImage
 				style={{width: 120, height: 120, borderRadius: 8,
 				}}
@@ -66,16 +66,6 @@ export default class CocktailsListScreen extends NavigationComponent {
 				resizeMode={FastImage.resizeMode.cover}
 				nativeID={`image.from`}
 			/>
-			{/*<Image*/}
-			{/*	source={{uri:  `https://picsum.photos/id/${12 + 10}/400/400`}}*/}
-			{/*	nativeID={`image.from`}*/}
-			{/*	style={{*/}
-			{/*		height: 120,*/}
-			{/*		width: 120,*/}
-			{/*		zIndex: 1,*/}
-			{/*	}}*/}
-			{/*	resizeMode={'cover'}*/}
-			{/*/>*/}
 			<TouchableOpacity onPress={() => {
 				this.pushCocktailDetails(item)
 			}} >
@@ -100,6 +90,19 @@ export default class CocktailsListScreen extends NavigationComponent {
 								{
 									fromId: `image.from`,
 									toId: `image.to`,
+									interpolation: {
+										type: 'spring',
+										...SPRING_CONFIG,
+									},
+									duration: 500
+								},
+							],
+						},
+						dismissModal: {
+							sharedElementTransitions: [
+								{
+									fromId: `image.to`,
+									toId: `image.from`,
 									interpolation: {
 										type: 'spring',
 										...SPRING_CONFIG,

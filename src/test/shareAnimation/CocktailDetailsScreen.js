@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, ScrollView, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native';
 import {
 	NavigationComponentProps,
 	NavigationButtonPressedEvent,
@@ -9,7 +9,6 @@ import {
 import { CocktailItem } from './cocktails';
 import {Colors} from '../../utils/styles';
 import FastImage from 'react-native-fast-image';
-
 
 export default class CocktailDetailsScreen extends React.Component<Props> {
 	static defaultProps = {
@@ -22,16 +21,25 @@ export default class CocktailDetailsScreen extends React.Component<Props> {
 		const {uri, id} = this.props
 		return (
 			<View style={{flex: 1, backgroundColor: Colors.white}}>
-				<FastImage
-					nativeID={`image.to`}
-					style={{width:'100%', height: 200}}
-					source={{
-						uri:  this.props.uri,
-						priority: FastImage.priority.normal,
-					}}
-					resizeMode={FastImage.resizeMode.cover}
-				/>
-				{/*<Image source={{uri: `https://picsum.photos/id/${12 + 10}/400/400`}} nativeID={`image.to`} style={{width:'100%', height: 200}} />*/}
+				<ScrollView contentInsetAdjustmentBehavior="never" style={{flex: 1}}>
+					<FastImage
+						nativeID={`image.to`}
+						style={{width:'100%', height: 200}}
+						source={{
+							uri:  this.props.uri,
+							priority: FastImage.priority.normal,
+						}}
+						resizeMode={FastImage.resizeMode.cover}
+					/>
+
+					<TouchableOpacity onPress={() => {
+						Navigation.dismissModal(this.props.componentId);
+					}}>
+						<Text>{'pop'}</Text>
+					</TouchableOpacity>
+				</ScrollView>
+
+
 			</View>
 		);
 	}
