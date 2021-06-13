@@ -23,6 +23,7 @@ import UpdateBasicProfileViewController from '../components/profile/controller/U
 import ZoomViewer from '../baseComponents/zoomViewer'
 import CocktailsListScreen from '../test/shareAnimation/CocktailsListScreen';
 import CocktailDetailsScreen from '../test/shareAnimation/CocktailDetailsScreen';
+import PostDetailViewController from '../components/universal/PostDetailViewController';
 
 const RouterMapper = {
 	run() {
@@ -49,6 +50,7 @@ const RouterMapper = {
 		Navigation.registerComponent('ZoomViewer', () => ZoomViewer);
 		Navigation.registerComponent('CocktailsListScreen', () => CocktailsListScreen);
 		Navigation.registerComponent('CocktailDetailsScreen', () => CocktailDetailsScreen);
+		Navigation.registerComponent('PostDetailViewController', () => PostDetailViewController);
 		//
 		//
 	},

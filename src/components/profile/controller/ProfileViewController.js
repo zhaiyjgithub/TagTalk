@@ -13,6 +13,10 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ProfileService from '../service/ProfileService';
 import {Navigation} from 'react-native-navigation';
 import {BaseNavigatorOptions} from '../../../utils/Navigator';
+import type {CocktailItem} from '../../../test/shareAnimation/cocktails';
+
+const SPRING_CONFIG = { mass: 2, damping: 500, stiffness: 200 };
+
 
 let data = []
 for (let i = 0; i < 56; i ++) {
@@ -282,19 +286,73 @@ export default class ProfileViewController extends Component{
         )
     }
 
+    onClickTimelineImage = (uri, id) => {
+        const fromId = `image.${id}.from`
+        const toId = `image.${id}.to`
+        Navigation.showModal({
+            component: {
+                name: 'PostDetailViewController',
+                passProps: {
+                    uri: uri,
+                    id: id,
+                    fromId: fromId,
+                    toId: toId
+                },
+                options: {
+                    modalPresentationStyle: 'fullScreen',
+                    animations: {
+                        showModal: {
+                            sharedElementTransitions: [
+                                {
+                                    fromId: fromId,
+                                    toId: toId,
+                                    interpolation: {
+                                        type: 'spring',
+                                        ...SPRING_CONFIG,
+                                    },
+                                    duration: 500
+                                },
+                            ],
+                        },
+                        dismissModal: {
+                            sharedElementTransitions: [
+                                {
+                                    fromId: toId,
+                                    toId: fromId,
+                                    interpolation: {
+                                        type: 'spring',
+                                        ...SPRING_CONFIG,
+                                    },
+                                    duration: 500
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+    }
+
     renderTimelineImageItem = (idx) => {
         const {width, height} = Dimensions.get('window')
         const number = 4
         const size = (width - 32 - 4*(number - 1))/number
+        const uri = `https://picsum.photos/id/${idx + 10}/400/400`
+        const fromId = `image.${idx}.from`
         return (
-            <FastImage
-                style={{width: size, height: size, marginBottom: 4, borderRadius: 4}}
-                source={{
-                    uri: `https://picsum.photos/id/${idx + 10}/400/400`,
-                    priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.contain}
-            />
+            <TouchableOpacity onPress={() =>{
+                this.onClickTimelineImage(uri, idx)
+            }}>
+                <FastImage
+                    style={{width: size, height: size, marginBottom: 4, borderRadius: 4}}
+                    source={{
+                        uri: uri,
+                        priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                    nativeID={fromId}
+                />
+            </TouchableOpacity>
         )
     }
 

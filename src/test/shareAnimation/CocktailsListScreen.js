@@ -77,7 +77,7 @@ export default class CocktailsListScreen extends NavigationComponent {
 	pushCocktailDetails = (item: CocktailItem) => {
 		Navigation.showModal({
 			component: {
-				name: 'CocktailDetailsScreen',
+				name: 'PostDetailViewController',
 				passProps: {
 					uri: item.image,
 					id: item.id
@@ -111,102 +111,6 @@ export default class CocktailsListScreen extends NavigationComponent {
 								},
 							],
 						},
-					},
-				},
-			},
-		});
-
-		return
-		Navigation.push(this.props.componentId, {
-			component: {
-				name: 'CocktailDetailsScreen',
-				passProps: { ...item },
-				options: {
-					animations: {
-						push: {
-							content: {
-								alpha: {
-									from: 0,
-									to: 1,
-									duration: SHORT_DURATION,
-								},
-							},
-							sharedElementTransitions: [
-								{
-									fromId: `image${item.id}`,
-									toId: `image${item.id}Dest`,
-									duration: LONG_DURATION,
-									interpolation: { type: 'spring', ...SPRING_CONFIG },
-								},
-								{
-									fromId: `title${item.id}`,
-									toId: `title${item.id}Dest`,
-									duration: LONG_DURATION,
-									interpolation: { type: 'spring', ...SPRING_CONFIG },
-								},
-								{
-									fromId: `backdrop${item.id}`,
-									toId: 'backdrop',
-									duration: LONG_DURATION,
-									interpolation: { type: 'spring', ...SPRING_CONFIG },
-								},
-							],
-							elementTransitions: [
-								{
-									id: 'description',
-									alpha: {
-										from: 0,
-										duration: SHORT_DURATION,
-									},
-									translationY: {
-										from: 16,
-										duration: SHORT_DURATION,
-									},
-								},
-							],
-						},
-						// pop: {
-						// 	content: {
-						// 		alpha: {
-						// 			from: 1,
-						// 			to: 0,
-						// 			duration: SHORT_DURATION * POP_MULTIPLIER,
-						// 		},
-						// 	},
-						// 	sharedElementTransitions: [
-						// 		{
-						// 			fromId: `image${item.id}Dest`,
-						// 			toId: `image${item.id}`,
-						// 			duration: LONG_DURATION * POP_MULTIPLIER,
-						// 			interpolation: { type: 'spring', ...SPRING_CONFIG },
-						// 		},
-						// 		{
-						// 			fromId: `title${item.id}Dest`,
-						// 			toId: `title${item.id}`,
-						// 			duration: LONG_DURATION * POP_MULTIPLIER,
-						// 			interpolation: { type: 'spring', ...SPRING_CONFIG },
-						// 		},
-						// 		{
-						// 			fromId: 'backdrop',
-						// 			toId: `backdrop${item.id}`,
-						// 			duration: LONG_DURATION * POP_MULTIPLIER,
-						// 			interpolation: { type: 'spring', ...SPRING_CONFIG },
-						// 		},
-						// 	],
-						// 	elementTransitions: [
-						// 		{
-						// 			id: 'description',
-						// 			alpha: {
-						// 				to: 0,
-						// 				duration: SHORT_DURATION,
-						// 			},
-						// 			translationY: {
-						// 				to: 16,
-						// 				duration: SHORT_DURATION,
-						// 			},
-						// 		},
-						// 	],
-						// },
 					},
 				},
 			},
